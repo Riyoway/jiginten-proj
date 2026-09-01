@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "vite public"
+    "start": "vite public",
+    "build": "vite build public --base ./ --outDir ../dist --emptyOutDir"
   },
   "devDependencies": {
     "vite": "^7.1.3"
