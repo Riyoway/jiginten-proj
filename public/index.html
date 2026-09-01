@@ -20,26 +20,9 @@
           <div id="video-area" class="video-stage">
             <video id="live-video" class="video-surface" muted playsinline></video>
 
-            <div class="video-overlay top-overlay">
-              <div class="broadcaster-info">
-                <span class="live-tag">LIVE</span>
-                <div class="avatar"></div>
-                <div class="broadcaster-text">
-                  <p class="broadcaster-name">配信者名</p>
-                  <p class="stream-title">配信タイトルがここに入ります</p>
-                </div>
-                <button type="button" class="follow-btn">フォロー</button>
-              </div>
-              <div class="viewer-badge">
-                <svg viewBox="0 0 24 24" class="icon"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span>1.2万人</span>
-              </div>
-            </div>
-
             <div class="video-overlay action-rail">
-              <button type="button" class="rail-btn like-btn">
+              <button type="button" class="rail-btn like-btn" aria-label="いいね">
                 <span class="rail-icon"><svg viewBox="0 0 24 24" class="icon"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
-                <span class="rail-count">12.3k</span>
               </button>
               <button type="button" class="rail-btn share-btn">
                 <span class="rail-icon"><svg viewBox="0 0 24 24" class="icon"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></span>
@@ -55,7 +38,6 @@
               <button type="button" class="icon-btn play-btn">
                 <svg viewBox="0 0 24 24" class="icon"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
               </button>
-              <div class="seek-track"><div class="seek-progress"></div></div>
               <button type="button" class="icon-btn mute-btn">
                 <svg viewBox="0 0 24 24" class="icon"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
               </button>
@@ -67,21 +49,7 @@
         </div>
 
         <aside class="comment-panel">
-          <header class="panel-header">
-            <div class="avatar small"></div>
-            <div class="panel-header-text">
-              <p class="broadcaster-name">配信者名</p>
-              <p class="viewer-count-text">1.2万人が視聴中</p>
-            </div>
-          </header>
-
           <ul class="comment-list">
-            <li class="comment-item"><span class="comment-user">ユーザー1</span><span class="comment-text">こんにちは!</span></li>
-            <li class="comment-item"><span class="comment-user">ユーザー2</span><span class="comment-text">今日も配信お疲れ様です</span></li>
-            <li class="comment-item comment-item--gift"><span class="comment-user">ユーザー3</span><span class="comment-text">🎁 ギフトを贈りました</span></li>
-            <li class="comment-item"><span class="comment-user">ユーザー4</span><span class="comment-text">応援してます!</span></li>
-            <li class="comment-item"><span class="comment-user">ユーザー5</span><span class="comment-text">次は何するんですか?</span></li>
-            <li class="comment-item"><span class="comment-user">ユーザー6</span><span class="comment-text">いいね押しました</span></li>
           </ul>
 
           <form class="comment-form">
