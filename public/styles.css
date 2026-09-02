@@ -174,16 +174,23 @@ button {
 
 .item-shortcuts {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
+.item-shortcuts[hidden] {
+  display: none; /* display:flexが[hidden]のUA既定(display:none)より詳細度で勝ってしまうため明示 */
+}
+
 .item-shortcut {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
   border: 1px solid #ddd;
   background: #fff;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .comment-input-row {

@@ -42,6 +42,15 @@ fullscreenBtn?.addEventListener("click", () => {
   }
 });
 
+// アイコン画像要素を作る(コメント欄・アイテム一覧の両方で使う共通処理)
+function createIconImg(iconUrl, name) {
+  const icon = document.createElement("img");
+  icon.src = iconUrl;
+  icon.alt = name ?? "";
+  icon.className = "comment-item-icon";
+  return icon;
+}
+
 // ---- ライブコメント(SSE受信) ----
 const COMMENTS_URL = "https://intern-comment-server.intern-comment-server.deno.net/events";
 const commentList = document.querySelector(".comment-list");
@@ -70,10 +79,7 @@ if (commentList) {
     li.dataset.commentId = payload.id ?? "";
 
     if (payload.item) {
-      const icon = document.createElement("img");
-      icon.src = payload.item.iconUrl;
-      icon.alt = payload.item.name ?? "";
-      icon.className = "comment-item-icon";
+      const icon = createIconImg(payload.item.iconUrl, payload.item.name);
       icon.onerror = () => icon.remove(); // アイコンが読み込めなくても文字だけは表示する
       li.append(icon, payload.item.name ?? "");
     } else {
@@ -151,3 +157,32 @@ function resizeCommentInput() {
 }
 
 commentInput?.addEventListener("input", resizeCommentInput);
+
+// ---- アイテム一覧 ----
+const ITEMS_URL = "https://intern-comment-server.intern-comment-server.deno.net/items";
+const itemShortcuts = document.querySelector(".item-shortcuts");
+const itemToggleBtn = document.querySelector(".gift-btn");
+
+itemToggleBtn?.addEventListener("click", () => {
+  itemShortcuts.hidden = !itemShortcuts.hidden;
+  itemToggleBtn.setAttribute("aria-expanded", String(!itemShortcuts.hidden));
+});
+
+if (itemShortcuts) {
+  fetch(ITEMS_URL)
+    .then((res) => {
+      if (!res.ok) throw new Error(`アイテム取得失敗: ${res.status}`);
+      return res.json();
+    })
+    .then(({ items }) => {
+      items.forEach((item) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "item-shortcut";
+        btn.dataset.itemId = item.id;
+        btn.append(createIconImg(item.iconUrl, item.name), item.name);
+        itemShortcuts.appendChild(btn);
+      });
+    })
+    .catch((err) => console.error("アイテム一覧の取得に失敗:", err));
+}
