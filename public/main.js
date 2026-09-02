@@ -96,8 +96,58 @@ if (commentList) {
   };
 }
 
-// 送信フォームはページ遷移だけ防止(実送信先は未確定のため今回は対象外)
+// ---- コメント送信 ----
+const SEND_URL = "https://intern-comment-server.intern-comment-server.deno.net/messages";
+const MAX_COMMENT_LENGTH = 200;
 const commentForm = document.querySelector(".comment-form");
+const commentInput = document.querySelector(".comment-input");
+const sendBtn = document.querySelector(".send-btn");
+let isSending = false;
+
+async function sendComment() {
+  if (isSending) return;
+
+  const text = commentInput.value.trim();
+  if (!text || text.length > MAX_COMMENT_LENGTH) return;
+
+  isSending = true;
+  sendBtn.disabled = true;
+
+  try {
+    const res = await fetch(SEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) throw new Error(`送信失敗: ${res.status}`);
+    commentInput.value = ""; // 表示は上のSSE受信リスナー任せ(ここではDOMに追加しない)
+    resizeCommentInput();
+  } catch (err) {
+    console.error("コメント送信エラー:", err); // 失敗時は入力内容を残す
+  } finally {
+    isSending = false;
+    sendBtn.disabled = false;
+  }
+}
+
 commentForm?.addEventListener("submit", (e) => {
   e.preventDefault();
+  sendComment();
 });
+
+commentInput?.addEventListener("keydown", (e) => {
+  // Shift+Enterは改行(デフォルト動作に任せる)、Enter単体は送信
+  // isComposing: 日本語IMEの変換確定Enterで誤送信しないためのガード
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    sendComment();
+  }
+});
+
+// 入力行数に合わせてtextareaの高さを自動調整(CSSのmax-heightで上限〜5行に抑える)
+function resizeCommentInput() {
+  commentInput.style.height = "auto";
+  commentInput.style.height = `${commentInput.scrollHeight}px`;
+}
+
+commentInput?.addEventListener("input", resizeCommentInput);

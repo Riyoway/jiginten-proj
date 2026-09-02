@@ -189,15 +189,21 @@ button {
 .comment-input-row {
   display: flex;
   gap: 8px;
+  align-items: flex-end;
 }
 
 .comment-input {
   flex: 1;
   min-width: 0;
   padding: 8px 14px;
-  border-radius: 999px;
+  border-radius: 18px;
   border: 1px solid #ddd;
   font-size: 14px;
+  font-family: inherit;
+  line-height: 1.4;
+  resize: none;
+  max-height: calc(1.4em * 5 + 16px); /* だいたい5行分。超えたら中でスクロール */
+  overflow-y: auto;
 }
 
 .comment-item-icon {
@@ -217,6 +223,11 @@ button {
   border: none;
   background: #111;
   color: #fff;
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* ---------- mobile: full-bleed video + overlay bottom sheet ---------- */
