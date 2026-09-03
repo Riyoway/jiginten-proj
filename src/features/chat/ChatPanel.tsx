@@ -17,7 +17,6 @@ export function ChatPanel() {
     <aside className="chat-panel" aria-label="ライブチャット">
       <div className="chat-header">
         <div>
-          <span className="eyebrow">LIVE</span>
           <h2>チャット</h2>
         </div>
         <span className={`connection-pill ${connected ? "online" : "reconnecting"}`}>

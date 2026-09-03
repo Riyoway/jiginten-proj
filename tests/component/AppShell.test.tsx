@@ -58,4 +58,16 @@ describe("AppShell", () => {
 
     expect(within(sidebar).queryByText(MOCK_CHANNELS[0].title)).not.toBeInTheDocument();
   });
+
+  it("labels the channel list 'おすすめチャンネル' with no purple English eyebrow", async () => {
+    render(<RouterProvider router={router} />);
+
+    const heading = await screen.findByText("おすすめチャンネル");
+    expect(heading).toBeInTheDocument();
+
+    const sidebar = heading.closest(".sidebar-channels");
+    if (!sidebar) throw new Error("sidebar-channels not found");
+    // reference画像のsidebarに紫色の英語eyebrowは存在しない(CATEGORIES/LIVE等)。
+    expect(sidebar.querySelector(".eyebrow")).toBeNull();
+  });
 });

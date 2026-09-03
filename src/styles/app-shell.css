@@ -142,6 +142,22 @@
   color: #fff;
 }
 
+.sidebar-channel-link span:first-of-type {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sidebar-channel-live-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
 .sidebar-channel-link img {
   width: 26px;
   height: 26px;

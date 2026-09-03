@@ -58,15 +58,10 @@ export function HomePage() {
           <section className="section-block">
             <div className="section-title">
               <div>
-                <span className="eyebrow">CATEGORIES</span>
                 <h2>人気のカテゴリー</h2>
               </div>
             </div>
-            <ComingSoonPanel
-              eyebrow="CATEGORIES"
-              title="カテゴリー一覧"
-              note="近日、カテゴリーごとの絞り込みに対応予定です"
-            >
+            <ComingSoonPanel title="カテゴリー一覧" note="近日、カテゴリーごとの絞り込みに対応予定です">
               <div className="category-row">
                 {CATEGORIES.map(({ label, icon: Icon }) => (
                   <span className="category-pill" key={label}>
@@ -81,7 +76,6 @@ export function HomePage() {
           <section className="section-block">
             <div className="section-title">
               <div>
-                <span className="eyebrow">AVAILABLE NOW</span>
                 <h2>おすすめのライブ</h2>
               </div>
             </div>
@@ -113,11 +107,11 @@ export function HomePage() {
         </div>
 
         <aside className="right-rail">
-          <ComingSoonPanel eyebrow="FOLLOWING" title="フォロー中のライブ" note="近日対応予定です">
+          <ComingSoonPanel title="フォロー中のライブ" note="近日対応予定です">
             <PlaceholderRows />
           </ComingSoonPanel>
 
-          <ComingSoonPanel eyebrow="GIFTERS" title="トップギフター" note="近日公開予定です">
+          <ComingSoonPanel title="トップギフター" note="近日公開予定です">
             <PlaceholderRows />
           </ComingSoonPanel>
 

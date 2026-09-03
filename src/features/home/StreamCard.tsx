@@ -39,7 +39,7 @@ export function StreamCardSkeleton() {
       </div>
       <div className="stream-card-body">
         <strong>読み込み中</strong>
-        <span>ライブ情報を取得しています</span>
+        <span>チャンネル情報を取得しています</span>
       </div>
     </div>
   );

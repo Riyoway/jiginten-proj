@@ -2,7 +2,6 @@ import { Card, Chip } from "@heroui/react";
 import type { ReactNode } from "react";
 
 interface ComingSoonPanelProps {
-  eyebrow: string;
   title: string;
   note: string;
   children: ReactNode;
@@ -10,12 +9,12 @@ interface ComingSoonPanelProps {
 
 // ponytail: 配信一覧/フォロー/ギフトランキングAPIが無いため、実データの代わりに
 // 誠実な「近日公開」表示にしている。API追加時はこのラッパーごと実データ表示に差し替える。
-export function ComingSoonPanel({ eyebrow, title, note, children }: ComingSoonPanelProps) {
+// (紫色の英語eyebrowはreferenceデザインに存在しないため付けない。)
+export function ComingSoonPanel({ title, note, children }: ComingSoonPanelProps) {
   return (
     <Card className="coming-soon-panel" variant="transparent">
       <Card.Header className="coming-soon-panel-header">
         <div>
-          <span className="eyebrow">{eyebrow}</span>
           <Card.Title>{title}</Card.Title>
         </div>
         <Chip variant="soft" color="accent" size="sm">

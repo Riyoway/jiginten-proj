@@ -15,7 +15,6 @@ export function GiftPicker({ open, selectedId, onSelect }: GiftPickerProps) {
     <div className="gift-picker" aria-label="ギフトを選ぶ">
       <div className="panel-heading compact">
         <div>
-          <span className="eyebrow">GIFTS</span>
           <strong>ギフトを送る</strong>
         </div>
         {selectedId ? (

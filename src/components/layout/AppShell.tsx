@@ -76,10 +76,9 @@ export function AppShell({ children }: PropsWithChildren) {
 
         {channels.length > 0 ? (
           <div className="sidebar-channels">
-            {/* ponytail: 「チャンネル」ではなく「ライブ」表記。1チャンネル(Streamly)が
-                複数のライブを持つ構造なので、この一覧は複数チャンネルの意味にしない。 */}
-            <span className="eyebrow">LIVE</span>
-            <strong className="sidebar-channels-title">配信中のライブ</strong>
+            {/* ponytail: 1チャンネル=最大1ライブなので、3ライブ同時に立っている今は
+                3つの別チャンネルが存在するということ。「おすすめチャンネル」表記が正しい。 */}
+            <strong className="sidebar-channels-title">おすすめチャンネル</strong>
             <div className="sidebar-channel-list">
               {channels.map((channel) => (
                 <Link
@@ -93,14 +92,16 @@ export function AppShell({ children }: PropsWithChildren) {
                       配信者アカウントAPIが無いのはchatのGuestと同じ制約なので、
                       id単位で決定的に選んだ仮の表示名(Streamly User N)にする。 */}
                   <span>{getStreamlyUserName(channel.id)}</span>
+                  {/* ponytail: 数値(視聴者数等)は出さないが、実際に配信中という事実だけは示す。
+                      一覧の全行が常にliveなので情報量が無く、リンクのaccessible nameには含めない。 */}
+                  <span className="sidebar-channel-live-dot" aria-hidden="true" />
                 </Link>
               ))}
             </div>
           </div>
         ) : (
           <ComingSoonPanel
-            eyebrow="LIVE"
-            title="配信中のライブ"
+            title="おすすめチャンネル"
             note={status === "error" ? "配信一覧を取得できませんでした" : "近日公開予定です"}
           >
             <PlaceholderRows />
