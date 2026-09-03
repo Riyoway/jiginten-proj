@@ -2,7 +2,7 @@ import { Card } from "@heroui/react";
 import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
 import { BookOpen, Gamepad2, Gift, MessageCircle, Music, Palette, Play, Trophy } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../../components/ui/ComingSoonPanel";
 import { getRandomBanner } from "../../lib/banners";
 import { useChannels } from "../../store/channels";
@@ -22,14 +22,6 @@ const CATEGORIES = [
 ];
 
 export function HomePage() {
-  // ponytail: page (not a fixed-height panel) overflows the viewport, and
-  // <html> (not <body>) is the actual scrolling element — scope hiding its
-  // native scrollbar to Home via a class.
-  useEffect(() => {
-    document.documentElement.classList.add("home-no-scrollbar");
-    return () => document.documentElement.classList.remove("home-no-scrollbar");
-  }, []);
-
   // ponytail: random per page load, memoized so it doesn't swap mid-session.
   const banner = useMemo(() => getRandomBanner(), []);
 
@@ -90,6 +82,7 @@ export function HomePage() {
                 // channels.json取得失敗/空 -> 互換エンドポイントの単一配信にフォールバック
                 <Link className="stream-card stream-card-live" to="/watch">
                   <div className="stream-card-thumb live-thumb">
+                    <img src="/noimage.jpg" alt="" loading="lazy" />
                     <span className="live-badge">LIVE</span>
                     <span className="stream-card-play">
                       <Play size={22} fill="currentColor" />

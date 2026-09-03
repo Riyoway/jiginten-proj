@@ -1,18 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { Hourglass, Play } from "lucide-react";
 import type { Channel } from "../../lib/api/contracts";
-import { hashToIndex } from "../../lib/hash";
 
 interface StreamCardProps {
   channel: Channel;
 }
 
-const THUMB_VARIANTS = 3;
-
 export function StreamCard({ channel }: StreamCardProps) {
   return (
     <Link className="stream-card stream-card-live" to="/watch" search={{ channel: channel.id }}>
-      <div className={`stream-card-thumb live-thumb thumb-${hashToIndex(channel.id, THUMB_VARIANTS)}`}>
+      <div className="stream-card-thumb live-thumb">
+        {/* ponytail: サムネイル画像APIが無いので、実写の代わりに「画像なし」の
+            プレースホルダー1枚を全カードで使う(以前のチャンネル別グラデーションは依頼により置き換え)。 */}
+        <img src="/noimage.jpg" alt="" loading="lazy" />
         <span className="live-badge">LIVE</span>
         <span className="stream-card-play">
           <Play size={22} fill="currentColor" />

@@ -39,11 +39,14 @@ body {
     var(--bg);
 }
 
-html.home-no-scrollbar {
+/* ponytail: 実際にスクロールする要素は<html>。ページごとにclassを付け外ししていたが、
+   ルート間でスクロールバーの有無が変わると幅が変動して内容が横にずれるので、全画面で隠す。
+   ホイール/タッチ/キーボードのスクロールはそのまま効く。 */
+html {
   scrollbar-width: none;
 }
 
-html.home-no-scrollbar::-webkit-scrollbar {
+html::-webkit-scrollbar {
   display: none;
 }
 

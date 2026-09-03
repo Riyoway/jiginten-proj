@@ -210,15 +210,20 @@ main {
   min-width: 0;
 }
 
+/* ponytail: 検索欄を中央に置きつつ右側のアクション(アイコン/アバター画像)を
+   position:absoluteで重ねていたため、幅が中途半端なときに両者が重なっていた。
+   3トラックのgridにすると、中央トラックが縮んで避けるので重なりが起こり得ない。 */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 15;
   height: 74px;
   padding: 14px clamp(16px, 2.2vw, 34px);
-  display: flex;
+  display: grid;
+  /* 両端は1fr(= minmax(auto, 1fr))なので、右トラックはアクションの実寸まで必ず広がる。
+     中央は最大520pxで、狭いときはそこが縮んで検索欄が避ける。 */
+  grid-template-columns: 1fr minmax(0, 520px) 1fr;
   align-items: center;
-  justify-content: center;
   gap: 18px;
   background: linear-gradient(180deg, rgba(7, 10, 16, 0.98), rgba(7, 10, 16, 0.82));
   backdrop-filter: blur(20px);
@@ -226,12 +231,13 @@ main {
 }
 
 .search-field {
-  width: min(520px, 48vw);
+  grid-column: 2;
+  width: 100%;
 }
 
 .top-actions {
-  position: absolute;
-  right: clamp(16px, 2.2vw, 34px);
+  grid-column: 3;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -379,12 +385,18 @@ main {
 
   .topbar {
     height: 64px;
-    justify-content: flex-start;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
     padding: 10px 12px;
   }
 
   .search-field {
-    width: min(58vw, 320px);
+    grid-column: 1;
+    max-width: 320px;
+  }
+
+  .top-actions {
+    grid-column: 2;
   }
 
   .topbar-kbd,
@@ -395,9 +407,5 @@ main {
 
   .topbar-install-btn {
     display: inline-flex;
-  }
-
-  .top-actions {
-    right: 12px;
   }
 }
