@@ -7,12 +7,15 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { endpoints } from "../../lib/api/endpoints";
 import { usePreferenceStore } from "../../store/preferences";
 import { DanmakuLayer } from "../danmaku/DanmakuLayer";
 import { useHlsPlayer } from "./useHlsPlayer";
 
-export function StreamPlayer() {
+interface StreamPlayerProps {
+  source: string;
+}
+
+export function StreamPlayer({ source }: StreamPlayerProps) {
   const [video, setVideo] = useState<HTMLVideoElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -21,7 +24,7 @@ export function StreamPlayer() {
   const danmakuEnabled = usePreferenceStore((state) => state.danmakuEnabled);
   const setMuted = usePreferenceStore((state) => state.setMuted);
   const setDanmakuEnabled = usePreferenceStore((state) => state.setDanmakuEnabled);
-  const { orientation, error } = useHlsPlayer(video, endpoints.stream);
+  const { orientation, error } = useHlsPlayer(video, source);
 
   useEffect(() => {
     if (!video) return;
@@ -57,7 +60,6 @@ export function StreamPlayer() {
 
       <div className="player-badges">
         <span className="live-badge">LIVE</span>
-        <span className="viewer-badge">固定 HLS endpoint</span>
       </div>
 
       {error ? <div className="player-error">{error}</div> : null}

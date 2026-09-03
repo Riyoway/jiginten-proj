@@ -1,5 +1,6 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
 import { AppShell } from "../components/layout/AppShell";
+import { FavoritesPage } from "../features/favorites/FavoritesPage";
 import { HomePage } from "../features/home/HomePage";
 import { WatchPage } from "../features/watch/WatchPage";
 
@@ -17,13 +18,23 @@ const homeRoute = createRoute({
   component: HomePage,
 });
 
-const watchRoute = createRoute({
+export const watchRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/watch",
+  // channel未指定時はdefaultチャンネル(resolveSelectedChannelが解決)にフォールバックする。
+  validateSearch: (search: Record<string, unknown>): { channel?: string } => ({
+    channel: typeof search.channel === "string" ? search.channel : undefined,
+  }),
   component: WatchPage,
 });
 
-const routeTree = rootRoute.addChildren([homeRoute, watchRoute]);
+const favoritesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/favorites",
+  component: FavoritesPage,
+});
+
+const routeTree = rootRoute.addChildren([homeRoute, watchRoute, favoritesRoute]);
 
 export const router = createRouter({
   routeTree,

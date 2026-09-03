@@ -9,18 +9,18 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["mascot/default-avatar.png"],
+      includeAssets: ["avatars/avatar1.png"],
       manifest: {
         name: "Streamly",
         short_name: "Streamly",
-        description: "A client-first streaming experience.",
+        description: "ライブ配信・チャット・ギフトを楽しめるストリーミングサービス",
         theme_color: "#080b12",
         background_color: "#080b12",
         display: "standalone",
         start_url: "/",
         icons: [
           {
-            src: "/mascot/default-avatar.png",
+            src: "/avatars/avatar1.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"

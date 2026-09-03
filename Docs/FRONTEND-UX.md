@@ -108,29 +108,30 @@ Mobile:
 
 ## 5. Default avatar
 
-APIからユーザー画像を取得できないので、ブランドマスコットを共通デフォルトアイコンにします。
+APIからユーザー画像を取得できないので、チャットの各メッセージには`public/avatars/`内の画像からランダムに1枚選んで表示します（`src/lib/avatars.ts`）。
 
-asset:
+assets:
 
 ```text
-public/mascot/default-avatar.png
+public/avatars/avatar1.png
+public/avatars/avatar2.png
+public/avatars/avatar3.png
+public/avatars/avatar4.png
 ```
-
-キャラクターはアニメ人物ではなく、万人受けしやすい猫マスコットを採用しています。
 
 ## 6. Home
 
 バックエンドに配信一覧APIがないため、ホームで「複数の実配信が存在する」ような偽データは出しません。
 
-現状のホームは:
+`Docs/reference/ui/home-concept.png`のレイアウト（Hero / カテゴリー / おすすめのライブ / 右カラム）は視覚的に再現しますが、実データの裏付けがないセクションは実データのふりをせず、明示的に「近日公開」で示します。
 
-- ブランドhero
-- 現在利用可能な1つのHLS配信
+- ブランドhero + 実配信への導線（実データ）
+- 人気のカテゴリー（レイアウトのみ再現、Coming soon。ラベルはあっても配信数は出さない）
+- おすすめのライブ 5枚グリッド（1枚目は実配信、残り4枚はComing soonのplaceholderカード）
+- 右カラム: フォロー中のライブ / トップギフター（いずれもComing soon）、ギフトCTA（実際の`/watch`へのリンク・実データ）
 - feature説明
 
-までを実装します。
-
-配信一覧APIが追加された時点でrecommendation gridを本実装します。
+Coming soon表示は`src/components/ui/ComingSoonPanel.tsx`に集約し、具体的な偽の名前・数値・ランキングは一切含めません（抽象的なplaceholder行のみ）。配信一覧・カテゴリー・フォロー・ギフトランキングAPIが追加された時点で、該当パネルを実データ表示に差し替えます。
 
 ## 7. Accessibility
 

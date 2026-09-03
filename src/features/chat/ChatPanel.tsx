@@ -17,7 +17,6 @@ export function ChatPanel() {
     <aside className="chat-panel" aria-label="ライブチャット">
       <div className="chat-header">
         <div>
-          <span className="eyebrow">LIVE</span>
           <h2>チャット</h2>
         </div>
         <span className={`connection-pill ${connected ? "online" : "reconnecting"}`}>
@@ -28,9 +27,9 @@ export function ChatPanel() {
       <div className="chat-list" ref={listRef} aria-live="polite">
         {messages.length === 0 ? (
           <div className="chat-empty">
-            <img src="/mascot/default-avatar.png" alt="" />
+            <img src="/avatars/avatar1.png" alt="" />
             <strong>コメントを待っています</strong>
-            <span>SSE で届いたコメントがここに表示されます。</span>
+            <span>コメントが届くとここに表示されます。</span>
           </div>
         ) : (
           messages.map((message) => <ChatMessageView key={message.key} message={message} />)

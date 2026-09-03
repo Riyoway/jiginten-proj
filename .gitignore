@@ -2,9 +2,11 @@ node_modules
 dist
 .vite
 coverage
+*.tsbuildinfo
 playwright-report
 test-results
 .DS_Store
 .env
 .env.*
 !.env.example
+CLAUDE.md
