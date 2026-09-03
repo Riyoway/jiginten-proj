@@ -36,8 +36,8 @@ export function HomePage() {
           </h1>
           <p>ライブ配信、リアルタイムチャット、ギフトで、配信をもっと楽しく。</p>
           <div className="hero-actions">
-            <Link className="primary-button large" to="/watch">
-              <Play size={18} fill="currentColor" /> 配信を見る
+            <Link className="primary-button" to="/watch">
+              <Play size={16} fill="currentColor" /> 配信を見る
             </Link>
           </div>
           <div className="capability-row">

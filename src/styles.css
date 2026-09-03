@@ -286,7 +286,7 @@ main {
 }
 
 .hero-panel {
-  min-height: 390px;
+  min-height: 260px;
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
   overflow: hidden;
@@ -299,7 +299,7 @@ main {
 
 .hero-copy {
   align-self: center;
-  padding: clamp(34px, 5vw, 72px);
+  padding: clamp(22px, 3.3vw, 48px);
   z-index: 2;
 }
 
@@ -313,32 +313,32 @@ main {
 }
 
 .hero-copy h1 {
-  margin: 16px 0 14px;
-  max-width: 620px;
-  font-size: clamp(32px, 4.2vw, 60px);
-  line-height: 1.1;
-  letter-spacing: -0.055em;
+  margin: 10px 0 8px;
+  max-width: 480px;
+  font-size: clamp(21px, 2.8vw, 34px);
+  line-height: 1.2;
+  letter-spacing: -0.045em;
 }
 
 .hero-copy > p {
-  max-width: 580px;
+  max-width: 480px;
   margin: 0;
   color: #aeb7c5;
-  line-height: 1.75;
-  font-size: 14px;
+  line-height: 1.6;
+  font-size: 13px;
 }
 
 .hero-actions {
   display: flex;
   gap: 10px;
-  margin-top: 28px;
+  margin-top: 16px;
 }
 
 .capability-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 24px;
+  margin-top: 14px;
 }
 
 .capability-row span {
@@ -355,7 +355,7 @@ main {
 
 .hero-mascot-wrap {
   position: relative;
-  min-height: 390px;
+  min-height: 260px;
   overflow: hidden;
 }
 
@@ -369,10 +369,10 @@ main {
 
 .hero-mascot {
   position: absolute;
-  width: 760px;
+  width: 500px;
   max-width: none;
-  right: -180px;
-  bottom: -185px;
+  right: -120px;
+  bottom: -125px;
   border-radius: 44%;
   mix-blend-mode: screen;
   opacity: 0.95;
