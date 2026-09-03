@@ -17,11 +17,12 @@ const CATEGORIES = [
 ];
 
 export function HomePage() {
-  // ponytail: page (not a fixed-height panel) overflows the viewport, so the
-  // native scrollbar lives on <body> — scope hiding it to Home via a class.
+  // ponytail: page (not a fixed-height panel) overflows the viewport, and
+  // <html> (not <body>) is the actual scrolling element — scope hiding its
+  // native scrollbar to Home via a class.
   useEffect(() => {
-    document.body.classList.add("home-no-scrollbar");
-    return () => document.body.classList.remove("home-no-scrollbar");
+    document.documentElement.classList.add("home-no-scrollbar");
+    return () => document.documentElement.classList.remove("home-no-scrollbar");
   }, []);
 
   return (
