@@ -42,6 +42,14 @@ body {
     var(--bg);
 }
 
+body.home-no-scrollbar {
+  scrollbar-width: none;
+}
+
+body.home-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 button,
 input,
 textarea {
@@ -82,10 +90,15 @@ a {
   gap: 20px;
   padding: 22px 14px;
   overflow-y: auto;
+  scrollbar-width: none;
   border-right: 1px solid var(--line);
   background: rgba(7, 10, 16, 0.92);
   backdrop-filter: blur(22px);
   z-index: 20;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .brand {

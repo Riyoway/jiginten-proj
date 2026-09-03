@@ -2,6 +2,7 @@ import { Card } from "@heroui/react";
 import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
 import { BookOpen, Gamepad2, Gift, MessageCircle, Music, Palette, Play, Radio, Trophy } from "lucide-react";
+import { useEffect } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../../components/ui/ComingSoonPanel";
 import { StreamCard } from "./StreamCard";
 
@@ -16,6 +17,13 @@ const CATEGORIES = [
 ];
 
 export function HomePage() {
+  // ponytail: page (not a fixed-height panel) overflows the viewport, so the
+  // native scrollbar lives on <body> — scope hiding it to Home via a class.
+  useEffect(() => {
+    document.body.classList.add("home-no-scrollbar");
+    return () => document.body.classList.remove("home-no-scrollbar");
+  }, []);
+
   return (
     <div className="home-page">
       <section className="hero-panel">
