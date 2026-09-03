@@ -1,5 +1,5 @@
 import { RouterProvider } from "@tanstack/react-router";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { router } from "../../src/app/router";
 import type { Channel } from "../../src/lib/api/contracts";
@@ -42,12 +42,22 @@ describe("AppShell", () => {
     expect(screen.queryByText(/^[0-9]+$/)).not.toBeInTheDocument();
   });
 
-  it("shows a real channel list in the sidebar once /channels.json loads", async () => {
+  it("links to every real channel without displaying content titles as a streamer identity", async () => {
     render(<RouterProvider router={router} />);
 
+    const sidebar = (await screen.findByRole("link", { name: /^ホーム$/ })).closest("aside");
+    if (!sidebar) throw new Error("sidebar not found");
+
+    // channel.titleはコンテンツ名(配信者名ではない)なので、chatのGuestと同じく
+    // sidebarの表示名は固定の "Streamly User" にする(実データを人物名っぽく見せない)。
+    const links = within(sidebar).getAllByRole("link", { name: "Streamly User" });
+    expect(links).toHaveLength(MOCK_CHANNELS.length);
+
+    const hrefs = links.map((link) => link.getAttribute("href"));
     for (const channel of MOCK_CHANNELS) {
-      const link = await screen.findByRole("link", { name: channel.title });
-      expect(link.getAttribute("href")).toContain(`channel=${channel.id}`);
+      expect(hrefs.some((href) => href?.includes(`channel=${channel.id}`))).toBe(true);
     }
+
+    expect(within(sidebar).queryByText(MOCK_CHANNELS[0].title)).not.toBeInTheDocument();
   });
 });

@@ -86,7 +86,9 @@ export function AppShell({ children }: PropsWithChildren) {
                   search={{ channel: channel.id }}
                 >
                   <img src="/avatars/avatar1.png" alt="" />
-                  <span>{channel.title}</span>
+                  {/* ponytail: channel.titleはコンテンツ名であって配信者名ではない。
+                      配信者アカウントAPIが無いのはchatのGuestと同じ制約なので、同じ扱いで固定表示にする。 */}
+                  <span>Streamly User</span>
                 </Link>
               ))}
             </div>

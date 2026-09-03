@@ -7,7 +7,8 @@ src/
 ├─ app/
 │  └─ router.tsx           # /watch は channel search param を validateSearch で型付け
 ├─ components/
-│  ├─ layout/               # AppShell(sidebarの実チャンネルリストを含む)
+│  ├─ layout/               # AppShell(sidebarのチャンネルリンク一覧。遷移先は実チャンネル、
+│  │                          #   表示名はchannel.titleを使わず固定"Streamly User")
 │  └─ ui/                   # ComingSoonPanel など
 ├─ features/
 │  ├─ home/                 # HomePage, StreamCard(実チャンネルのライブグリッド)
@@ -31,12 +32,14 @@ feature-firstにしている理由は、配信サービスではplayer/chat/gift
 ```text
 GET /channels.json (useChannelStore, 一度だけ取得)
     |
-    +--> AppShell: sidebarの実チャンネルリスト
-    +--> HomePage: ライブグリッド(1チャンネル=1 StreamCard)
+    +--> AppShell: sidebarのリンク一覧(遷移先=channel.id、表示名は固定 "Streamly User")
+    +--> HomePage: ライブグリッド(1チャンネル=1 StreamCard、表示名にchannel.titleを使用)
     +--> WatchPage: resolveSelectedChannel(channels, URLのchannel)
 ```
 
 選択中チャンネルはstoreではなくURL(`/watch?channel=<id>`)が正。取得失敗/空なら`endpoints.stream`(単一互換ストリーム)にフォールバックする。
+
+`channel.title`はコンテンツ名であって配信者名ではない。avatar+name形式で「誰の配信か」を表す文脈(sidebarの`.sidebar-channel-link`)では、配信者アカウントAPIが無いchatの`Guest`表示と同じ理由で実データを人物名のように見せず、固定文字列にする。一方ChannelSelectorやStreamCardのようにコンテンツ名として明示的に扱う文脈では引き続き`channel.title`を表示する。
 
 ### Playback
 
