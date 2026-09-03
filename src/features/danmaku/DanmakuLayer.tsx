@@ -17,8 +17,17 @@ export function DanmakuLayer() {
   const enabled = usePreferenceStore((state) => state.danmakuEnabled);
   const opacity = usePreferenceStore((state) => state.danmakuOpacity);
   const [active, setActive] = useState<ActiveDanmaku[]>([]);
-  const previousCount = useRef(0);
+  // ponytail: seed with whatever's already in the (session-persistent)
+  // comment store at mount — otherwise re-mounting this layer (e.g.
+  // navigating away from /watch and back) treats the whole pre-existing
+  // backlog as "fresh" and dumps it all the instant danmaku is on again.
+  const previousCount = useRef(messages.length);
   const nextLane = useRef(0);
+  // ponytail: every batch needs its own independent timer — a shared
+  // per-effect timer gets clearTimeout'd by the next message's cleanup
+  // before it can fire, so old items never expire and dump all at once
+  // the moment danmaku is turned back on.
+  const timers = useRef(new Set<number>());
 
   useEffect(() => {
     if (messages.length <= previousCount.current) {
@@ -28,7 +37,9 @@ export function DanmakuLayer() {
 
     const fresh = messages.slice(previousCount.current).filter(hasRenderableText);
     previousCount.current = messages.length;
-    if (!fresh.length) return;
+    // while off, don't queue anything to replay later — only ever show
+    // comments that arrive while danmaku is actually on.
+    if (!enabled || !fresh.length) return;
 
     const additions = fresh.map((message) => {
       const lane = nextLane.current;
@@ -43,12 +54,20 @@ export function DanmakuLayer() {
 
     setActive((current) => [...current, ...additions]);
     const timer = window.setTimeout(() => {
+      timers.current.delete(timer);
       const expired = new Set(additions.map((item) => item.key));
       setActive((current) => current.filter((item) => !expired.has(item.key)));
     }, 9000);
+    timers.current.add(timer);
+  }, [messages, enabled]);
 
-    return () => window.clearTimeout(timer);
-  }, [messages]);
+  useEffect(() => {
+    const pending = timers.current;
+    return () => {
+      pending.forEach((id) => window.clearTimeout(id));
+      pending.clear();
+    };
+  }, []);
 
   if (!enabled) return null;
 
