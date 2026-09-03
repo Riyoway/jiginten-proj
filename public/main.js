@@ -82,6 +82,7 @@ if (commentList) {
       const icon = createIconImg(payload.item.iconUrl, payload.item.name);
       icon.onerror = () => icon.remove(); // アイコンが読み込めなくても文字だけは表示する
       li.append(icon, payload.item.name ?? "");
+      if (payload.text) li.append(` ${payload.text}`); // アイテム+コメント同時送信時は両方表示
     } else {
       li.textContent = payload.text ?? "";
     }
@@ -108,28 +109,45 @@ const MAX_COMMENT_LENGTH = 200;
 const commentForm = document.querySelector(".comment-form");
 const commentInput = document.querySelector(".comment-input");
 const sendBtn = document.querySelector(".send-btn");
+const sendError = document.querySelector(".send-error");
 let isSending = false;
+let selectedItemId = null;
 
-async function sendComment() {
+// 選択中のアイテムを解除する(送信成功時・アイテム再クリック時の両方で使う)
+function clearItemSelection() {
+  document.querySelector(".item-shortcut.is-selected")?.classList.remove("is-selected");
+  selectedItemId = null;
+}
+
+// text/itemIdのどちらか(または両方)を送信する汎用送信関数
+async function sendMessage() {
   if (isSending) return;
 
   const text = commentInput.value.trim();
-  if (!text || text.length > MAX_COMMENT_LENGTH) return;
+  if (text.length > MAX_COMMENT_LENGTH) return;
+  if (!text && !selectedItemId) return; // どちらも無ければ送信しない
+
+  const payload = {};
+  if (text) payload.text = text;
+  if (selectedItemId) payload.itemId = selectedItemId;
 
   isSending = true;
   sendBtn.disabled = true;
+  sendError.hidden = true; // 前回のエラー表示をクリア
 
   try {
     const res = await fetch(SEND_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error(`送信失敗: ${res.status}`);
     commentInput.value = ""; // 表示は上のSSE受信リスナー任せ(ここではDOMに追加しない)
     resizeCommentInput();
+    clearItemSelection();
   } catch (err) {
-    console.error("コメント送信エラー:", err); // 失敗時は入力内容を残す
+    console.error("コメント送信エラー:", err); // 失敗時は入力内容・アイテム選択を残す
+    sendError.hidden = false;
   } finally {
     isSending = false;
     sendBtn.disabled = false;
@@ -138,7 +156,7 @@ async function sendComment() {
 
 commentForm?.addEventListener("submit", (e) => {
   e.preventDefault();
-  sendComment();
+  sendMessage();
 });
 
 commentInput?.addEventListener("keydown", (e) => {
@@ -146,7 +164,7 @@ commentInput?.addEventListener("keydown", (e) => {
   // isComposing: 日本語IMEの変換確定Enterで誤送信しないためのガード
   if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
     e.preventDefault();
-    sendComment();
+    sendMessage();
   }
 });
 
@@ -180,7 +198,19 @@ if (itemShortcuts) {
         btn.type = "button";
         btn.className = "item-shortcut";
         btn.dataset.itemId = item.id;
+        btn.setAttribute("aria-pressed", "false");
         btn.append(createIconImg(item.iconUrl, item.name), item.name);
+        btn.addEventListener("click", () => {
+          const wasSelected = btn.classList.contains("is-selected");
+          clearItemSelection();
+          if (!wasSelected) {
+            btn.classList.add("is-selected");
+            btn.setAttribute("aria-pressed", "true");
+            selectedItemId = item.id;
+          } else {
+            btn.setAttribute("aria-pressed", "false");
+          }
+        });
         itemShortcuts.appendChild(btn);
       });
     })

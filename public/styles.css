@@ -193,6 +193,12 @@ button {
   font-size: 13px;
 }
 
+.item-shortcut.is-selected {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
 .comment-input-row {
   display: flex;
   gap: 8px;
@@ -235,6 +241,12 @@ button {
 .send-btn:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.send-error {
+  margin: 0;
+  font-size: 12px;
+  color: #c0392b;
 }
 
 /* ---------- mobile: full-bleed video + overlay bottom sheet ---------- */
