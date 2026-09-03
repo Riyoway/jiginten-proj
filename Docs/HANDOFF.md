@@ -84,8 +84,15 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
   使い回している(CSSも`styles/favorites.css`→`styles/collections.css`、クラスは`.collection-*`)。
   履歴は`store/history.ts`(新しい順・上限30件)で、`/history`に「履歴を削除」ボタンがある。
 - **sidebarの余白調整**: おすすめチャンネル行を詰め、Home右カラム「フォロー中のライブ」の行を大きくした。
-  合わせて、モバイルのbottom barが`repeat(2, 1fr)`固定で項目を増やすと64pxからはみ出す(お気に入りが
-  見えなくなっていた)問題を、項目数に追従する1行グリッド+アイコン上ラベルに直した。
+- **モバイルのdockをiOSのtab bar風に作り直した**(`app-shell.css`の`max-width: 720px`ブロック)。
+  元は`repeat(2, 1fr)`固定の角丸バーで、項目を増やすと64pxからはみ出して「お気に入り」が
+  見えなくなっていた。現在は端まで伸ばした角丸なし・上辺hairline・半透明+`backdrop-filter`で、
+  項目数に追従する1行グリッド、アイコン上に10pxラベル、tap領域は1タブ64x49px。
+  activeはtint色のみ(rail用の左端barと横gradientはtab barでは向きが合わないので打ち消す)。
+  下端の余白は`env(safe-area-inset-bottom)`で確保する(home indicator分を固定pxで足さない)。
+  **sidebarのnav項目は「人気」も含めて全部dockに出す**(以前はモバイルで`.nav-item.muted`を
+  非表示にしていた)。dockはnav専用なので、インストールボタンだけ
+  `topbar-install-btn`としてモバイルのtopbarへ出している(プロフィールは元からtopbarのavatar)。
 
 ---
 
