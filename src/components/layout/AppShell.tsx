@@ -43,11 +43,7 @@ export function AppShell({ children }: PropsWithChildren) {
           ))}
         </nav>
 
-        <ComingSoonPanel
-          eyebrow="CHANNELS"
-          title="おすすめチャンネル"
-          note="配信一覧APIが追加され次第表示されます"
-        >
+        <ComingSoonPanel eyebrow="CHANNELS" title="おすすめチャンネル" note="近日公開予定です">
           <PlaceholderRows />
         </ComingSoonPanel>
 

@@ -24,4 +24,14 @@ describe("HomePage", () => {
     expect(screen.queryByText(/[0-9],[0-9]{3}\s*P/)).not.toBeInTheDocument();
     expect(screen.queryByText(/TechWorld|GameSpace|ChillWave/)).not.toBeInTheDocument();
   });
+
+  it("does not leak developer-facing wording to end users", async () => {
+    render(<RouterProvider router={router} />);
+    await screen.findByRole("heading", { name: /見る、話す、贈る/ });
+
+    const body = document.body.textContent ?? "";
+    for (const term of ["API", "スターター", "SSE", "HLS", "バックエンド", "EventSource"]) {
+      expect(body).not.toContain(term);
+    }
+  });
 });

@@ -30,7 +30,7 @@ export function ChatPanel() {
           <div className="chat-empty">
             <img src="/avatars/avatar1.png" alt="" />
             <strong>コメントを待っています</strong>
-            <span>SSE で届いたコメントがここに表示されます。</span>
+            <span>コメントが届くとここに表示されます。</span>
           </div>
         ) : (
           messages.map((message) => <ChatMessageView key={message.key} message={message} />)

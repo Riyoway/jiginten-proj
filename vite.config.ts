@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: "Streamly",
         short_name: "Streamly",
-        description: "A client-first streaming experience.",
+        description: "ライブ配信・チャット・ギフトを楽しめるストリーミングサービス",
         theme_color: "#080b12",
         background_color: "#080b12",
         display: "standalone",

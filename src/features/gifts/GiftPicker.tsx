@@ -25,7 +25,7 @@ export function GiftPicker({ open, selectedId, onSelect }: GiftPickerProps) {
         ) : null}
       </div>
       {error ? <p className="inline-error">{error}</p> : null}
-      {!loaded && !error ? <div className="gift-skeleton">Loading gifts…</div> : null}
+      {!loaded && !error ? <div className="gift-skeleton">ギフトを読み込み中…</div> : null}
       <div className="gift-grid">
         {gifts.map((gift) => (
           <button

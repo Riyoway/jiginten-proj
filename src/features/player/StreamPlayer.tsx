@@ -57,7 +57,6 @@ export function StreamPlayer() {
 
       <div className="player-badges">
         <span className="live-badge">LIVE</span>
-        <span className="viewer-badge">固定 HLS endpoint</span>
       </div>
 
       {error ? <div className="player-error">{error}</div> : null}

@@ -15,8 +15,8 @@ export function StreamCard({ variant }: StreamCardProps) {
           <Hourglass size={20} />
         </div>
         <div className="stream-card-body">
-          <strong>Coming soon</strong>
-          <span>配信一覧APIが追加され次第表示されます</span>
+          <strong>近日公開</strong>
+          <span>近日公開予定です</span>
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ export function StreamCard({ variant }: StreamCardProps) {
         <img src="/avatars/avatar1.png" alt="" />
         <div>
           <strong>雪景色の線路を眺める配信</strong>
-          <span>Streamly · HLS live stream</span>
+          <span>Streamly · ライブ配信中</span>
         </div>
       </div>
     </Link>
