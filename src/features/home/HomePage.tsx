@@ -29,13 +29,13 @@ export function HomePage() {
     <div className="home-page">
       <section className="hero-panel">
         <div className="hero-copy">
-          <span className="eyebrow">STREAMLY STREAMING</span>
+          <span className="eyebrow">ようこそ Streamly へ</span>
           <h1>
-            見る、話す、贈る。
+            好きな配信を見つけて
             <br />
-            配信の体験を一つに。
+            みんなで楽しもう!
           </h1>
-          <p>ライブ配信、リアルタイムチャット、ギフトで、配信をもっと楽しく。</p>
+          <p>ライブ、チャット、ギフトで配信をもっと楽しく。</p>
           <div className="hero-actions">
             <Link className="primary-button" to="/watch">
               <Play size={16} fill="currentColor" /> 配信を見る
