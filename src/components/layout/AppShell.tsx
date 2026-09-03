@@ -1,7 +1,20 @@
-import { Avatar, Button, InputGroup, Kbd, TextField } from "@heroui/react";
+import { Avatar, Button, Dropdown, InputGroup, Kbd, Label, TextField } from "@heroui/react";
 import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
-import { Bell, Flame, Gift, Heart, History, Home, Radio, Search, Settings, Users } from "lucide-react";
+import {
+  Bell,
+  CircleHelp,
+  Flame,
+  Gift,
+  Heart,
+  History,
+  Home,
+  Radio,
+  Search,
+  Settings,
+  User,
+  Users,
+} from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../ui/ComingSoonPanel";
 
@@ -17,6 +30,14 @@ const disabledNavItems = [
   { label: "人気", icon: Flame },
   { label: "お気に入り", icon: Heart },
   { label: "履歴", icon: History },
+];
+
+// ponytail: プロフィール/設定/ヘルプも同じ理由(実装先のページ・APIが無い)で
+// 選択不可のまま項目だけ用意しておく。
+const userMenuItems = [
+  { id: "profile", label: "プロフィール", icon: User },
+  { id: "settings", label: "設定", icon: Settings },
+  { id: "help", label: "ヘルプ", icon: CircleHelp },
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
@@ -58,9 +79,6 @@ export function AppShell({ children }: PropsWithChildren) {
             <small>Default profile</small>
           </div>
         </div>
-        <Button className="sidebar-icon-btn" isIconOnly variant="ghost" aria-label="設定">
-          <Settings size={18} />
-        </Button>
       </aside>
 
       <div className="workspace">
@@ -101,10 +119,24 @@ export function AppShell({ children }: PropsWithChildren) {
             >
               <Gift size={22} />
             </Link>
-            <Avatar size="sm">
-              <Avatar.Image src="/avatars/avatar1.png" alt="Guest" />
-              <Avatar.Fallback>G</Avatar.Fallback>
-            </Avatar>
+            <Dropdown>
+              <Button className="user-menu-trigger" isIconOnly size="lg" variant="ghost" aria-label="ユーザーメニュー">
+                <Avatar size="md">
+                  <Avatar.Image src="/avatars/avatar1.png" alt="Guest" />
+                  <Avatar.Fallback>G</Avatar.Fallback>
+                </Avatar>
+              </Button>
+              <Dropdown.Popover>
+                <Dropdown.Menu disabledKeys={userMenuItems.map((item) => item.id)}>
+                  {userMenuItems.map(({ id, label, icon: Icon }) => (
+                    <Dropdown.Item key={id} id={id} textValue={label}>
+                      <Icon className="size-4 shrink-0 text-muted" />
+                      <Label>{label}</Label>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown.Popover>
+            </Dropdown>
           </div>
         </header>
         <main>{children}</main>
