@@ -183,7 +183,8 @@ main {
   .nav-item span,
   .profile-card div,
   .sidebar .profile-card,
-  .sidebar .coming-soon-panel {
+  .sidebar .coming-soon-panel,
+  .pwa-install-btn {
     display: none;
   }
 
@@ -224,6 +225,7 @@ main {
   .profile-card,
   .sidebar > .sidebar-icon-btn,
   .sidebar .coming-soon-panel,
+  .pwa-install-btn,
   .nav-item.muted {
     display: none;
   }

@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import {
   Bell,
   CircleHelp,
+  Download,
   Flame,
   Gift,
   Heart,
@@ -16,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import type { PropsWithChildren } from "react";
+import { usePwaInstallPrompt } from "../../lib/pwaInstall";
 import { ComingSoonPanel, PlaceholderRows } from "../ui/ComingSoonPanel";
 
 const navItems = [
@@ -41,6 +43,8 @@ const userMenuItems = [
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
+  const { canInstall, promptInstall } = usePwaInstallPrompt();
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -70,6 +74,16 @@ export function AppShell({ children }: PropsWithChildren) {
         <ComingSoonPanel eyebrow="CHANNELS" title="おすすめチャンネル" note="近日公開予定です">
           <PlaceholderRows />
         </ComingSoonPanel>
+
+        <Button
+          className="pwa-install-btn"
+          variant="secondary"
+          fullWidth
+          isDisabled={!canInstall}
+          onPress={promptInstall}
+        >
+          <Download size={16} /> アプリをインストール
+        </Button>
 
         <div className="sidebar-spacer" />
         <div className="profile-card">
