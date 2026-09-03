@@ -87,18 +87,19 @@ export function AppShell({ children }: PropsWithChildren) {
             <Button
               className="topbar-icon-btn"
               isIconOnly
+              size="lg"
               variant="ghost"
               aria-label="通知（近日公開）"
               isDisabled
             >
-              <Bell size={18} />
+              <Bell size={22} />
             </Button>
             <Link
-              className={`topbar-icon-btn ${buttonVariants({ variant: "ghost", isIconOnly: true })}`}
+              className={`topbar-icon-btn ${buttonVariants({ variant: "ghost", isIconOnly: true, size: "lg" })}`}
               to="/watch"
               aria-label="ギフトを見る"
             >
-              <Gift size={18} />
+              <Gift size={22} />
             </Link>
             <Avatar size="sm">
               <Avatar.Image src="/avatars/avatar1.png" alt="Guest" />

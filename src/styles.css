@@ -104,18 +104,18 @@ a {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 4px 8px 18px;
-  font-size: 21px;
+  font-size: 25px;
   font-weight: 800;
   letter-spacing: -0.04em;
 }
 
 .brand-mark {
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 8px 30px rgba(124, 77, 255, 0.28);
 }
 
@@ -221,6 +221,14 @@ a {
   display: flex;
   align-items: center;
   gap: 9px;
+}
+
+/* ponytail: HeroUI's own .button svg rule forces a 16px icon at this
+   breakpoint via a more specific selector than a plain class match beats;
+   !important is the lazy, correctly-scoped way past it. */
+.topbar-icon-btn svg {
+  width: 22px !important;
+  height: 22px !important;
 }
 
 .icon-button,
