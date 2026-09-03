@@ -4,7 +4,6 @@ import { resolvePlaylistUrl, resolveSelectedChannel } from "../../lib/api/channe
 import { endpoints } from "../../lib/api/endpoints";
 import { useChannels } from "../../store/channels";
 import { ChatPanel } from "../chat/ChatPanel";
-import { ChannelSelector } from "../player/ChannelSelector";
 import { StreamPlayer } from "../player/StreamPlayer";
 
 export function WatchPage() {
@@ -20,7 +19,6 @@ export function WatchPage() {
     <div className="watch-page">
       <div className="watch-main">
         <StreamPlayer source={source} />
-        <ChannelSelector channels={channels} selectedId={selectedChannel?.id} />
         <section className="stream-meta">
           <div className="channel-row">
             <img src="/avatars/avatar1.png" alt="Channel avatar" />
