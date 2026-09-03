@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sendMessage } from "./messages";
+import { sendMessage } from "../../src/lib/api/messages";
 
 afterEach(() => vi.restoreAllMocks());
 

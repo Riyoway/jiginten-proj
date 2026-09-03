@@ -81,6 +81,7 @@ a {
   flex-direction: column;
   gap: 20px;
   padding: 22px 14px;
+  overflow-y: auto;
   border-right: 1px solid var(--line);
   background: rgba(7, 10, 16, 0.92);
   backdrop-filter: blur(22px);
@@ -200,33 +201,8 @@ a {
   border-bottom: 1px solid rgba(255, 255, 255, 0.035);
 }
 
-.search-box {
+.search-field {
   width: min(520px, 48vw);
-  height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 13px;
-  background: #0b0f16;
-  color: var(--muted);
-}
-
-.search-box input {
-  flex: 1;
-  min-width: 0;
-  color: var(--text);
-  border: 0;
-  outline: 0;
-  background: transparent;
-}
-
-.kbd {
-  padding: 3px 7px;
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 11px;
 }
 
 .top-actions {
@@ -411,30 +387,124 @@ main {
   letter-spacing: -0.025em;
 }
 
-.live-card {
-  width: min(410px, 100%);
+.home-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 20px;
+}
+
+.home-main {
+  min-width: 0;
+}
+
+.right-rail {
+  display: grid;
+  gap: 16px;
+  position: sticky;
+  top: 90px;
+}
+
+.category-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px dashed var(--line-strong);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.coming-soon-panel {
+  border: 1px dashed var(--line-strong);
+}
+
+.coming-soon-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.coming-soon-panel-body {
+  opacity: 0.85;
+}
+
+.placeholder-list {
+  display: grid;
+  gap: 10px;
+}
+
+.placeholder-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.placeholder-avatar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px dashed var(--line-strong);
+}
+
+.placeholder-line {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.05) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.stream-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.stream-card {
   overflow: hidden;
   display: block;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--surface);
   transition: 180ms ease;
 }
 
-.live-card:hover {
+.stream-card-live:hover {
   transform: translateY(-2px);
   border-color: rgba(159, 124, 255, 0.35);
 }
 
-.live-preview {
+.stream-card-thumb {
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(125, 191, 226, 0.95) 0 58%, rgba(73, 57, 42, 0.85) 58% 64%, #d7e8ef 64%);
 }
 
-.live-preview::after {
+.stream-card-thumb.live-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(125, 191, 226, 0.95) 0 58%,
+    rgba(73, 57, 42, 0.85) 58% 64%,
+    #d7e8ef 64%
+  );
+}
+
+.stream-card-thumb.live-thumb::after {
   content: "";
   position: absolute;
   left: 0;
@@ -445,10 +515,12 @@ main {
   box-shadow: 0 18px 0 #4c3c30;
 }
 
-.preview-sky {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.18));
+.stream-card-thumb.placeholder-thumb {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--line-strong);
 }
 
 .live-badge {
@@ -463,19 +535,19 @@ main {
   letter-spacing: 0.04em;
 }
 
-.live-preview > .live-badge {
+.stream-card-thumb > .live-badge {
   position: absolute;
-  left: 12px;
-  top: 12px;
+  left: 10px;
+  top: 10px;
   z-index: 2;
 }
 
-.preview-play {
+.stream-card-play {
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -483,36 +555,62 @@ main {
   backdrop-filter: blur(10px);
 }
 
-.live-card-body {
+.stream-card-body {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 13px;
+  gap: 10px;
+  padding: 11px;
 }
 
-.live-card-body img {
-  width: 38px;
-  height: 38px;
+.stream-card-body img {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.live-card-body div {
+.stream-card-body div {
   min-width: 0;
   display: grid;
-  gap: 3px;
+  gap: 2px;
 }
 
-.live-card-body strong {
+.stream-card-body strong {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.live-card-body span {
+.stream-card-body span {
   color: var(--muted);
+  font-size: 10px;
+}
+
+.stream-card-placeholder {
+  opacity: 0.6;
+}
+
+.stream-card-placeholder .stream-card-body {
+  display: block;
+  padding: 10px 11px 12px;
+}
+
+.stream-card-placeholder .stream-card-body strong {
+  display: block;
   font-size: 11px;
+  color: var(--muted);
+}
+
+.stream-card-placeholder .stream-card-body span {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.gift-cta-card {
+  background: linear-gradient(145deg, rgba(124, 77, 255, 0.14), rgba(255, 77, 145, 0.08));
 }
 
 .feature-grid {
@@ -1155,7 +1253,8 @@ main {
   .brand > span:last-child,
   .nav-item span,
   .profile-card div,
-  .sidebar .profile-card {
+  .sidebar .profile-card,
+  .sidebar .coming-soon-panel {
     display: none;
   }
 
@@ -1198,6 +1297,14 @@ main {
   .hero-mascot-wrap {
     display: none;
   }
+
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .right-rail {
+    position: static;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1224,7 +1331,8 @@ main {
   .brand,
   .sidebar-spacer,
   .profile-card,
-  .sidebar > .icon-button,
+  .sidebar > .sidebar-icon-btn,
+  .sidebar .coming-soon-panel,
   .nav-item.muted {
     display: none;
   }
@@ -1251,14 +1359,13 @@ main {
     padding: 10px 12px;
   }
 
-  .search-box {
+  .search-field {
     width: min(58vw, 320px);
-    height: 40px;
   }
 
-  .kbd,
-  .top-actions .primary-button,
-  .top-actions .icon-button {
+  .topbar-kbd,
+  .top-actions .topbar-cta,
+  .top-actions .topbar-icon-btn {
     display: none;
   }
 

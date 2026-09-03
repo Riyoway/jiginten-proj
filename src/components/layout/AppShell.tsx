@@ -1,10 +1,22 @@
+import { Avatar, Button, InputGroup, Kbd, TextField } from "@heroui/react";
+import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
-import { Gift, Heart, History, Home, Radio, Search, Settings } from "lucide-react";
+import { Bell, Flame, Gift, Heart, History, Home, Radio, Search, Settings, Users } from "lucide-react";
 import type { PropsWithChildren } from "react";
+import { ComingSoonPanel, PlaceholderRows } from "../ui/ComingSoonPanel";
 
 const navItems = [
   { to: "/" as const, label: "ホーム", icon: Home },
   { to: "/watch" as const, label: "ライブ", icon: Radio },
+];
+
+// ponytail: フォロー/人気/お気に入り/履歴はいずれもAPIが存在しないため、
+// 実装せず「押せない」ことが分かるmuted buttonとして配置するだけに留める。
+const disabledNavItems = [
+  { label: "フォロー中", icon: Users },
+  { label: "人気", icon: Flame },
+  { label: "お気に入り", icon: Heart },
+  { label: "履歴", icon: History },
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
@@ -23,45 +35,79 @@ export function AppShell({ children }: PropsWithChildren) {
               <span>{label}</span>
             </Link>
           ))}
-          <button className="nav-item muted" type="button" disabled>
-            <Heart size={19} />
-            <span>お気に入り</span>
-          </button>
-          <button className="nav-item muted" type="button" disabled>
-            <History size={19} />
-            <span>履歴</span>
-          </button>
+          {disabledNavItems.map(({ label, icon: Icon }) => (
+            <button key={label} className="nav-item muted" type="button" disabled>
+              <Icon size={19} />
+              <span>{label}</span>
+            </button>
+          ))}
         </nav>
+
+        <ComingSoonPanel
+          eyebrow="CHANNELS"
+          title="おすすめチャンネル"
+          note="配信一覧APIが追加され次第表示されます"
+        >
+          <PlaceholderRows />
+        </ComingSoonPanel>
 
         <div className="sidebar-spacer" />
         <div className="profile-card">
-          <img src="/avatars/avatar1.png" alt="Guest avatar" />
+          <Avatar size="sm">
+            <Avatar.Image src="/avatars/avatar1.png" alt="" />
+            <Avatar.Fallback>G</Avatar.Fallback>
+          </Avatar>
           <div>
             <strong>Guest</strong>
             <small>Default profile</small>
           </div>
         </div>
-        <button className="icon-button" type="button" aria-label="設定">
+        <Button className="sidebar-icon-btn" isIconOnly variant="ghost" aria-label="設定">
           <Settings size={18} />
-        </button>
+        </Button>
       </aside>
 
       <div className="workspace">
         <header className="topbar">
-          <div className="search-box" role="search">
-            <Search size={18} />
-            <input aria-label="配信を検索" placeholder="検索..." disabled />
-            <span className="kbd">⌘K</span>
-          </div>
+          <TextField aria-label="配信を検索" className="search-field" isDisabled>
+            <InputGroup>
+              <InputGroup.Prefix>
+                <Search size={16} />
+              </InputGroup.Prefix>
+              <InputGroup.Input placeholder="検索..." />
+              <InputGroup.Suffix>
+                <Kbd className="topbar-kbd">
+                  <Kbd.Abbr keyValue="command" />
+                  <Kbd.Content>K</Kbd.Content>
+                </Kbd>
+              </InputGroup.Suffix>
+            </InputGroup>
+          </TextField>
           <div className="top-actions">
-            <Link className="primary-button" to="/watch">
-              <Radio size={17} />
+            <Link className={`topbar-cta ${buttonVariants({ variant: "primary" })}`} to="/watch">
+              <Radio size={16} />
               配信を見る
             </Link>
-            <button className="icon-button" aria-label="ギフト" type="button">
+            <Button
+              className="topbar-icon-btn"
+              isIconOnly
+              variant="ghost"
+              aria-label="通知（近日公開）"
+              isDisabled
+            >
+              <Bell size={18} />
+            </Button>
+            <Link
+              className={`topbar-icon-btn ${buttonVariants({ variant: "ghost", isIconOnly: true })}`}
+              to="/watch"
+              aria-label="ギフトを見る"
+            >
               <Gift size={18} />
-            </button>
-            <img className="top-avatar" src="/avatars/avatar1.png" alt="Guest" />
+            </Link>
+            <Avatar size="sm">
+              <Avatar.Image src="/avatars/avatar1.png" alt="Guest" />
+              <Avatar.Fallback>G</Avatar.Fallback>
+            </Avatar>
           </div>
         </header>
         <main>{children}</main>

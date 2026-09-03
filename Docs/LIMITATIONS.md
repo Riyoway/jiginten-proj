@@ -44,7 +44,7 @@
 
 ### Home recommendations
 
-実APIが追加されるまでmockをproduction UIの実データとして見せません。
+コンセプトデザインのレイアウト（カテゴリー・複数配信グリッド・フォロー中・トップギフター）は再現しますが、数値・名前・ランキングは実APIが追加されるまでmockをproduction UIの実データとして見せません。該当セクションは`ComingSoonPanel`で「近日公開」と明示し、抽象的なplaceholder行のみを表示します。
 
 ### Follow / Favorites / History
 
