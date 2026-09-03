@@ -94,6 +94,23 @@
   cursor: not-allowed;
 }
 
+/* ponytail: matches .nav-item's flat sidebar-row look — HeroUI's own
+   ghost/secondary chrome (rounded pill, centered label) reads as a
+   generic button dropped into the sidebar rather than another row in it. */
+.pwa-install-btn {
+  width: 100%;
+  min-height: 44px;
+  justify-content: flex-start;
+  gap: 12px;
+  padding-inline: 12px;
+  border-radius: 12px;
+  color: #bbc4d3;
+}
+
+.pwa-install-btn:not([aria-disabled="true"]):hover {
+  color: #fff;
+}
+
 .sidebar-spacer {
   flex: 1;
 }

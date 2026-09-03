@@ -77,12 +77,12 @@ export function AppShell({ children }: PropsWithChildren) {
 
         <Button
           className="pwa-install-btn"
-          variant="secondary"
+          variant="ghost"
           fullWidth
           isDisabled={!canInstall}
           onPress={promptInstall}
         >
-          <Download size={16} /> アプリをインストール
+          <Download size={16} /> インストール
         </Button>
 
         <div className="sidebar-spacer" />
