@@ -830,7 +830,11 @@ main {
   min-height: 0;
   overflow: auto;
   padding: 8px;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+}
+
+.chat-list::-webkit-scrollbar {
+  display: none;
 }
 
 .chat-empty {
