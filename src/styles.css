@@ -101,11 +101,8 @@ a {
 .brand-mark {
   width: 32px;
   height: 32px;
-  display: grid;
-  place-items: center;
+  object-fit: cover;
   border-radius: 10px;
-  font-weight: 900;
-  background: linear-gradient(145deg, #9c7cff, #5633f0);
   box-shadow: 0 8px 30px rgba(124, 77, 255, 0.28);
 }
 
