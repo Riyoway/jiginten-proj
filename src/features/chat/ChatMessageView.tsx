@@ -4,8 +4,11 @@ import type { ChatMessage } from "../../lib/api/contracts";
 import { getRandomAvatar } from "../../lib/avatars";
 
 export function ChatMessageView({ message }: { message: ChatMessage }) {
-  // ponytail: random per message.key, memoized so it doesn't reshuffle on re-render
-  const avatar = useMemo(() => getRandomAvatar(), [message.key]);
+  // ponytail: ChatPanelが key={message.key} で描画するのでインスタンス=1メッセージ。
+  // 依存なしで「そのメッセージの間だけ固定」になる(再描画で引き直さない)。
+  // message.key は payload.id なので、そこからアバターを導出してはいけない
+  // (CLAUDE.md: idやテキストから発言者の同一性を作らない)。
+  const avatar = useMemo(() => getRandomAvatar(), []);
 
   if (message.gift) {
     return (

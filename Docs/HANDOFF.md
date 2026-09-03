@@ -119,9 +119,8 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 - **バンドルサイズ**: JSが約1.1MB(gzip約346KB)。HeroUI導入分。必要なら`dynamic import()`で分割。
 - **HeroUI移行が中途**: Hero CTA・player controls・chat composer・gift picker等はまだ素の`<button>`。
   `CLAUDE.md`の方針(汎用UIはHeroUI優先)に合わせるなら段階的に置換。
-- **既存のBiome指摘が残っている**: `hero-panel::before`のフォーマット、`.topbar-icon-btn svg`の`!important`、
-  `player.css`のdescending specificity、`GiftPicker`の`aria-label`、`ChatPanel`のuseEffect依存など。
-  いずれも今回のタスク範囲外として温存。`pnpm lint`はこれらで失敗するので、変更前後の差分で判断すること。
+- **~~既存のBiome指摘~~ 解消済み。`pnpm lint`は緑が正常になった。** 赤が出たらそれは自分の差分。
+  経緯と、意図的に`biome-ignore`で残している箇所は「7. lintとBiomeの扱い」を参照。
 
 ---
 
@@ -144,11 +143,25 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 ## 7. 完了の定義 / 検証コマンド
 
 ```powershell
-pnpm lint       # biome(既存指摘は上記参照。自分の差分がクリーンかで判断)
-pnpm test       # vitest: unit + component (現在41件)
+pnpm lint       # biome check .(0件が正常。赤くなったら自分の差分が原因)
+pnpm test       # vitest: unit + component (現在43件)
 pnpm build      # tsc -b + vite build
 pnpm test:e2e   # playwright: chromium + mobile (現在8件)
 ```
+
+### lintとBiomeの扱い
+
+`pnpm lint`は以前50 errors / 10 warningsで**構造的に絶対通らない**状態だったが、解消済み。原因と対処:
+
+- **改行コード**: `core.autocrlf=true`のWindowsではチェックアウトのたびに全ファイルがCRLFになり、
+  LF基準のBiomeが「触っていないファイルまで整形エラー」を出していた(41ファイル中29ファイルがこれ)。
+  `.gitattributes`の`* text=auto eol=lf`で作業ツリーもLFに固定した。**このファイルを消すと再発する。**
+  CRLF↔LFの変換はgitのcleanフィルタで正規化されるので、コミット差分には出ない。
+- **残りの整形差分**は`biome check --write`で解消(14ファイル/117行、整形とimport順のみ)。
+- **意図的に残している`!important`等**は`biome-ignore`に理由を書いてある(`base.css`の
+  reduced-motion打ち消し、`app-shell.css`のHeroUI詳細度対策、`main.tsx`の`#root`)。
+  ルール自体をbiome.jsonでoffにはしていないので、**理由の無い新規の`!important`はちゃんと警告が出る。**
+- `biome.json`は`biome migrate`済み(schema 2.5.11 / `rules.preset`)。
 
 UI・レイアウト・レスポンシブ・状態表示を触ったら、**実ブラウザでデスクトップ幅とモバイル幅の両方**を
 確認すること(`CLAUDE.md`のルール)。Claude in Chromeが使えないときは、`@playwright/test`を直接使った

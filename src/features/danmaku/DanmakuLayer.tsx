@@ -64,7 +64,9 @@ export function DanmakuLayer() {
   useEffect(() => {
     const pending = timers.current;
     return () => {
-      pending.forEach((id) => window.clearTimeout(id));
+      pending.forEach((id) => {
+        window.clearTimeout(id);
+      });
       pending.clear();
     };
   }, []);

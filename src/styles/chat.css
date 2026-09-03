@@ -180,9 +180,10 @@
   font-size: 12px;
 }
 
-.gift-caption {
-  margin-top: 7px !important;
-  color: #fff !important;
+/* ponytail: .chat-body p を上書きするだけなので、!important ではなく詳細度で勝たせる。 */
+.chat-body p.gift-caption {
+  margin-top: 7px;
+  color: #fff;
 }
 
 .composer-wrap {

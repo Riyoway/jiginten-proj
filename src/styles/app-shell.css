@@ -253,7 +253,9 @@ main {
    breakpoint via a more specific selector than a plain class match beats;
    !important is the lazy, correctly-scoped way past it. */
 .topbar-icon-btn svg {
+  /* biome-ignore lint/complexity/noImportantStyles: HeroUI側の .button svg がより高い詳細度で16pxを指定しているため */
   width: 22px !important;
+  /* biome-ignore lint/complexity/noImportantStyles: 同上 */
   height: 22px !important;
 }
 

@@ -10,7 +10,10 @@ export function ChatPanel() {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
+    const list = listRef.current;
+    // 新着(件数の増加)が下までスクロールするトリガー。空のときは動かす必要がない。
+    if (!list || messages.length === 0) return;
+    list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
   }, [messages.length]);
 
   return (

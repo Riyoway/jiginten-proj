@@ -12,7 +12,7 @@ export function GiftPicker({ open, selectedId, onSelect }: GiftPickerProps) {
   if (!open) return null;
 
   return (
-    <div className="gift-picker" aria-label="ギフトを選ぶ">
+    <section className="gift-picker" aria-label="ギフトを選ぶ">
       <div className="panel-heading compact">
         <div>
           <strong>ギフトを送る</strong>
@@ -39,6 +39,6 @@ export function GiftPicker({ open, selectedId, onSelect }: GiftPickerProps) {
           </button>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
