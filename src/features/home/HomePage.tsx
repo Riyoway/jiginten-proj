@@ -27,40 +27,40 @@ export function HomePage() {
 
   return (
     <div className="home-page">
-      <section className="hero-panel">
-        <div className="hero-copy">
-          <span className="eyebrow">ようこそ Streamly へ</span>
-          <h1>
-            好きな配信を見つけて
-            <br />
-            みんなで楽しもう!
-          </h1>
-          <p>ライブ、チャット、ギフトで配信をもっと楽しく。</p>
-          <div className="hero-actions">
-            <Link className="primary-button" to="/watch">
-              <Play size={16} fill="currentColor" /> 配信を見る
-            </Link>
-          </div>
-          <div className="capability-row">
-            <span>
-              <Radio size={15} /> ライブ配信
-            </span>
-            <span>
-              <MessageCircle size={15} /> リアルタイムチャット
-            </span>
-            <span>
-              <Gift size={15} /> ギフト
-            </span>
-          </div>
-        </div>
-        <div className="hero-mascot-wrap">
-          <div className="hero-glow" />
-          <img className="hero-mascot" src="/avatars/avatar1.png" alt="" />
-        </div>
-      </section>
-
       <div className="home-layout">
         <div className="home-main">
+          <section className="hero-panel">
+            <div className="hero-copy">
+              <span className="eyebrow">ようこそ Streamly へ</span>
+              <h1>
+                好きな配信を見つけて
+                <br />
+                みんなで楽しもう!
+              </h1>
+              <p>ライブ、チャット、ギフトで配信をもっと楽しく。</p>
+              <div className="hero-actions">
+                <Link className="primary-button" to="/watch">
+                  <Play size={16} fill="currentColor" /> 配信を見る
+                </Link>
+              </div>
+              <div className="capability-row">
+                <span>
+                  <Radio size={15} /> ライブ配信
+                </span>
+                <span>
+                  <MessageCircle size={15} /> リアルタイムチャット
+                </span>
+                <span>
+                  <Gift size={15} /> ギフト
+                </span>
+              </div>
+            </div>
+            <div className="hero-mascot-wrap">
+              <div className="hero-glow" />
+              <img className="hero-mascot" src="/avatars/avatar1.png" alt="" />
+            </div>
+          </section>
+
           <section className="section-block">
             <div className="section-title">
               <div>
