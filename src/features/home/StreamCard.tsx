@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Hourglass, Play } from "lucide-react";
 import type { Channel } from "../../lib/api/contracts";
+import { hashToIndex } from "../../lib/hash";
 
 interface StreamCardProps {
   channel: Channel;
@@ -8,19 +9,10 @@ interface StreamCardProps {
 
 const THUMB_VARIANTS = 3;
 
-// ponytail: サムネイル画像APIが無いため、チャンネルごとに見た目を変える
-// (同じ枠を使い回すと全カードが同一に見えて壊れて見えるため)。
-// channel.idのハッシュで固定色を選ぶ — 並び順が変わっても同じチャンネルは同じ色。
-function thumbVariant(id: string) {
-  let hash = 0;
-  for (const char of id) hash = (hash * 31 + char.charCodeAt(0)) % THUMB_VARIANTS;
-  return hash;
-}
-
 export function StreamCard({ channel }: StreamCardProps) {
   return (
     <Link className="stream-card stream-card-live" to="/watch" search={{ channel: channel.id }}>
-      <div className={`stream-card-thumb live-thumb thumb-${thumbVariant(channel.id)}`}>
+      <div className={`stream-card-thumb live-thumb thumb-${hashToIndex(channel.id, THUMB_VARIANTS)}`}>
         <span className="live-badge">LIVE</span>
         <span className="stream-card-play">
           <Play size={22} fill="currentColor" />
@@ -47,7 +39,7 @@ export function StreamCardSkeleton() {
       </div>
       <div className="stream-card-body">
         <strong>読み込み中</strong>
-        <span>チャンネル情報を取得しています</span>
+        <span>ライブ情報を取得しています</span>
       </div>
     </div>
   );

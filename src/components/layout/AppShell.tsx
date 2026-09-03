@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { usePwaInstallPrompt } from "../../lib/pwaInstall";
+import { getStreamlyUserName } from "../../lib/streamlyUsers";
 import { useChannels } from "../../store/channels";
 import { ComingSoonPanel, PlaceholderRows } from "../ui/ComingSoonPanel";
 
@@ -75,8 +76,10 @@ export function AppShell({ children }: PropsWithChildren) {
 
         {channels.length > 0 ? (
           <div className="sidebar-channels">
-            <span className="eyebrow">CHANNELS</span>
-            <strong className="sidebar-channels-title">チャンネル</strong>
+            {/* ponytail: 「チャンネル」ではなく「ライブ」表記。1チャンネル(Streamly)が
+                複数のライブを持つ構造なので、この一覧は複数チャンネルの意味にしない。 */}
+            <span className="eyebrow">LIVE</span>
+            <strong className="sidebar-channels-title">配信中のライブ</strong>
             <div className="sidebar-channel-list">
               {channels.map((channel) => (
                 <Link
@@ -87,16 +90,17 @@ export function AppShell({ children }: PropsWithChildren) {
                 >
                   <img src="/avatars/avatar1.png" alt="" />
                   {/* ponytail: channel.titleはコンテンツ名であって配信者名ではない。
-                      配信者アカウントAPIが無いのはchatのGuestと同じ制約なので、同じ扱いで固定表示にする。 */}
-                  <span>Streamly User</span>
+                      配信者アカウントAPIが無いのはchatのGuestと同じ制約なので、
+                      id単位で決定的に選んだ仮の表示名(Streamly User N)にする。 */}
+                  <span>{getStreamlyUserName(channel.id)}</span>
                 </Link>
               ))}
             </div>
           </div>
         ) : (
           <ComingSoonPanel
-            eyebrow="CHANNELS"
-            title="チャンネル"
+            eyebrow="LIVE"
+            title="配信中のライブ"
             note={status === "error" ? "配信一覧を取得できませんでした" : "近日公開予定です"}
           >
             <PlaceholderRows />

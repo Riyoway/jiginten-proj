@@ -3,6 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { router } from "../../src/app/router";
 import type { Channel } from "../../src/lib/api/contracts";
+import { getStreamlyUserName } from "../../src/lib/streamlyUsers";
 import { useChannelStore } from "../../src/store/channels";
 
 // ponytail: /channels.jsonへの実ネットワークアクセスをテストで発生させないため、
@@ -49,13 +50,10 @@ describe("AppShell", () => {
     if (!sidebar) throw new Error("sidebar not found");
 
     // channel.titleはコンテンツ名(配信者名ではない)なので、chatのGuestと同じく
-    // sidebarの表示名は固定の "Streamly User" にする(実データを人物名っぽく見せない)。
-    const links = within(sidebar).getAllByRole("link", { name: "Streamly User" });
-    expect(links).toHaveLength(MOCK_CHANNELS.length);
-
-    const hrefs = links.map((link) => link.getAttribute("href"));
+    // sidebarの表示名はid単位で決定的な "Streamly User N" にする(実データを人物名っぽく見せない)。
     for (const channel of MOCK_CHANNELS) {
-      expect(hrefs.some((href) => href?.includes(`channel=${channel.id}`))).toBe(true);
+      const link = within(sidebar).getByRole("link", { name: getStreamlyUserName(channel.id) });
+      expect(link.getAttribute("href")).toContain(`channel=${channel.id}`);
     }
 
     expect(within(sidebar).queryByText(MOCK_CHANNELS[0].title)).not.toBeInTheDocument();

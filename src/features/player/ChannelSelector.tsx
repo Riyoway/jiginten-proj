@@ -7,11 +7,13 @@ interface ChannelSelectorProps {
 }
 
 // ponytail: 切り替え先が無い(0-1チャンネル)ときは意味の無いUIになるので何も出さない。
+// 表示文言は「チャンネル」ではなく「ライブ」にする: channel.titleはコンテンツ名で、
+// 実体は「1つのStreamlyチャンネルが持つ複数のライブ」を切り替えるUIのため。
 export function ChannelSelector({ channels, selectedId }: ChannelSelectorProps) {
   if (channels.length < 2) return null;
 
   return (
-    <nav className="channel-selector" aria-label="チャンネルを選ぶ">
+    <nav className="channel-selector" aria-label="ライブを選ぶ">
       {channels.map((channel) => (
         <Link
           key={channel.id}
