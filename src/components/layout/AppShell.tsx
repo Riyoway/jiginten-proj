@@ -46,7 +46,10 @@ export function AppShell({ children }: PropsWithChildren) {
       <aside className="sidebar">
         <Link className="brand" to="/" aria-label="Streamly ホーム">
           <img className="brand-mark" src="/icon.png" alt="" />
-          <span>Streamly</span>
+          <span className="brand-text">
+            <strong>Streamly</strong>
+            <small>Watch. Chat. Enjoy.</small>
+          </span>
         </Link>
 
         <nav className="side-nav" aria-label="メインナビゲーション">
