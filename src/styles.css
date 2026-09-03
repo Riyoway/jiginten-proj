@@ -7,6 +7,7 @@
 @import "./styles/app-shell.css";
 @import "./styles/ui.css";
 @import "./styles/home.css";
+@import "./styles/favorites.css";
 @import "./styles/watch.css";
 @import "./styles/player.css";
 @import "./styles/danmaku.css";

@@ -47,7 +47,12 @@
 
 ### Follow / Favorites / History
 
-Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetStore`、Zustand + localStorage)で端末内完結のトグルとして実装済みです。ボタンには「この端末だけに保存されます」というhoverヒントを付け、サーバー同期機能のように見せません。フォロー結果はHome右カラムの「フォロー中のライブ」に反映されます(配信中のチャンネルのみ)。お気に入り一覧・履歴の専用ページはまだ無いため、sidebarの該当nav項目は引き続き無効化のままです。
+Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetStore`、Zustand + localStorage)で端末内完結のトグルとして実装済みです。ボタンには「この端末だけに保存されます」というhoverヒントを付け、サーバー同期機能のように見せません。
+
+- フォロー → Home右カラムの「フォロー中のライブ」に反映(配信中のチャンネルのみ)
+- お気に入り → `/favorites`ページ(`features/favorites/FavoritesPage.tsx`)に一覧表示。画面上部に「この端末に保存されています」と明記します
+- お気に入りのうち配信していないものは、名前を捏造せず**件数だけ**伝えます(`/channels.json`は配信中のチャンネルしか返さないため)
+- 履歴とフォロー中の専用ページはまだ無いため、sidebarの該当nav項目は引き続き無効化のままです
 
 ## 追加APIが来たら優先する順番
 

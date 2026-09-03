@@ -28,8 +28,10 @@ describe("AppShell", () => {
 
     expect(await screen.findByRole("link", { name: /^ホーム$/ })).toHaveAttribute("href", "/");
     expect(await screen.findByRole("link", { name: /^ライブ$/ })).toHaveAttribute("href", "/watch");
+    // お気に入りは端末内保存で実装済みなので、無効なボタンではなく実ページへのリンク
+    expect(await screen.findByRole("link", { name: /^お気に入り$/ })).toHaveAttribute("href", "/favorites");
 
-    for (const label of ["フォロー中", "人気", "お気に入り", "履歴"]) {
+    for (const label of ["フォロー中", "人気", "履歴"]) {
       expect(screen.getByRole("button", { name: label })).toBeDisabled();
     }
   });

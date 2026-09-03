@@ -18,8 +18,8 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 ギフト    GET /items
 ```
 
-画面は `/`(Home) と `/watch`(視聴) の2つだけ。視聴チャンネルは **URL の検索パラメータ**
-(`/watch?channel=<id>`)が正で、storeには持たせません。
+画面は `/`(Home)・`/watch`(視聴)・`/favorites`(お気に入り) の3つ。視聴チャンネルは
+**URL の検索パラメータ**(`/watch?channel=<id>`)が正で、storeには持たせません。
 
 ---
 
@@ -34,9 +34,10 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 | ギフト送信・一覧 | **実データ** | `features/gifts/*`, `lib/api/gifts.ts` |
 | フォロー / お気に入り | **実データだが端末内のみ**(localStorage) | `store/follows.ts`, `favorites.ts`, `createIdSetStore.ts` |
 | フォロー中のライブ(Home右カラム) | **実データ**(フォロー済み ∩ 配信中) | `features/home/FollowedChannelsPanel.tsx` |
+| お気に入り一覧(`/favorites`) | **実データ**(お気に入り ∩ 配信中、配信していない分は件数のみ) | `features/favorites/FavoritesPage.tsx` |
 | PWAインストール導線 | 実装済み | `lib/pwaInstall.ts` |
 | カテゴリー / トップギフター | **未対応**(`ComingSoonPanel`) | `components/ui/ComingSoonPanel.tsx` |
-| 検索 / 通知 / 履歴 / プロフィール・設定メニュー | **未対応**(disabled表示のみ) | `AppShell.tsx` |
+| 検索 / 通知 / 人気 / 履歴 / プロフィール・設定メニュー | **未対応**(disabled表示のみ) | `AppShell.tsx` |
 | 視聴者数・フォロワー数・ランキング・配信スケジュール | **出さない**(APIに無い) | — |
 
 ---
@@ -69,7 +70,8 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
   開発者向け文言を削除・書き換え。PWAマニフェスト/metaの英語説明も日本語の実文に変更。
 - **リファレンス再照合**: 紫色の英語eyebrowを全削除(Hero以外)、sidebar見出しを「おすすめチャンネル」に、
   視聴画面のチャンネル名とコンテンツタイトルを分離。
-- **フォロー / お気に入りを実装**(端末内のみ)+ Home右カラムの「フォロー中のライブ」を実データ化。
+- **フォロー / お気に入りを実装**(端末内のみ)。Home右カラムの「フォロー中のライブ」を実データ化し、
+  sidebarの「お気に入り」を`/favorites`ページ(実データ)に接続。
 - **視聴画面内のチャンネル切替UI(`ChannelSelector`)は明示的な依頼で削除済み。** 切替はHomeのカードか
   sidebarのリンクから`/watch?channel=<id>`へ遷移して行う。**勝手に復活させないこと。**
 
@@ -81,7 +83,9 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 - **`/items`の未使用フィールド**: `Docs/ITEMS-API.md`の通り`cost` / `group` / `animationUrl`が実在するが、
   `lib/api/contracts.ts`の`Gift`型はid/name/iconUrlのみ。価格表示・グループ分けタブ・アニメーション
   ギフトは**実データで作れる余地がある**。
-- **フォロー中/お気に入りの一覧ページが無い**ため、sidebarの該当nav項目はdisabledのまま。
+- **フォロー中の一覧ページが無い**(お気に入りは`/favorites`で実装済み)。`FavoritesPage`と
+  `FollowedChannelsPanel`が同じ「id集合 ∩ 配信中」パターンなので、`/follows`を作るなら丸ごと流用できる。
+  「人気」「履歴」は対応APIが無いためdisabledのまま。
 - **quality selector**: `Docs/HLS-SERVER.md`の方針通り、hls.jsが実際に複数levelを検出したときだけ出す。未着手。
 - **バンドルサイズ**: JSが約1.1MB(gzip約346KB)。HeroUI導入分。必要なら`dynamic import()`で分割。
 - **HeroUI移行が中途**: Hero CTA・player controls・chat composer・gift picker等はまだ素の`<button>`。
@@ -112,7 +116,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 
 ```powershell
 pnpm lint       # biome(既存指摘は上記参照。自分の差分がクリーンかで判断)
-pnpm test       # vitest: unit + component (現在28件)
+pnpm test       # vitest: unit + component (現在32件)
 pnpm build      # tsc -b + vite build
 pnpm test:e2e   # playwright: chromium + mobile (現在8件)
 ```

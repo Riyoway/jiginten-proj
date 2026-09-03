@@ -5,13 +5,16 @@
 ```text
 src/
 ├─ app/
-│  └─ router.tsx           # /watch は channel search param を validateSearch で型付け
+│  └─ router.tsx           # "/" / "/watch" / "/favorites"。/watch は channel search param を
+│                           #   validateSearch で型付け
 ├─ components/
 │  ├─ layout/               # AppShell(sidebarのチャンネルリンク一覧。遷移先は実チャンネル、
-│  │                          #   表示名はchannel.titleを使わず固定"Streamly User")
+│  │                        #   表示名はchannel.titleを使わず"Streamly User N")
 │  └─ ui/                   # ComingSoonPanel など
 ├─ features/
-│  ├─ home/                 # HomePage, StreamCard(実チャンネルのライブグリッド)
+│  ├─ home/                 # HomePage, StreamCard(実チャンネルのライブグリッド),
+│  │                        #   FollowedChannelsPanel(フォロー済み ∩ 配信中)
+│  ├─ favorites/            # FavoritesPage(お気に入り ∩ 配信中。StreamCardを流用)
 │  ├─ watch/
 │  ├─ player/                # StreamPlayer, useHlsPlayer
 │  ├─ chat/
@@ -19,7 +22,8 @@ src/
 │  └─ gifts/
 ├─ lib/
 │  └─ api/                  # endpoints.ts, channels.ts, comments.ts, messages.ts, gifts.ts
-├─ store/                    # comments.ts, preferences.ts, channels.ts
+├─ store/                  # comments.ts, preferences.ts, channels.ts,
+│                           #   follows.ts / favorites.ts (createIdSetStore, localStorage)
 └─ test/
 ```
 
@@ -38,6 +42,9 @@ GET /channels.json (useChannelStore, 一度だけ取得)
 ```
 
 選択中チャンネルはstoreではなくURL(`/watch?channel=<id>`)が正。取得失敗/空なら`endpoints.stream`(単一互換ストリーム)にフォールバックする。
+
+フォロー/お気に入り(`store/follows.ts` / `favorites.ts`、localStorage)はこのカタログと突き合わせて
+「保存済み ∩ 配信中」を表示する。カタログに無いidは配信していないだけなので、名前を作らず件数で示す。
 
 `channel.title`はコンテンツ名であって配信者名ではない。avatar+name形式で「誰の配信か」を表す文脈(sidebarの`.sidebar-channel-link`)では、配信者アカウントAPIが無いchatの`Guest`表示と同じ理由で実データを人物名のように見せず、`getStreamlyUserName`(id単位で決定的な"Streamly User N")にする。一方StreamCardや視聴画面の見出しのようにコンテンツ名として明示的に扱う文脈では引き続き`channel.title`を表示する。
 
@@ -130,10 +137,10 @@ Local preference:
 
 ## Route strategy
 
-スターターではcode-based TanStack Routerです。
-routeが2つしかない状態でgenerated route treeを必須にしないことで、zipを展開した直後の構造を読みやすくしています。
+code-based TanStack Routerです(`/`, `/watch`, `/favorites`)。
+この規模でgenerated route treeを必須にしないことで、展開直後の構造を読みやすくしています。
 
-routeが増えたらTanStack Routerのfile-based routingへ移行してください。
+これ以上routeが増えるならTanStack Routerのfile-based routingへ移行してください。
 
 ## Component boundary principles
 
