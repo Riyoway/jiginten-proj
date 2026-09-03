@@ -35,6 +35,6 @@
 @media (max-width: 720px) {
   .collection-page {
     width: calc(100% - 24px);
-    margin-bottom: 94px;
+    margin-bottom: calc(86px + env(safe-area-inset-bottom));
   }
 }

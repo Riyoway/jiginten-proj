@@ -125,7 +125,7 @@
   .watch-page {
     min-height: auto;
     padding: 8px;
-    padding-bottom: 82px;
+    padding-bottom: calc(74px + env(safe-area-inset-bottom));
   }
 
   .channel-row {

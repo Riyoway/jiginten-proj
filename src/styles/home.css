@@ -314,7 +314,7 @@
 @media (max-width: 720px) {
   .home-page {
     width: calc(100% - 24px);
-    margin-bottom: 94px;
+    margin-bottom: calc(86px + env(safe-area-inset-bottom));
   }
 
   .hero-panel {
@@ -325,8 +325,10 @@
     padding: 34px 24px;
   }
 
+  /* ponytail: 35px固定だと390px幅で<br>の前の行がさらに折れて1文字だけ次行に落ちる。
+     幅に追従させて、意図した2行(「〜見つけて」/「みんなで楽しもう!」)で収める。 */
   .hero-copy h1 {
     max-width: none;
-    font-size: 35px;
+    font-size: clamp(24px, 7.6vw, 34px);
   }
 }

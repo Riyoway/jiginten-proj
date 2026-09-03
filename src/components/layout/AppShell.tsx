@@ -162,6 +162,20 @@ export function AppShell({ children }: PropsWithChildren) {
             >
               <Bell size={22} />
             </Button>
+            {/* ponytail: モバイルではsidebarがdock(nav専用)になりインストールボタンの
+                置き場が無くなるため、インストール可能なときだけtopbarへ出す。 */}
+            {canInstall ? (
+              <Button
+                className="topbar-icon-btn topbar-install-btn"
+                isIconOnly
+                size="lg"
+                variant="ghost"
+                aria-label="インストール"
+                onPress={promptInstall}
+              >
+                <Download size={22} />
+              </Button>
+            ) : null}
             <Link
               className={`topbar-icon-btn ${buttonVariants({ variant: "ghost", isIconOnly: true, size: "lg" })}`}
               to="/watch"
