@@ -8,3 +8,36 @@ import { afterEach } from "vitest";
 afterEach(() => {
   cleanup();
 });
+
+// ponytail: jsdomにはEventSourceが無く、WatchPage(ChatPanel経由でopenCommentStreamが
+// new EventSource()する)をrenderするテストが全滅する。実際のSSEは検証しないテストなので、
+// 接続を確立しない最小限のstubで十分。
+class StubEventSource {
+  static readonly CONNECTING = 0;
+  static readonly OPEN = 1;
+  static readonly CLOSED = 2;
+
+  constructor(public url: string) {}
+  addEventListener() {}
+  removeEventListener() {}
+  close() {}
+  dispatchEvent() {
+    return true;
+  }
+}
+
+if (typeof globalThis.EventSource === "undefined") {
+  // biome-ignore lint/suspicious/noExplicitAny: 最小限のstubなので型はゆるく合わせるだけ
+  globalThis.EventSource = StubEventSource as any;
+}
+
+// ponytail: jsdomはElement.scrollToを実装していない。ChatPanelの自動スクロールが
+// 呼ぶだけで、スクロール位置自体をテストするわけではないのでno-opで十分。
+if (!Element.prototype.scrollTo) {
+  Element.prototype.scrollTo = () => {};
+}
+
+// ponytail: jsdomのHTMLMediaElement.playはPromiseを返さない(undefined)ため、
+// StreamPlayerの`.catch()`チェーンが例外になる。実再生はどうせ検証しないのでresolve固定。
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+HTMLMediaElement.prototype.pause = () => {};

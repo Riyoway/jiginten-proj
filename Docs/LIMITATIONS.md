@@ -47,8 +47,7 @@
 
 ### Follow / Favorites / History
 
-ローカルだけで実装する場合は必ず「この端末のみ」と分かる設計にします。
-サーバー同期機能のように見せません。
+Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetStore`、Zustand + localStorage)で端末内完結のトグルとして実装済みです。ボタンには「この端末だけに保存されます」というhoverヒントを付け、サーバー同期機能のように見せません。フォロー中一覧・お気に入り一覧・履歴の専用ページはまだ無いため、sidebarの該当nav項目は引き続き無効化のままです。
 
 ## 追加APIが来たら優先する順番
 
