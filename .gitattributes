@@ -1,0 +1,3 @@
+# ponytail: Biomeの整形はLF基準。Windowsのcore.autocrlf=trueだとチェックアウトのたびに
+# CRLFになり、触っていないファイルまで整形エラーになるので、作業ツリーもLFで固定する。
+* text=auto eol=lf

@@ -68,12 +68,19 @@ export function ChatComposer() {
         >
           <GiftIcon size={19} />
         </button>
-        <button className="send-button" type="submit" disabled={sending || (!text.trim() && !selectedGift)} aria-label="送信">
+        <button
+          className="send-button"
+          type="submit"
+          disabled={sending || (!text.trim() && !selectedGift)}
+          aria-label="送信"
+        >
           <Send size={18} />
         </button>
       </form>
       <div className="composer-footer">
-        <span>{text.length}/{MAX_COMMENT_LENGTH}</span>
+        <span>
+          {text.length}/{MAX_COMMENT_LENGTH}
+        </span>
         {error ? <span className="inline-error">{error}</span> : null}
       </div>
     </div>

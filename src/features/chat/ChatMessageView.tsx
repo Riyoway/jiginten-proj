@@ -1,5 +1,5 @@
-import { useMemo } from "react";
 import { Gift as GiftIcon } from "lucide-react";
+import { useMemo } from "react";
 import type { ChatMessage } from "../../lib/api/contracts";
 import { getRandomAvatar } from "../../lib/avatars";
 
@@ -14,7 +14,9 @@ export function ChatMessageView({ message }: { message: ChatMessage }) {
         <div className="chat-body">
           <div className="chat-meta">
             <strong>Guest</strong>
-            <span className="gift-chip"><GiftIcon size={12} /> GIFT</span>
+            <span className="gift-chip">
+              <GiftIcon size={12} /> GIFT
+            </span>
           </div>
           <div className="gift-highlight">
             {message.gift.iconUrl ? <img src={message.gift.iconUrl} alt="" /> : <GiftIcon size={24} />}

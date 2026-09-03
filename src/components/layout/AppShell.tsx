@@ -184,7 +184,13 @@ export function AppShell({ children }: PropsWithChildren) {
               <Gift size={22} />
             </Link>
             <Dropdown>
-              <Button className="user-menu-trigger" isIconOnly size="lg" variant="ghost" aria-label="ユーザーメニュー">
+              <Button
+                className="user-menu-trigger"
+                isIconOnly
+                size="lg"
+                variant="ghost"
+                aria-label="ユーザーメニュー"
+              >
                 <Avatar size="md">
                   <Avatar.Image src="/avatars/avatar1.png" alt="Guest" />
                   <Avatar.Fallback>G</Avatar.Fallback>
