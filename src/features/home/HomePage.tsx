@@ -6,6 +6,7 @@ import { useEffect, useMemo } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../../components/ui/ComingSoonPanel";
 import { getRandomBanner } from "../../lib/banners";
 import { useChannels } from "../../store/channels";
+import { FollowedChannelsPanel } from "./FollowedChannelsPanel";
 import { StreamCard, StreamCardSkeleton } from "./StreamCard";
 
 const SKELETON_KEYS = ["skeleton-1", "skeleton-2", "skeleton-3"] as const;
@@ -33,6 +34,7 @@ export function HomePage() {
   const banner = useMemo(() => getRandomBanner(), []);
 
   const { channels, status } = useChannels();
+  const channelsLoading = status === "loading" || status === "idle";
 
   return (
     <div className="home-page">
@@ -80,7 +82,7 @@ export function HomePage() {
               </div>
             </div>
             <div className="stream-grid">
-              {status === "loading" || status === "idle" ? (
+              {channelsLoading ? (
                 SKELETON_KEYS.map((key) => <StreamCardSkeleton key={key} />)
               ) : channels.length > 0 ? (
                 channels.map((channel) => <StreamCard key={channel.id} channel={channel} />)
@@ -107,9 +109,7 @@ export function HomePage() {
         </div>
 
         <aside className="right-rail">
-          <ComingSoonPanel title="フォロー中のライブ" note="近日対応予定です">
-            <PlaceholderRows />
-          </ComingSoonPanel>
+          <FollowedChannelsPanel channels={channels} loading={channelsLoading} />
 
           <ComingSoonPanel title="トップギフター" note="近日公開予定です">
             <PlaceholderRows />

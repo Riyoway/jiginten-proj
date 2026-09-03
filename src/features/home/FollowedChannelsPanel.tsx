@@ -1,0 +1,56 @@
+import { Card } from "@heroui/react";
+import { Link } from "@tanstack/react-router";
+import type { Channel } from "../../lib/api/contracts";
+import { getStreamlyUserName } from "../../lib/streamlyUsers";
+import { useFollowStore } from "../../store/follows";
+
+interface FollowedChannelsPanelProps {
+  channels: Channel[];
+  loading: boolean;
+}
+
+// ponytail: フォローは端末内保存(store/follows.ts)なので、この枠はもう実データで出せる。
+// /channels.jsonは配信中のチャンネルしか返さないため「フォロー済み ∩ 配信中」がこの一覧になる。
+export function FollowedChannelsPanel({ channels, loading }: FollowedChannelsPanelProps) {
+  const followedIds = useFollowStore((state) => state.ids);
+  const followedLive = channels.filter((channel) => followedIds.includes(channel.id));
+
+  return (
+    <Card className="rail-panel" variant="transparent">
+      <Card.Header>
+        <Card.Title>フォロー中のライブ</Card.Title>
+      </Card.Header>
+      <Card.Content>
+        {followedLive.length > 0 ? (
+          <div className="rail-channel-list">
+            {followedLive.map((channel) => (
+              <Link
+                key={channel.id}
+                className="rail-channel-row"
+                to="/watch"
+                search={{ channel: channel.id }}
+              >
+                <img src="/avatars/avatar1.png" alt="" />
+                <span className="rail-channel-body">
+                  <span className="rail-channel-name">
+                    {getStreamlyUserName(channel.id)}
+                    <span className="rail-channel-live-dot" aria-hidden="true" />
+                  </span>
+                  <span className="rail-channel-title">{channel.title}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <Card.Description>
+            {followedIds.length === 0
+              ? "配信画面でフォローすると、ここに表示されます(この端末のみ)"
+              : loading
+                ? "読み込み中…"
+                : "フォロー中のチャンネルは現在配信していません"}
+          </Card.Description>
+        )}
+      </Card.Content>
+    </Card>
+  );
+}

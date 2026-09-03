@@ -237,6 +237,70 @@
   background: linear-gradient(145deg, rgba(124, 77, 255, 0.14), rgba(255, 77, 145, 0.08));
 }
 
+/* src/features/home/FollowedChannelsPanel.tsx */
+
+/* ponytail: ComingSoonPanelのdashed枠と違い、こちらは実データなので実線。 */
+.rail-panel {
+  border: 1px solid var(--line);
+}
+
+.rail-channel-list {
+  display: grid;
+  gap: 4px;
+}
+
+.rail-channel-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  color: #bbc4d3;
+}
+
+.rail-channel-row:hover {
+  background: rgba(255, 255, 255, 0.045);
+  color: #fff;
+}
+
+.rail-channel-row img {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.rail-channel-body {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.rail-channel-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rail-channel-live-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+.rail-channel-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--muted);
+  font-size: 10px;
+}
+
 @media (max-width: 960px) {
   .home-layout {
     grid-template-columns: 1fr;

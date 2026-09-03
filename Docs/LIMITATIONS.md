@@ -43,11 +43,11 @@
 
 ### Home recommendations
 
-配信グリッドは`/channels.json`により実データになりました(チャンネル数ぶんの`StreamCard`をレンダー、水増しのダミーカードは追加しません)。一方カテゴリー・フォロー中・トップギフターは引き続き対応APIが無いため、数値・名前・ランキングを実データとして見せません。該当セクションは`ComingSoonPanel`で「近日公開」と明示し、抽象的なplaceholder行のみを表示します。
+配信グリッドは`/channels.json`により実データになりました(チャンネル数ぶんの`StreamCard`をレンダー、水増しのダミーカードは追加しません)。右カラムの「フォロー中のライブ」も端末内フォロー(`store/follows.ts`)と`/channels.json`の突き合わせで実データ表示になりました(`FollowedChannelsPanel`)。一方カテゴリー・トップギフターは引き続き対応APIが無いため、数値・名前・ランキングを実データとして見せません。該当セクションは`ComingSoonPanel`で「近日公開」と明示し、抽象的なplaceholder行のみを表示します。
 
 ### Follow / Favorites / History
 
-Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetStore`、Zustand + localStorage)で端末内完結のトグルとして実装済みです。ボタンには「この端末だけに保存されます」というhoverヒントを付け、サーバー同期機能のように見せません。フォロー中一覧・お気に入り一覧・履歴の専用ページはまだ無いため、sidebarの該当nav項目は引き続き無効化のままです。
+Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetStore`、Zustand + localStorage)で端末内完結のトグルとして実装済みです。ボタンには「この端末だけに保存されます」というhoverヒントを付け、サーバー同期機能のように見せません。フォロー結果はHome右カラムの「フォロー中のライブ」に反映されます(配信中のチャンネルのみ)。お気に入り一覧・履歴の専用ページはまだ無いため、sidebarの該当nav項目は引き続き無効化のままです。
 
 ## 追加APIが来たら優先する順番
 
