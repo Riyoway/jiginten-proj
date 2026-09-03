@@ -246,15 +246,15 @@
 
 .rail-channel-list {
   display: grid;
-  gap: 4px;
+  gap: 6px;
 }
 
 .rail-channel-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 8px;
-  border-radius: 10px;
+  gap: 12px;
+  padding: 9px 8px;
+  border-radius: 12px;
   color: #bbc4d3;
 }
 
@@ -264,8 +264,8 @@
 }
 
 .rail-channel-row img {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   flex: 0 0 auto;
   border-radius: 50%;
   object-fit: cover;
@@ -281,7 +281,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -298,7 +298,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 @media (max-width: 960px) {

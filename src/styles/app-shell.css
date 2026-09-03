@@ -124,14 +124,14 @@
 
 .sidebar-channel-list {
   display: grid;
-  gap: 4px;
+  gap: 0;
 }
 
 .sidebar-channel-link {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
+  padding: 4px 10px;
   border-radius: 10px;
   color: #bbc4d3;
   font-size: 12px;
@@ -303,20 +303,30 @@ main {
     display: none;
   }
 
+  /* ponytail: 列数を固定するとnav項目を増減したときに64pxのバーからはみ出す(お気に入りが
+     見えなくなっていた)。項目数に合わせて1行に並べる。 */
   .side-nav {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 4px;
   }
 
+  /* ponytail: 5項目を横並びにすると横書きのラベルが折り返すので、bottom barでは
+     アイコンの下にラベルを置く一般的なタブ形にする。 */
   .nav-item {
     min-height: 48px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 0 2px;
     border-radius: 11px;
   }
 
   .nav-item span {
     display: inline;
-    font-size: 11px;
+    font-size: 10px;
+    white-space: nowrap;
   }
 
   .topbar {
