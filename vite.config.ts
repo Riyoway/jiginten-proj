@@ -9,7 +9,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["avatars/avatar1.png"],
+      includeAssets: ["favicon.png"],
       manifest: {
         name: "Streamly",
         short_name: "Streamly",
@@ -20,7 +20,7 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/avatars/avatar1.png",
+            src: "/favicon.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
