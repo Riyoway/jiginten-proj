@@ -13,7 +13,7 @@ src/
 ├─ features/
 │  ├─ home/                 # HomePage, StreamCard(実チャンネルのライブグリッド)
 │  ├─ watch/
-│  ├─ player/                # StreamPlayer, useHlsPlayer, ChannelSelector
+│  ├─ player/                # StreamPlayer, useHlsPlayer
 │  ├─ chat/
 │  ├─ danmaku/
 │  └─ gifts/
@@ -39,7 +39,9 @@ GET /channels.json (useChannelStore, 一度だけ取得)
 
 選択中チャンネルはstoreではなくURL(`/watch?channel=<id>`)が正。取得失敗/空なら`endpoints.stream`(単一互換ストリーム)にフォールバックする。
 
-`channel.title`はコンテンツ名であって配信者名ではない。avatar+name形式で「誰の配信か」を表す文脈(sidebarの`.sidebar-channel-link`)では、配信者アカウントAPIが無いchatの`Guest`表示と同じ理由で実データを人物名のように見せず、固定文字列にする。一方ChannelSelectorやStreamCardのようにコンテンツ名として明示的に扱う文脈では引き続き`channel.title`を表示する。
+`channel.title`はコンテンツ名であって配信者名ではない。avatar+name形式で「誰の配信か」を表す文脈(sidebarの`.sidebar-channel-link`)では、配信者アカウントAPIが無いchatの`Guest`表示と同じ理由で実データを人物名のように見せず、`getStreamlyUserName`(id単位で決定的な"Streamly User N")にする。一方StreamCardや視聴画面の見出しのようにコンテンツ名として明示的に扱う文脈では引き続き`channel.title`を表示する。
+
+視聴画面内でのライブ切り替えUI(旧`ChannelSelector`)は削除済み。ライブの選択はHomeのライブグリッドかsidebarのリンクから`/watch?channel=<id>`への遷移のみで行う。
 
 ### Playback
 
@@ -140,10 +142,6 @@ routeが増えたらTanStack Routerのfile-based routingへ移行してくださ
 - player overlay
 - danmaku container
 - `source` propで再生対象を受け取るだけ(チャンネル解決はWatchPage側の責務)
-
-`ChannelSelector`:
-- チャンネル一覧の表示・選択のみ(2チャンネル未満なら非表示)
-- 選択状態はURL(`/watch?channel=<id>`)へのLinkとして表現し、自前のstateは持たない
 
 `ChatPanel`:
 - SSE lifecycle
