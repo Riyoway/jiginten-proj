@@ -1,11 +1,16 @@
+import { useMemo } from "react";
 import { Gift as GiftIcon } from "lucide-react";
 import type { ChatMessage } from "../../lib/api/contracts";
+import { getRandomAvatar } from "../../lib/avatars";
 
 export function ChatMessageView({ message }: { message: ChatMessage }) {
+  // ponytail: random per message.key, memoized so it doesn't reshuffle on re-render
+  const avatar = useMemo(() => getRandomAvatar(), [message.key]);
+
   if (message.gift) {
     return (
       <article className="chat-message gift-message">
-        <img className="chat-avatar" src="/mascot/default-avatar.png" alt="" />
+        <img className="chat-avatar" src={avatar} alt="" />
         <div className="chat-body">
           <div className="chat-meta">
             <strong>Guest</strong>
@@ -23,7 +28,7 @@ export function ChatMessageView({ message }: { message: ChatMessage }) {
 
   return (
     <article className="chat-message">
-      <img className="chat-avatar" src="/mascot/default-avatar.png" alt="" />
+      <img className="chat-avatar" src={avatar} alt="" />
       <div className="chat-body">
         <div className="chat-meta">
           <strong>Guest</strong>

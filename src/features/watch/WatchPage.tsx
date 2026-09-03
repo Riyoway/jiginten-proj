@@ -9,7 +9,7 @@ export function WatchPage() {
         <StreamPlayer />
         <section className="stream-meta">
           <div className="channel-row">
-            <img src="/mascot/default-avatar.png" alt="Streamly mascot" />
+            <img src="/avatars/avatar1.png" alt="Channel avatar" />
             <div className="stream-copy">
               <span className="eyebrow">LIVE STREAM</span>
               <h1>雪景色の線路を眺める配信</h1>

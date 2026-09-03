@@ -108,15 +108,16 @@ Mobile:
 
 ## 5. Default avatar
 
-APIからユーザー画像を取得できないので、ブランドマスコットを共通デフォルトアイコンにします。
+APIからユーザー画像を取得できないので、チャットの各メッセージには`public/avatars/`内の画像からランダムに1枚選んで表示します（`src/lib/avatars.ts`）。
 
-asset:
+assets:
 
 ```text
-public/mascot/default-avatar.png
+public/avatars/avatar1.png
+public/avatars/avatar2.png
+public/avatars/avatar3.png
+public/avatars/avatar4.png
 ```
-
-キャラクターはアニメ人物ではなく、万人受けしやすい猫マスコットを採用しています。
 
 ## 6. Home
 

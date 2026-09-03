@@ -32,7 +32,7 @@
 
 ### User avatar
 
-共通Streamly mascotを利用します。
+`public/avatars/`内の画像からランダムに選んで表示します（ユーザーごとの固定アイコンではありません）。
 
 ### User name
 

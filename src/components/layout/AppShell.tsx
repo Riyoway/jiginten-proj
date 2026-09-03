@@ -35,7 +35,7 @@ export function AppShell({ children }: PropsWithChildren) {
 
         <div className="sidebar-spacer" />
         <div className="profile-card">
-          <img src="/mascot/default-avatar.png" alt="Streamly mascot avatar" />
+          <img src="/avatars/avatar1.png" alt="Guest avatar" />
           <div>
             <strong>Guest</strong>
             <small>Default profile</small>
@@ -61,7 +61,7 @@ export function AppShell({ children }: PropsWithChildren) {
             <button className="icon-button" aria-label="ギフト" type="button">
               <Gift size={18} />
             </button>
-            <img className="top-avatar" src="/mascot/default-avatar.png" alt="Guest" />
+            <img className="top-avatar" src="/avatars/avatar1.png" alt="Guest" />
           </div>
         </header>
         <main>{children}</main>

@@ -150,7 +150,7 @@ GET https://intern-comment-server.intern-comment-server.deno.net/items
 したがって現在は:
 
 ```text
-avatar = /mascot/default-avatar.png
+avatar = public/avatars/*.png からランダム選択
 name   = Guest
 ```
 

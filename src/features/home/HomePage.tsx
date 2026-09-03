@@ -22,7 +22,7 @@ export function HomePage() {
         </div>
         <div className="hero-mascot-wrap">
           <div className="hero-glow" />
-          <img className="hero-mascot" src="/mascot/character-sheet.jpg" alt="Streamly mascot character reference" />
+          <img className="hero-mascot" src="/avatars/avatar1.png" alt="" />
         </div>
       </section>
 
@@ -41,7 +41,7 @@ export function HomePage() {
             <span className="preview-play"><Play size={25} fill="currentColor" /></span>
           </div>
           <div className="live-card-body">
-            <img src="/mascot/default-avatar.png" alt="" />
+            <img src="/avatars/avatar1.png" alt="" />
             <div>
               <strong>雪景色の線路を眺める配信</strong>
               <span>Streamly · HLS live stream</span>
