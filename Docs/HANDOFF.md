@@ -18,7 +18,8 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 ギフト    GET /items
 ```
 
-画面は `/`(Home)・`/watch`(視聴)・`/favorites`(お気に入り) の3つ。視聴チャンネルは
+画面は `/`(Home)・`/watch`(視聴)・`/favorites`(お気に入り)・`/follows`(フォロー中)・
+`/history`(履歴) の5つ。視聴チャンネルは
 **URL の検索パラメータ**(`/watch?channel=<id>`)が正で、storeには持たせません。
 
 ---
@@ -33,11 +34,12 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 | 弾幕 | **実データ**(チャットと同一ストリーム) | `features/danmaku/DanmakuLayer.tsx` |
 | ギフト送信・一覧 | **実データ** | `features/gifts/*`, `lib/api/gifts.ts` |
 | フォロー / お気に入り | **実データだが端末内のみ**(localStorage) | `store/follows.ts`, `favorites.ts`, `createIdSetStore.ts` |
+| 視聴履歴 | **実データだが端末内のみ**(新しい順・上限30件、`WatchPage`のmountで記録) | `store/history.ts` |
 | フォロー中のライブ(Home右カラム) | **実データ**(フォロー済み ∩ 配信中) | `features/home/FollowedChannelsPanel.tsx` |
-| お気に入り一覧(`/favorites`) | **実データ**(お気に入り ∩ 配信中、配信していない分は件数のみ) | `features/favorites/FavoritesPage.tsx` |
+| お気に入り / フォロー中 / 履歴の一覧ページ | **実データ**(保存済み ∩ 配信中、配信していない分は件数のみ) | `features/collections/CollectionPages.tsx`(3画面で1コンポーネントを共有) |
 | PWAインストール導線 | 実装済み | `lib/pwaInstall.ts` |
 | カテゴリー / トップギフター | **未対応**(`ComingSoonPanel`) | `components/ui/ComingSoonPanel.tsx` |
-| 検索 / 通知 / 人気 / 履歴 / プロフィール・設定メニュー | **未対応**(disabled表示のみ) | `AppShell.tsx` |
+| 検索 / 通知 / 人気 / プロフィール・設定メニュー | **未対応**(disabled表示のみ) | `AppShell.tsx` |
 | 視聴者数・フォロワー数・ランキング・配信スケジュール | **出さない**(APIに無い) | — |
 
 ---
@@ -59,6 +61,9 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
    紫色の英語マイクロラベル(`CATEGORIES`等)は付けない。Home Heroの「ようこそ Streamly へ」だけが例外。
 7. **Service WorkerでHLS/SSE/APIをキャッシュしない**(`vite.config.ts`の`NetworkOnly`)。
 8. **CSSは機能単位のファイルへ。** `src/styles.css`は`@import`だけ。新規ルールは`src/styles/<feature>.css`。
+9. **「端末内のid集合 ∩ 配信中」の一覧を増やすときはページを複製しない。**
+   `features/collections/CollectionPages.tsx`の共有コンポーネントに文言を渡すだけで足りる
+   (お気に入り / フォロー中 / 履歴の3画面がこれで動いている)。
 
 ---
 
@@ -74,6 +79,13 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
   sidebarの「お気に入り」を`/favorites`ページ(実データ)に接続。
 - **視聴画面内のチャンネル切替UI(`ChannelSelector`)は明示的な依頼で削除済み。** 切替はHomeのカードか
   sidebarのリンクから`/watch?channel=<id>`へ遷移して行う。**勝手に復活させないこと。**
+- **`/follows`と`/history`を追加し、sidebarの「フォロー中」「履歴」を実ページへ接続。** 既存の
+  `FavoritesPage`を`features/collections/CollectionPages.tsx`の共有コンポーネントへ一般化して3画面で
+  使い回している(CSSも`styles/favorites.css`→`styles/collections.css`、クラスは`.collection-*`)。
+  履歴は`store/history.ts`(新しい順・上限30件)で、`/history`に「履歴を削除」ボタンがある。
+- **sidebarの余白調整**: おすすめチャンネル行を詰め、Home右カラム「フォロー中のライブ」の行を大きくした。
+  合わせて、モバイルのbottom barが`repeat(2, 1fr)`固定で項目を増やすと64pxからはみ出す(お気に入りが
+  見えなくなっていた)問題を、項目数に追従する1行グリッド+アイコン上ラベルに直した。
 
 ---
 
@@ -83,9 +95,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 - **`/items`の未使用フィールド**: `Docs/ITEMS-API.md`の通り`cost` / `group` / `animationUrl`が実在するが、
   `lib/api/contracts.ts`の`Gift`型はid/name/iconUrlのみ。価格表示・グループ分けタブ・アニメーション
   ギフトは**実データで作れる余地がある**。
-- **フォロー中の一覧ページが無い**(お気に入りは`/favorites`で実装済み)。`FavoritesPage`と
-  `FollowedChannelsPanel`が同じ「id集合 ∩ 配信中」パターンなので、`/follows`を作るなら丸ごと流用できる。
-  「人気」「履歴」は対応APIが無いためdisabledのまま。
+- **「人気」はランキングAPIが無いためdisabledのまま。** 一覧を出せる材料が無い。
 - **quality selector**: `Docs/HLS-SERVER.md`の方針通り、hls.jsが実際に複数levelを検出したときだけ出す。未着手。
 - **バンドルサイズ**: JSが約1.1MB(gzip約346KB)。HeroUI導入分。必要なら`dynamic import()`で分割。
 - **HeroUI移行が中途**: Hero CTA・player controls・chat composer・gift picker等はまだ素の`<button>`。
@@ -116,7 +126,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 
 ```powershell
 pnpm lint       # biome(既存指摘は上記参照。自分の差分がクリーンかで判断)
-pnpm test       # vitest: unit + component (現在32件)
+pnpm test       # vitest: unit + component (現在41件)
 pnpm build      # tsc -b + vite build
 pnpm test:e2e   # playwright: chromium + mobile (現在8件)
 ```
