@@ -6,17 +6,30 @@
 }
 
 .hero-panel {
+  position: relative;
   min-height: 260px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.9fr);
+  display: flex;
+  align-items: center;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 24px;
-  background: linear-gradient(135deg, #0b1018 20%, #0d1020 65%, #15102b);
+  background-color: #0b1018;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: cover;
+}
+
+/* ponytail: banner art has its own dark left-hand side meant for text, but
+   a wide gradient on top guarantees contrast regardless of crop/breakpoint. */
+.hero-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(7, 10, 16, 0.88) 0%, rgba(7, 10, 16, 0.55) 42%, rgba(7, 10, 16, 0) 72%);
 }
 
 .hero-copy {
-  align-self: center;
+  position: relative;
   padding: clamp(18px, 2.2vw, 32px);
   z-index: 2;
 }
@@ -41,23 +54,6 @@
   display: flex;
   gap: 10px;
   margin-top: 16px;
-}
-
-.hero-mascot-wrap {
-  position: relative;
-  min-height: 260px;
-  overflow: hidden;
-}
-
-.hero-mascot {
-  position: absolute;
-  width: 400px;
-  max-width: none;
-  right: -95px;
-  bottom: -100px;
-  border-radius: 44%;
-  mix-blend-mode: screen;
-  opacity: 0.95;
 }
 
 .section-block {
@@ -246,14 +242,6 @@
 }
 
 @media (max-width: 960px) {
-  .hero-panel {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-mascot-wrap {
-    display: none;
-  }
-
   .home-layout {
     grid-template-columns: 1fr;
   }

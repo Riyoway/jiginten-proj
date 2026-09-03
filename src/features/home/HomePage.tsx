@@ -2,8 +2,9 @@ import { Card } from "@heroui/react";
 import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
 import { BookOpen, Gamepad2, Gift, MessageCircle, Music, Palette, Play, Trophy } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../../components/ui/ComingSoonPanel";
+import { getRandomBanner } from "../../lib/banners";
 import { StreamCard } from "./StreamCard";
 
 // ponytail: ラベルのみ。カウントは出さない(カテゴリー別の配信数APIが無いため)。
@@ -25,11 +26,14 @@ export function HomePage() {
     return () => document.documentElement.classList.remove("home-no-scrollbar");
   }, []);
 
+  // ponytail: random per page load, memoized so it doesn't swap mid-session.
+  const banner = useMemo(() => getRandomBanner(), []);
+
   return (
     <div className="home-page">
       <div className="home-layout">
         <div className="home-main">
-          <section className="hero-panel">
+          <section className="hero-panel" style={{ backgroundImage: `url(${banner})` }}>
             <div className="hero-copy">
               <span className="eyebrow">ようこそ Streamly へ</span>
               <h1>
@@ -43,9 +47,6 @@ export function HomePage() {
                   <Play size={16} fill="currentColor" /> 配信を見る
                 </Link>
               </div>
-            </div>
-            <div className="hero-mascot-wrap">
-              <img className="hero-mascot" src="/avatars/avatar1.png" alt="" />
             </div>
           </section>
 
