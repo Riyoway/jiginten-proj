@@ -1,4 +1,5 @@
 import { Heart, Share2, UserCheck, UserPlus } from "lucide-react";
+import { useEffect } from "react";
 import { watchRoute } from "../../app/router";
 import { resolvePlaylistUrl, resolveSelectedChannel } from "../../lib/api/channels";
 import { endpoints } from "../../lib/api/endpoints";
@@ -6,6 +7,7 @@ import { getStreamlyUserName } from "../../lib/streamlyUsers";
 import { useChannels } from "../../store/channels";
 import { useFavoriteStore } from "../../store/favorites";
 import { useFollowStore } from "../../store/follows";
+import { useHistoryStore } from "../../store/history";
 import { ChatPanel } from "../chat/ChatPanel";
 import { StreamPlayer } from "../player/StreamPlayer";
 
@@ -26,6 +28,14 @@ export function WatchPage() {
   const toggleFollow = useFollowStore((state) => state.toggle);
   const favoritedIds = useFavoriteStore((state) => state.ids);
   const toggleFavorite = useFavoriteStore((state) => state.toggle);
+
+  // ponytail: 視聴履歴は「このチャンネルを開いた」だけを端末内に記録する(再生開始や視聴時間の
+  // 判定はAPIが無く自前計測になるので、必要になってから足す)。
+  const recordHistory = useHistoryStore((state) => state.record);
+  const selectedChannelId = selectedChannel?.id;
+  useEffect(() => {
+    if (selectedChannelId) recordHistory(selectedChannelId);
+  }, [selectedChannelId, recordHistory]);
 
   const following = selectedChannel ? followedIds.includes(selectedChannel.id) : false;
   const favorited = selectedChannel ? favoritedIds.includes(selectedChannel.id) : false;

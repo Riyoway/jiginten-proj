@@ -30,10 +30,11 @@ describe("AppShell", () => {
     expect(await screen.findByRole("link", { name: /^ライブ$/ })).toHaveAttribute("href", "/watch");
     // お気に入りは端末内保存で実装済みなので、無効なボタンではなく実ページへのリンク
     expect(await screen.findByRole("link", { name: /^お気に入り$/ })).toHaveAttribute("href", "/favorites");
+    expect(await screen.findByRole("link", { name: /^フォロー中$/ })).toHaveAttribute("href", "/follows");
+    expect(await screen.findByRole("link", { name: /^履歴$/ })).toHaveAttribute("href", "/history");
 
-    for (const label of ["フォロー中", "人気", "履歴"]) {
-      expect(screen.getByRole("button", { name: label })).toBeDisabled();
-    }
+    // 人気はランキングAPIが無いため一覧を出せない
+    expect(screen.getByRole("button", { name: "人気" })).toBeDisabled();
   });
 
   it("keeps search disabled and shows no fabricated notification count", async () => {

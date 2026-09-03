@@ -1,6 +1,6 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
 import { AppShell } from "../components/layout/AppShell";
-import { FavoritesPage } from "../features/favorites/FavoritesPage";
+import { FavoritesPage, FollowsPage, HistoryPage } from "../features/collections/CollectionPages";
 import { HomePage } from "../features/home/HomePage";
 import { WatchPage } from "../features/watch/WatchPage";
 
@@ -34,7 +34,19 @@ const favoritesRoute = createRoute({
   component: FavoritesPage,
 });
 
-const routeTree = rootRoute.addChildren([homeRoute, watchRoute, favoritesRoute]);
+const followsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/follows",
+  component: FollowsPage,
+});
+
+const historyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/history",
+  component: HistoryPage,
+});
+
+const routeTree = rootRoute.addChildren([homeRoute, watchRoute, favoritesRoute, followsRoute, historyRoute]);
 
 export const router = createRouter({
   routeTree,

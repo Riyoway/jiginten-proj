@@ -25,17 +25,16 @@ import { ComingSoonPanel, PlaceholderRows } from "../ui/ComingSoonPanel";
 const navItems = [
   { to: "/" as const, label: "ホーム", icon: Home },
   { to: "/watch" as const, label: "ライブ", icon: Radio },
-  // お気に入りは端末内保存(store/favorites.ts)で実装済みなので実ページへ遷移する。
+  // お気に入り/フォロー中/履歴は端末内保存(store/{favorites,follows,history}.ts)で
+  // 実装済みなので実ページへ遷移する。
   { to: "/favorites" as const, label: "お気に入り", icon: Heart },
+  { to: "/follows" as const, label: "フォロー中", icon: Users },
+  { to: "/history" as const, label: "履歴", icon: History },
 ];
 
-// ponytail: フォロー中/人気/履歴は一覧を出せる状態にないため(フォローはstoreはあるが専用ページ未実装、
-// 人気・履歴はAPIが無い)、「押せない」ことが分かるmuted buttonとして項目だけ置く。
-const disabledNavItems = [
-  { label: "フォロー中", icon: Users },
-  { label: "人気", icon: Flame },
-  { label: "履歴", icon: History },
-];
+// ponytail: 人気はランキングAPIが無く一覧を出せないため、「押せない」ことが分かる
+// muted buttonとして項目だけ置く。
+const disabledNavItems = [{ label: "人気", icon: Flame }];
 
 // ponytail: プロフィール/設定/ヘルプも同じ理由(実装先のページ・APIが無い)で
 // 選択不可のまま項目だけ用意しておく。
