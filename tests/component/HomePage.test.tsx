@@ -7,7 +7,7 @@ describe("HomePage", () => {
   it("renders the hero heading and a real link to /watch", async () => {
     render(<RouterProvider router={router} />);
 
-    expect(await screen.findByRole("heading", { name: /見る、話す、贈る/ })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /好きな配信を見つけて/ })).toBeInTheDocument();
 
     const links = await screen.findAllByRole("link");
     expect(links.some((link) => link.getAttribute("href") === "/watch")).toBe(true);
@@ -27,7 +27,7 @@ describe("HomePage", () => {
 
   it("does not leak developer-facing wording to end users", async () => {
     render(<RouterProvider router={router} />);
-    await screen.findByRole("heading", { name: /見る、話す、贈る/ });
+    await screen.findByRole("heading", { name: /好きな配信を見つけて/ });
 
     const body = document.body.textContent ?? "";
     for (const term of ["API", "スターター", "SSE", "HLS", "バックエンド", "EventSource"]) {

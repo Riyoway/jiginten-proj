@@ -1,0 +1,108 @@
+/* src/features/watch/WatchPage.tsx */
+
+.watch-page {
+  min-height: calc(100vh - 74px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(310px, 360px);
+  gap: 14px;
+  padding: 14px;
+}
+
+.watch-main {
+  min-width: 0;
+}
+
+.stream-meta {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.channel-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 17px;
+}
+
+.channel-row > img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stream-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.stream-copy h1 {
+  margin: 5px 0 2px;
+  font-size: clamp(17px, 2vw, 22px);
+  letter-spacing: -0.03em;
+}
+
+.stream-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stream-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.stream-actions button {
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+  border-radius: 10px;
+  color: #c6ceda;
+}
+
+@media (max-width: 960px) {
+  .watch-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .watch-page {
+    min-height: auto;
+    padding: 8px;
+    padding-bottom: 82px;
+  }
+
+  .channel-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .channel-row > img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .stream-copy {
+    width: calc(100% - 62px);
+    flex: none;
+  }
+
+  .stream-actions {
+    width: 100%;
+  }
+
+  .stream-actions button {
+    flex: 1;
+    justify-content: center;
+  }
+}

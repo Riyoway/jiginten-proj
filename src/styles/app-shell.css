@@ -1,0 +1,252 @@
+/* src/components/layout/AppShell.tsx */
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 22px 14px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  border-right: 1px solid var(--line);
+  background: rgba(7, 10, 16, 0.92);
+  backdrop-filter: blur(22px);
+  z-index: 20;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 18px;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(124, 77, 255, 0.28);
+}
+
+.side-nav {
+  display: grid;
+  gap: 6px;
+}
+
+.nav-item {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  background: transparent;
+  color: #bbc4d3;
+  cursor: pointer;
+  transition: 160ms ease;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.045);
+  color: #fff;
+}
+
+.nav-item.active {
+  color: #c7b7ff;
+  background: linear-gradient(90deg, rgba(124, 77, 255, 0.2), rgba(124, 77, 255, 0.08));
+  box-shadow: inset 2px 0 0 var(--purple-2);
+}
+
+.nav-item.muted {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.sidebar-spacer {
+  flex: 1;
+}
+
+.profile-card {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.profile-card img,
+.top-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--line-strong);
+}
+
+.profile-card div {
+  min-width: 0;
+  display: grid;
+}
+
+.profile-card strong {
+  font-size: 13px;
+}
+
+.profile-card small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.workspace {
+  min-width: 0;
+}
+
+main {
+  min-width: 0;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  height: 74px;
+  padding: 14px clamp(16px, 2.2vw, 34px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: linear-gradient(180deg, rgba(7, 10, 16, 0.98), rgba(7, 10, 16, 0.82));
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+}
+
+.search-field {
+  width: min(520px, 48vw);
+}
+
+.top-actions {
+  position: absolute;
+  right: clamp(16px, 2.2vw, 34px);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+/* ponytail: HeroUI's own .button svg rule forces a 16px icon at this
+   breakpoint via a more specific selector than a plain class match beats;
+   !important is the lazy, correctly-scoped way past it. */
+.topbar-icon-btn svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+@media (max-width: 1180px) {
+  .app-shell {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .brand > span:last-child,
+  .nav-item span,
+  .profile-card div,
+  .sidebar .profile-card,
+  .sidebar .coming-soon-panel {
+    display: none;
+  }
+
+  .brand {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    z-index: 30;
+    height: 64px;
+    padding: 7px 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid var(--line);
+    border-radius: 16px 16px 0 0;
+    background: rgba(8, 11, 18, 0.96);
+  }
+
+  .brand,
+  .sidebar-spacer,
+  .profile-card,
+  .sidebar > .sidebar-icon-btn,
+  .sidebar .coming-soon-panel,
+  .nav-item.muted {
+    display: none;
+  }
+
+  .side-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .nav-item {
+    min-height: 48px;
+    border-radius: 11px;
+  }
+
+  .nav-item span {
+    display: inline;
+    font-size: 11px;
+  }
+
+  .topbar {
+    height: 64px;
+    justify-content: flex-start;
+    padding: 10px 12px;
+  }
+
+  .search-field {
+    width: min(58vw, 320px);
+  }
+
+  .topbar-kbd,
+  .top-actions .topbar-cta,
+  .top-actions .topbar-icon-btn {
+    display: none;
+  }
+
+  .top-actions {
+    right: 12px;
+  }
+}
