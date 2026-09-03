@@ -1,7 +1,25 @@
 import { RouterProvider } from "@tanstack/react-router";
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { render, screen, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 import { router } from "../../src/app/router";
+import type { Channel } from "../../src/lib/api/contracts";
+import { useChannelStore } from "../../src/store/channels";
+
+// ponytail: /channels.jsonへの実ネットワークアクセスをテストで発生させないため、
+// storeへ直接シードしてload()を早期returnさせる(Docs/DEVELOPMENT.mdの方針通り)。
+const MOCK_CHANNELS: Channel[] = [
+  { id: "llamigos", title: "Caminandes 3: Llamigos", playlist: "/ch/llamigos/stream.m3u8", default: true },
+  {
+    id: "llama-drama",
+    title: "Caminandes 1: Llama Drama",
+    playlist: "/ch/llama-drama/stream.m3u8",
+    default: false,
+  },
+];
+
+beforeEach(() => {
+  useChannelStore.setState({ channels: MOCK_CHANNELS, status: "loaded" });
+});
 
 describe("HomePage", () => {
   it("renders the hero heading and a real link to /watch", async () => {
@@ -10,7 +28,18 @@ describe("HomePage", () => {
     expect(await screen.findByRole("heading", { name: /好きな配信を見つけて/ })).toBeInTheDocument();
 
     const links = await screen.findAllByRole("link");
-    expect(links.some((link) => link.getAttribute("href") === "/watch")).toBe(true);
+    expect(links.some((link) => link.getAttribute("href")?.startsWith("/watch"))).toBe(true);
+  });
+
+  it("renders one live card per real channel from /channels.json", async () => {
+    render(<RouterProvider router={router} />);
+
+    const grid = (await screen.findByText("おすすめのライブ")).closest("section");
+    if (!grid) throw new Error("live grid section not found");
+
+    for (const channel of MOCK_CHANNELS) {
+      expect(within(grid).getByText(channel.title)).toBeInTheDocument();
+    }
   });
 
   it("shows coming-soon placeholders instead of fabricated data", async () => {

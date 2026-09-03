@@ -6,9 +6,10 @@
 
 1. `STACK.md`
 2. `API-INTEGRATION.md`
-3. `ARCHITECTURE.md`
-4. `FRONTEND-UX.md`
-5. `LIMITATIONS.md`
-6. `DEVELOPMENT.md`
+3. `HLS-SERVER.md`（HLSのマルチチャンネル仕様更新）
+4. `ARCHITECTURE.md`
+5. `FRONTEND-UX.md`
+6. `LIMITATIONS.md`
+7. `DEVELOPMENT.md`
 
-バックエンドが固定されているため、このプロジェクトではサーバー機能を推測して増やすのではなく、既存の4系統のI/Oを安全にラップし、プレイヤー・リアルタイムUI・レスポンシブ・アクセシビリティ・テストに集中します。
+バックエンドが固定されているため、このプロジェクトではサーバー機能を推測して増やすのではなく、既存のHLS(マルチチャンネル)・コメント・ギフトのI/Oを安全にラップし、プレイヤー・リアルタイムUI・レスポンシブ・アクセシビリティ・テストに集中します。

@@ -110,6 +110,31 @@
   z-index: 10;
 }
 
+/* src/features/player/ChannelSelector.tsx */
+
+.channel-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.channel-tab {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.channel-tab.active {
+  color: #c7b7ff;
+  border-color: rgba(159, 124, 255, 0.5);
+  background: rgba(124, 77, 255, 0.16);
+}
+
 @media (max-width: 960px) {
   .player-frame {
     height: auto;

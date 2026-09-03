@@ -4,6 +4,15 @@ export interface Gift {
   iconUrl: string;
 }
 
+export interface Channel {
+  id: string;
+  title: string;
+  playlist: string;
+  default: boolean;
+  // 出典情報など、実レスポンスにしか存在しない未確定フィールド用。
+  [key: string]: unknown;
+}
+
 export interface IncomingComment {
   id?: string;
   text?: string;

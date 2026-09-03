@@ -111,6 +111,44 @@
   color: #fff;
 }
 
+.sidebar-channels {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-channels-title {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.sidebar-channel-list {
+  display: grid;
+  gap: 4px;
+}
+
+.sidebar-channel-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: #bbc4d3;
+  font-size: 12px;
+}
+
+.sidebar-channel-link:hover {
+  background: rgba(255, 255, 255, 0.045);
+  color: #fff;
+}
+
+.sidebar-channel-link img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .sidebar-spacer {
   flex: 1;
 }
@@ -201,6 +239,7 @@ main {
   .profile-card div,
   .sidebar .profile-card,
   .sidebar .coming-soon-panel,
+  .sidebar-channels,
   .pwa-install-btn {
     display: none;
   }
@@ -242,6 +281,7 @@ main {
   .profile-card,
   .sidebar > .sidebar-icon-btn,
   .sidebar .coming-soon-panel,
+  .sidebar-channels,
   .pwa-install-btn,
   .nav-item.muted {
     display: none;

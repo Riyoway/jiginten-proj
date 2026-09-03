@@ -9,6 +9,7 @@ export function useHlsPlayer(video: HTMLVideoElement | null, source: string) {
 
   useEffect(() => {
     if (!video) return;
+    setError(null); // ponytail: チャンネル切り替え時に前のチャンネルのエラー表示が残らないように
 
     const detectOrientation = () => {
       if (!video.videoWidth || !video.videoHeight) return;

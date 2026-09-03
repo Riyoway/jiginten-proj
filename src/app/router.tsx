@@ -17,9 +17,13 @@ const homeRoute = createRoute({
   component: HomePage,
 });
 
-const watchRoute = createRoute({
+export const watchRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/watch",
+  // channel未指定時はdefaultチャンネル(resolveSelectedChannelが解決)にフォールバックする。
+  validateSearch: (search: Record<string, unknown>): { channel?: string } => ({
+    channel: typeof search.channel === "string" ? search.channel : undefined,
+  }),
   component: WatchPage,
 });
 

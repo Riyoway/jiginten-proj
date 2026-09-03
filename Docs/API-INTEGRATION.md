@@ -3,24 +3,45 @@
 ## 前提
 
 今回バックエンドは変更できません。
-`Docs/reference/legacy.main.js` から確認できるI/Oは次の4つです。
+`Docs/reference/legacy.main.js` から確認できるコメント/ギフト系I/Oは次の3つです。
 
 ```text
-GET  stream.m3u8   -> HLS playback
 GET  /events       -> SSE comments
 POST /messages     -> comment / gift / gift+message
 GET  /items        -> gift catalog
 ```
 
+HLSサーバーは`Docs/HLS-SERVER.md`の更新により単一固定ストリームから3チャンネル配信になりました(下記「1. HLS」参照)。
+
 フロントエンドはこの契約を拡張したふりをせず、「既存APIから取れる情報をどう良い体験に変換するか」に集中します。
 
-## 1. HLS
+## 1. HLS(マルチチャンネル)
 
-Endpoint:
+Base URL:
 
 ```text
-https://intern-hls-server.tomaton.workers.dev/stream.m3u8
+https://intern-hls-server.tomaton.workers.dev
 ```
+
+```text
+GET /channels.json          -> チャンネル一覧(source of truth)
+GET /stream.m3u8            -> デフォルトチャンネルの互換フォールバック
+GET /ch/<id>/stream.m3u8    -> チャンネル別プレイリスト
+GET /ch/<id>/segments/{n}.ts
+```
+
+起動フロー:
+
+```text
+GET /channels.json
+  +-- success -> resolveSelectedChannel(channels, URLのchannel id)
+  |               -> URL指定 -> default:true -> channels[0]
+  +-- failure -> /stream.m3u8 にフォールバック
+```
+
+`playlist`はそのまま使い、相対URLの場合は`resolvePlaylistUrl`(`new URL(playlist, HLS_BASE_URL)`)で正規化します(`src/lib/api/channels.ts`)。チャンネル一覧をコードに固定しません。
+
+選択中チャンネルはZustand storeではなく**URL(`/watch?channel=<id>`)をsource of truthにします**(`src/app/router.tsx`の`validateSearch`)。
 
 利用方法:
 
@@ -30,6 +51,7 @@ https://intern-hls-server.tomaton.workers.dev/stream.m3u8
 - `object-fit: contain` を基本にし、勝手に映像をcropしない
 - autoplayはブラウザ制限を考慮してmuted開始
 - Fullscreenはvideo単体ではなくoverlayを含むplayer frameに対して行う
+- 各チャンネルはループしているが「同じチャンネルの視聴者は同じ時点を見る」ライブ配信として扱う。VODのような0秒からの再生・シーク位置の表示はしない
 
 APIが固定でも改善できるもの:
 
@@ -37,11 +59,15 @@ APIが固定でも改善できるもの:
 - mute/volume
 - fullscreen
 - keyboard shortcuts
-- quality selector（master playlistに複数levelが存在する場合）
+- quality selector（実際に複数levelが検出された場合のみ表示。master playlistの構造は未確認のため決め打ちしない）
 - reconnect/recover UI
 - orientation-aware layout
 - Media Session API
 - Picture-in-Picture（必要なら追加）
+
+### コメント/ギフトはチャンネル別にしない
+
+`/events`・`/messages`・`/items`のpayloadに`channelId`は含まれていません。HLSが3チャンネルになっても、**チャットは全チャンネル共通の1本のまま**扱います。「今見ているチャンネルのコメントだけ表示」のようなフロント側だけの偽の分離はしません。バックエンドに`channelId`付きの契約が追加されない限りこの方針は変わりません。
 
 ## 2. SSE comments
 

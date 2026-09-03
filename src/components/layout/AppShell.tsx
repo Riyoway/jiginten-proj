@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { usePwaInstallPrompt } from "../../lib/pwaInstall";
+import { useChannels } from "../../store/channels";
 import { ComingSoonPanel, PlaceholderRows } from "../ui/ComingSoonPanel";
 
 const navItems = [
@@ -44,6 +45,7 @@ const userMenuItems = [
 
 export function AppShell({ children }: PropsWithChildren) {
   const { canInstall, promptInstall } = usePwaInstallPrompt();
+  const { channels, status } = useChannels();
 
   return (
     <div className="app-shell">
@@ -71,9 +73,33 @@ export function AppShell({ children }: PropsWithChildren) {
           ))}
         </nav>
 
-        <ComingSoonPanel eyebrow="CHANNELS" title="おすすめチャンネル" note="近日公開予定です">
-          <PlaceholderRows />
-        </ComingSoonPanel>
+        {channels.length > 0 ? (
+          <div className="sidebar-channels">
+            <span className="eyebrow">CHANNELS</span>
+            <strong className="sidebar-channels-title">チャンネル</strong>
+            <div className="sidebar-channel-list">
+              {channels.map((channel) => (
+                <Link
+                  key={channel.id}
+                  className="sidebar-channel-link"
+                  to="/watch"
+                  search={{ channel: channel.id }}
+                >
+                  <img src="/avatars/avatar1.png" alt="" />
+                  <span>{channel.title}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <ComingSoonPanel
+            eyebrow="CHANNELS"
+            title="チャンネル"
+            note={status === "error" ? "配信一覧を取得できませんでした" : "近日公開予定です"}
+          >
+            <PlaceholderRows />
+          </ComingSoonPanel>
+        )}
 
         <Button
           className="pwa-install-btn"

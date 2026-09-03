@@ -2,7 +2,8 @@
 
 ## APIから確認できるもの
 
-- 1つのHLS stream URL
+- HLSチャンネル一覧(`/channels.json`、id/title/playlist/default)
+- チャンネル別HLS再生(`/ch/<id>/stream.m3u8`)、単一互換ストリームURL(`/stream.m3u8`)
 - SSE comments
 - message POST
 - gift item list
@@ -14,8 +15,6 @@
 - user name
 - user avatar
 - authentication
-- stream list
-- stream ID
 - channel profile
 - follow state
 - favorites sync
@@ -44,7 +43,7 @@
 
 ### Home recommendations
 
-コンセプトデザインのレイアウト（カテゴリー・複数配信グリッド・フォロー中・トップギフター）は再現しますが、数値・名前・ランキングは実APIが追加されるまでmockをproduction UIの実データとして見せません。該当セクションは`ComingSoonPanel`で「近日公開」と明示し、抽象的なplaceholder行のみを表示します。
+配信グリッドは`/channels.json`により実データになりました(チャンネル数ぶんの`StreamCard`をレンダー、水増しのダミーカードは追加しません)。一方カテゴリー・フォロー中・トップギフターは引き続き対応APIが無いため、数値・名前・ランキングを実データとして見せません。該当セクションは`ComingSoonPanel`で「近日公開」と明示し、抽象的なplaceholder行のみを表示します。
 
 ### Follow / Favorites / History
 
@@ -54,11 +53,12 @@
 ## 追加APIが来たら優先する順番
 
 1. stable `userId` / display name
-2. stream metadata / stream list
+2. ~~stream metadata / stream list~~ → `/channels.json`で解決済み(`Docs/HLS-SERVER.md`)
 3. user profile / avatar
 4. follow state
 5. viewer count
 6. moderation
 7. ranking / recommendation
+8. channel-scoped comments / gifts（`/events`・`/messages`に`channelId`が追加されたら）
 
 ユーザー識別が追加されれば、チャットUIの品質が最も大きく改善します。

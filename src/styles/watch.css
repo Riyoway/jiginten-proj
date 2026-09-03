@@ -69,6 +69,11 @@
   color: #c6ceda;
 }
 
+.channel-fallback-note {
+  padding: 0 17px 14px;
+  font-size: 11px;
+}
+
 @media (max-width: 960px) {
   .watch-page {
     grid-template-columns: 1fr;
