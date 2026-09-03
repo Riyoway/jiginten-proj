@@ -180,39 +180,57 @@ commentInput?.addEventListener("input", resizeCommentInput);
 const ITEMS_URL = "https://intern-comment-server.intern-comment-server.deno.net/items";
 const itemShortcuts = document.querySelector(".item-shortcuts");
 const itemToggleBtn = document.querySelector(".gift-btn");
+let itemsLoaded = false;
 
-itemToggleBtn?.addEventListener("click", () => {
-  itemShortcuts.hidden = !itemShortcuts.hidden;
-  itemToggleBtn.setAttribute("aria-expanded", String(!itemShortcuts.hidden));
-});
+// アイテム一覧を初めて開いた時だけ取得する
+async function loadItems() {
+  if (itemsLoaded || !itemShortcuts) return;
 
-if (itemShortcuts) {
-  fetch(ITEMS_URL)
-    .then((res) => {
-      if (!res.ok) throw new Error(`アイテム取得失敗: ${res.status}`);
-      return res.json();
-    })
-    .then(({ items }) => {
-      items.forEach((item) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "item-shortcut";
-        btn.dataset.itemId = item.id;
-        btn.setAttribute("aria-pressed", "false");
-        btn.append(createIconImg(item.iconUrl, item.name), item.name);
-        btn.addEventListener("click", () => {
-          const wasSelected = btn.classList.contains("is-selected");
-          clearItemSelection();
-          if (!wasSelected) {
-            btn.classList.add("is-selected");
-            btn.setAttribute("aria-pressed", "true");
-            selectedItemId = item.id;
-          } else {
-            btn.setAttribute("aria-pressed", "false");
-          }
-        });
-        itemShortcuts.appendChild(btn);
+  try {
+    const res = await fetch(ITEMS_URL);
+    if (!res.ok) throw new Error(`アイテム取得失敗: ${res.status}`);
+
+    const { items } = await res.json();
+
+    items.forEach((item) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "item-shortcut";
+      btn.dataset.itemId = item.id;
+      btn.setAttribute("aria-pressed", "false");
+      btn.append(createIconImg(item.iconUrl, item.name), item.name);
+
+      btn.addEventListener("click", () => {
+        const wasSelected = btn.classList.contains("is-selected");
+        clearItemSelection();
+
+        if (!wasSelected) {
+          btn.classList.add("is-selected");
+          btn.setAttribute("aria-pressed", "true");
+          selectedItemId = item.id;
+        } else {
+          btn.setAttribute("aria-pressed", "false");
+        }
       });
-    })
-    .catch((err) => console.error("アイテム一覧の取得に失敗:", err));
+
+      itemShortcuts.appendChild(btn);
+    });
+
+    itemsLoaded = true;
+  } catch (err) {
+    console.error("アイテム一覧の取得に失敗:", err);
+  }
 }
+
+itemToggleBtn?.addEventListener("click", async () => {
+  if (!itemShortcuts) return;
+
+  itemShortcuts.hidden = !itemShortcuts.hidden;
+  const isOpen = !itemShortcuts.hidden;
+
+  itemToggleBtn.setAttribute("aria-expanded", String(isOpen));
+
+  if (isOpen) {
+    await loadItems();
+  }
+});
