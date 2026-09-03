@@ -1,7 +1,7 @@
 import { Card } from "@heroui/react";
 import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Gamepad2, Gift, MessageCircle, Music, Palette, Play, Radio, Trophy } from "lucide-react";
+import { BookOpen, Gamepad2, Gift, MessageCircle, Music, Palette, Play, Trophy } from "lucide-react";
 import { useEffect } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../../components/ui/ComingSoonPanel";
 import { StreamCard } from "./StreamCard";
@@ -43,20 +43,8 @@ export function HomePage() {
                   <Play size={16} fill="currentColor" /> 配信を見る
                 </Link>
               </div>
-              <div className="capability-row">
-                <span>
-                  <Radio size={15} /> ライブ配信
-                </span>
-                <span>
-                  <MessageCircle size={15} /> リアルタイムチャット
-                </span>
-                <span>
-                  <Gift size={15} /> ギフト
-                </span>
-              </div>
             </div>
             <div className="hero-mascot-wrap">
-              <div className="hero-glow" />
               <img className="hero-mascot" src="/avatars/avatar1.png" alt="" />
             </div>
           </section>
