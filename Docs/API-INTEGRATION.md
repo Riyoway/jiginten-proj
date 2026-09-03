@@ -3,7 +3,7 @@
 ## 前提
 
 今回バックエンドは変更できません。
-`legacy/main.original.js` から確認できるI/Oは次の4つです。
+`Docs/reference/legacy.main.js` から確認できるI/Oは次の4つです。
 
 ```text
 GET  stream.m3u8   -> HLS playback
