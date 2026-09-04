@@ -202,8 +202,9 @@ Full rationale in `Docs/STACK.md`; skim it before swapping a dependency. Short v
 - Native `EventSource`/`fetch` — no axios/query library added for four simple, mostly long-lived
   connections.
 - Zustand only, no Redux — state surface is intentionally small.
-- PWA caches the app shell only; `NetworkOnly` is set for the HLS and comment-server origins in
-  `vite.config.ts` — do not change `.m3u8`, SSE, `/messages`, or `/items` to a caching strategy.
+- PWA caches the app shell and static assets only; external HLS/SSE/API requests are not registered
+  with Workbox and go directly to the network — do not change `.m3u8`, SSE, `/messages`, or `/items`
+  to a caching strategy.
 
 ## UI quality and animation
 

@@ -6,13 +6,9 @@ import { resolveEndpoints } from "./src/lib/api/endpointConfig.ts";
 
 export default defineConfig(({ mode }) => {
   // Viteは設定評価後に.envを読むため、設定漏れをdev/build開始前に止めるにはここで明示的に読む。
-  const endpoints = resolveEndpoints(loadEnv(mode, process.cwd(), "VITE_"));
-  const networkOnlyRoutes = [...new Set(Object.values(endpoints).map((value) => new URL(value).origin))].map(
-    (origin) => ({
-      urlPattern: new RegExp(`^${origin.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:/|$)`),
-      handler: "NetworkOnly" as const,
-    }),
-  );
+  // 外部APIをruntimeCachingに登録しない。特にSSEをWorkbox経由にすると、EventSourceの
+  // 再接続時にバックエンドが許可していないCORS preflightが発生するため、ブラウザから直接送る。
+  resolveEndpoints(loadEnv(mode, process.cwd(), "VITE_"));
 
   return {
     plugins: [
@@ -40,7 +36,6 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           navigateFallback: "/index.html",
-          runtimeCaching: networkOnlyRoutes,
         },
       }),
     ],

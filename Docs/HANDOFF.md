@@ -63,7 +63,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
    選択は`resolveSelectedChannel()`(URL指定 → `default:true` → 先頭 → `/stream.m3u8`)。
 6. **リファレンス画像(`Docs/reference/ui/*.png`)に無い装飾を足さない。** 特に、セクション見出しの上に
    紫色の英語マイクロラベル(`CATEGORIES`等)は付けない。Home Heroの「ようこそ Streamly へ」だけが例外。
-7. **Service WorkerでHLS/SSE/APIをキャッシュしない**(`vite.config.ts`の`NetworkOnly`)。
+7. **Service WorkerでHLS/SSE/APIを扱わない。** 外部APIはruntimeCachingに登録せず、ブラウザから直接ネットワークへ送る。
 8. **CSSは機能単位のファイルへ。** `src/styles.css`は`@import`だけ。新規ルールは`src/styles/<feature>.css`。
 9. **アニメーションWebPは`src`差し替え以外で止められない。** `animations/*.webp`はloop count 0の
    無限ループで、`<img>`に`play()`/`pause()`は無い。再生/停止は`iconUrl` ↔ `animationUrl`の差し替えで
