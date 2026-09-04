@@ -32,10 +32,10 @@ export function ChatComposer() {
         ...(cleanText ? { text: cleanText } : {}),
         ...(selectedGift ? { itemId: selectedGift.id } : {}),
       });
-      // ponytail: 減算はPOSTが2xxを返した時点。/eventsは全視聴者共通の1本でuserIdが無く、
-      // POSTのレスポンスも読めないため「SSEに流れてきたどれが自分のギフトか」は判定できない。
-      // サーバーが受理したことをクライアントから観測できる唯一の瞬間がここ。
-      // (チャットへの表示は従来どおりSSE任せで、ローカル追加はしない。)
+      // ponytail: 減算はPOSTが2xxを返した時点。サーバーが受理したことをここで確定できる。
+      // (POSTは 202 + {id, timestamp} を返し、そのidはSSEイベントのidと一致するので、
+      //  「自分の送信」をSSE側で特定することも一応できる。ただし残高を引くのに待つ理由が無く、
+      //  待つと取りこぼし時に引き忘れるだけなので採用しない。チャット表示は従来どおりSSE任せ。)
       if (selectedGift) spend(selectedGift.cost);
       setText("");
       setSelectedGift(null);
