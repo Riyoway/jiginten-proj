@@ -1,11 +1,14 @@
-import { useMemo } from "react";
 import { Gift as GiftIcon } from "lucide-react";
+import { useMemo } from "react";
 import type { ChatMessage } from "../../lib/api/contracts";
 import { getRandomAvatar } from "../../lib/avatars";
 
 export function ChatMessageView({ message }: { message: ChatMessage }) {
-  // ponytail: random per message.key, memoized so it doesn't reshuffle on re-render
-  const avatar = useMemo(() => getRandomAvatar(), [message.key]);
+  // ponytail: ChatPanelが key={message.key} で描画するのでインスタンス=1メッセージ。
+  // 依存なしで「そのメッセージの間だけ固定」になる(再描画で引き直さない)。
+  // message.key は payload.id なので、そこからアバターを導出してはいけない
+  // (CLAUDE.md: idやテキストから発言者の同一性を作らない)。
+  const avatar = useMemo(() => getRandomAvatar(), []);
 
   if (message.gift) {
     return (
@@ -14,7 +17,9 @@ export function ChatMessageView({ message }: { message: ChatMessage }) {
         <div className="chat-body">
           <div className="chat-meta">
             <strong>Guest</strong>
-            <span className="gift-chip"><GiftIcon size={12} /> GIFT</span>
+            <span className="gift-chip">
+              <GiftIcon size={12} /> GIFT
+            </span>
           </div>
           <div className="gift-highlight">
             {message.gift.iconUrl ? <img src={message.gift.iconUrl} alt="" /> : <GiftIcon size={24} />}

@@ -11,6 +11,5 @@ export const endpoints = {
     import.meta.env.VITE_MESSAGES_URL ??
     "https://intern-comment-server.intern-comment-server.deno.net/messages",
   gifts:
-    import.meta.env.VITE_GIFTS_URL ??
-    "https://intern-comment-server.intern-comment-server.deno.net/items",
+    import.meta.env.VITE_GIFTS_URL ?? "https://intern-comment-server.intern-comment-server.deno.net/items",
 } as const;

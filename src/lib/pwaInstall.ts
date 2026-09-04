@@ -12,7 +12,10 @@ function isStandalone() {
   // matchMedia — treat that as "can't tell, assume not installed" rather
   // than throwing.
   if (typeof window.matchMedia !== "function") return false;
-  return window.matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone === true;
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (navigator as { standalone?: boolean }).standalone === true
+  );
 }
 
 export function usePwaInstallPrompt() {

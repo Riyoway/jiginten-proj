@@ -23,31 +23,31 @@ export default defineConfig({
             src: "/favicon.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable"
-          }
-        ]
+            purpose: "any maskable",
+          },
+        ],
       },
       workbox: {
         navigateFallback: "/index.html",
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/intern-hls-server\.tomaton\.workers\.dev\//,
-            handler: "NetworkOnly"
+            handler: "NetworkOnly",
           },
           {
             urlPattern: /^https:\/\/intern-comment-server\.intern-comment-server\.deno\.net\//,
-            handler: "NetworkOnly"
-          }
-        ]
-      }
-    })
+            handler: "NetworkOnly",
+          },
+        ],
+      },
+    }),
   ],
   server: {
     port: 5173,
-    host: true
+    host: true,
   },
   preview: {
     port: 4173,
-    host: true
-  }
+    host: true,
+  },
 });

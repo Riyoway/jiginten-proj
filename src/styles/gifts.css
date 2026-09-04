@@ -5,6 +5,12 @@
   border-bottom: 1px solid var(--line);
   max-height: 270px;
   overflow: auto;
+  /* ponytail: chat-listと同じ扱い。パネル内にネイティブスクロールバーを出さない。 */
+  scrollbar-width: none;
+}
+
+.gift-picker::-webkit-scrollbar {
+  display: none;
 }
 
 .panel-heading.compact {

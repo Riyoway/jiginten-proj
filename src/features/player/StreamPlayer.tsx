@@ -1,11 +1,4 @@
-import {
-  Expand,
-  MessageSquareText,
-  Pause,
-  Play,
-  Volume2,
-  VolumeX,
-} from "lucide-react";
+import { Expand, MessageSquareText, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePreferenceStore } from "../../store/preferences";
 import { DanmakuLayer } from "../danmaku/DanmakuLayer";
@@ -68,7 +61,11 @@ export function StreamPlayer({ source }: StreamPlayerProps) {
         <button type="button" onClick={togglePlay} aria-label={playing ? "一時停止" : "再生"}>
           {playing ? <Pause size={21} /> : <Play size={21} />}
         </button>
-        <button type="button" onClick={() => setMuted(!muted)} aria-label={muted ? "ミュート解除" : "ミュート"}>
+        <button
+          type="button"
+          onClick={() => setMuted(!muted)}
+          aria-label={muted ? "ミュート解除" : "ミュート"}
+        >
           {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
         </button>
         <span className="live-dot" />

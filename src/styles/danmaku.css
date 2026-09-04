@@ -33,8 +33,12 @@
 }
 
 @keyframes danmaku-slide {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(calc(-100vw - 100%), 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-100vw - 100%), 0, 0);
+  }
 }
 
 @media (max-width: 720px) {

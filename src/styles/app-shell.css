@@ -124,14 +124,14 @@
 
 .sidebar-channel-list {
   display: grid;
-  gap: 4px;
+  gap: 0;
 }
 
 .sidebar-channel-link {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
+  padding: 4px 10px;
   border-radius: 10px;
   color: #bbc4d3;
   font-size: 12px;
@@ -210,15 +210,20 @@ main {
   min-width: 0;
 }
 
+/* ponytail: 検索欄を中央に置きつつ右側のアクション(アイコン/アバター画像)を
+   position:absoluteで重ねていたため、幅が中途半端なときに両者が重なっていた。
+   3トラックのgridにすると、中央トラックが縮んで避けるので重なりが起こり得ない。 */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 15;
   height: 74px;
   padding: 14px clamp(16px, 2.2vw, 34px);
-  display: flex;
+  display: grid;
+  /* 両端は1fr(= minmax(auto, 1fr))なので、右トラックはアクションの実寸まで必ず広がる。
+     中央は最大520pxで、狭いときはそこが縮んで検索欄が避ける。 */
+  grid-template-columns: 1fr minmax(0, 520px) 1fr;
   align-items: center;
-  justify-content: center;
   gap: 18px;
   background: linear-gradient(180deg, rgba(7, 10, 16, 0.98), rgba(7, 10, 16, 0.82));
   backdrop-filter: blur(20px);
@@ -226,22 +231,31 @@ main {
 }
 
 .search-field {
-  width: min(520px, 48vw);
+  grid-column: 2;
+  width: 100%;
 }
 
 .top-actions {
-  position: absolute;
-  right: clamp(16px, 2.2vw, 34px);
+  grid-column: 3;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 9px;
+}
+
+/* ponytail: dockに入らないインストールボタンだけモバイルのtopbarへ出す
+   (desktopはsidebarの.pwa-install-btnが担当するので、そちらでは隠す)。 */
+.topbar-install-btn {
+  display: none;
 }
 
 /* ponytail: HeroUI's own .button svg rule forces a 16px icon at this
    breakpoint via a more specific selector than a plain class match beats;
    !important is the lazy, correctly-scoped way past it. */
 .topbar-icon-btn svg {
+  /* biome-ignore lint/complexity/noImportantStyles: HeroUI側の .button svg がより高い詳細度で16pxを指定しているため */
   width: 22px !important;
+  /* biome-ignore lint/complexity/noImportantStyles: 同上 */
   height: 22px !important;
 }
 
@@ -276,6 +290,9 @@ main {
     display: block;
   }
 
+  /* ponytail: iOSのtab barに合わせる。端まで伸ばして角丸なし、上辺だけhairline、
+     背景は半透明+blurでスクロールしたコンテンツが透ける。高さは内容なりで、
+     home indicator分の余白はsafe-area-insetで確保する(固定pxで足すと機種で合わない)。 */
   .sidebar {
     position: fixed;
     left: 0;
@@ -283,13 +300,15 @@ main {
     bottom: 0;
     top: auto;
     z-index: 30;
-    height: 64px;
-    padding: 7px 10px;
-    display: grid;
-    grid-template-columns: 1fr;
-    border: 1px solid var(--line);
-    border-radius: 16px 16px 0 0;
-    background: rgba(8, 11, 18, 0.96);
+    height: auto;
+    padding: 5px 2px calc(4px + env(safe-area-inset-bottom));
+    display: block;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 0;
+    background: rgba(8, 11, 18, 0.72);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
   }
 
   .brand,
@@ -298,44 +317,97 @@ main {
   .sidebar > .sidebar-icon-btn,
   .sidebar .coming-soon-panel,
   .sidebar-channels,
-  .pwa-install-btn,
-  .nav-item.muted {
+  .pwa-install-btn {
     display: none;
   }
 
+  /* ponytail: 列数を固定するとnav項目を増減したときにバーからはみ出す(お気に入りが
+     見えなくなっていた)。項目数に合わせて常に1行へ並べる。 */
   .side-nav {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 0;
   }
 
+  /* ponytail: iOSのtab barはアイコンの下にラベル。tap領域は列いっぱい(高さ49px)なので
+     見た目のpaddingを詰めても44px以上を確保できる。 */
   .nav-item {
-    min-height: 48px;
-    border-radius: 11px;
+    min-height: 49px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px 1px 2px;
+    border-radius: 0;
+    color: var(--muted);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nav-item svg {
+    width: 23px;
+    height: 23px;
   }
 
   .nav-item span {
     display: inline;
-    font-size: 11px;
+    font-size: 10px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  /* ponytail: activeはtint色だけで示す。デスクトップのrail用の左端barと横向き
+     gradientはtab barでは意味が逆(選択が「行」ではなく「列」)なので打ち消す。 */
+  .nav-item.active,
+  .nav-item.active:hover {
+    color: var(--purple-2);
+    background: none;
+    box-shadow: none;
+  }
+
+  /* タップ端末にhover状態は残らないので、押した瞬間のフィードバックだけ出す。 */
+  .nav-item:hover {
+    background: none;
+    color: var(--muted);
+  }
+
+  .nav-item:active {
+    opacity: 0.45;
+    transition-duration: 60ms;
+  }
+
+  /* 「人気」はAPIが無く遷移先が無いが、sidebarと同じくdockにも項目として並べる。 */
+  .nav-item.muted {
+    opacity: 0.45;
+  }
+
+  .nav-item.muted:active {
+    opacity: 0.45;
   }
 
   .topbar {
     height: 64px;
-    justify-content: flex-start;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
     padding: 10px 12px;
   }
 
   .search-field {
-    width: min(58vw, 320px);
+    grid-column: 1;
+    max-width: 320px;
+  }
+
+  .top-actions {
+    grid-column: 2;
   }
 
   .topbar-kbd,
   .top-actions .topbar-cta,
-  .top-actions .topbar-icon-btn {
+  .top-actions .topbar-icon-btn:not(.topbar-install-btn) {
     display: none;
   }
 
-  .top-actions {
-    right: 12px;
+  .topbar-install-btn {
+    display: inline-flex;
   }
 }
