@@ -40,6 +40,16 @@ async function selectGift(name: RegExp) {
 const balance = () => useCreditStore.getState().balance;
 
 describe("ChatComposer credits", () => {
+  it("grows the text field for multiline input", () => {
+    render(<ChatComposer />);
+    const textarea = screen.getByPlaceholderText("メッセージを入力...");
+    Object.defineProperty(textarea, "scrollHeight", { configurable: true, value: 84 });
+
+    fireEvent.change(textarea, { target: { value: "一行目\n二行目" } });
+
+    expect(textarea).toHaveStyle({ height: "84px" });
+  });
+
   it("subtracts the gift cost once the send is accepted", async () => {
     render(<ChatComposer />);
     await selectGift(/拍手/);

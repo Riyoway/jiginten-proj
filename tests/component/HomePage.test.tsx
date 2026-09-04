@@ -131,6 +131,7 @@ describe("HomePage", () => {
 
     const row = within(panel).getByRole("link", { name: /Streamly User/ });
     expect(row.getAttribute("href")).toContain("channel=llama-drama");
+    expect(row.querySelector(".rail-channel-thumbnail")).toHaveAttribute("src", "/avatars/avatar1.png");
     const channelIds = MOCK_CHANNELS.map((channel) => channel.id);
     expect(within(panel).getByText(getStreamlyUserName("llama-drama", channelIds))).toBeInTheDocument();
     expect(within(panel).getByText("すべて見る")).toHaveAttribute("href", "/follows");

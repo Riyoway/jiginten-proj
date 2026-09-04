@@ -70,24 +70,6 @@
   border-radius: 8px;
 }
 
-.connection-pill {
-  flex: 0 0 auto;
-  padding: 5px 8px;
-  border-radius: 999px;
-  font-size: 9px;
-  border: 1px solid var(--line);
-}
-
-.connection-pill.online {
-  color: #9be7c0;
-  background: rgba(53, 185, 117, 0.08);
-}
-
-.connection-pill.reconnecting {
-  color: #ffcf8a;
-  background: rgba(255, 166, 62, 0.08);
-}
-
 .chat-filters {
   position: relative;
   min-width: 0;
@@ -238,7 +220,6 @@
 .gift-message {
   margin: 7px 2px;
   padding: 10px;
-  border: 1px solid rgba(174, 105, 255, 0.42);
   background: rgba(123, 58, 190, 0.15);
 }
 
@@ -306,10 +287,30 @@
   color: #d8c8ff;
   background: rgba(124, 77, 255, 0.12);
   font-size: 11px;
+  animation: chat-follow-notice-exit 4s ease-out forwards;
 }
 
 .chat-follow-notice svg {
   color: #ff75b1;
+}
+
+@keyframes chat-follow-notice-exit {
+  0%,
+  72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-follow-notice {
+    animation: none;
+  }
 }
 
 .composer-wrap {
@@ -358,7 +359,10 @@
   width: 100%;
   min-height: 42px;
   max-height: 112px;
+  overflow-x: hidden;
+  overflow-y: auto;
   resize: none;
+  scrollbar-width: none;
   padding: 10px 12px;
   border: 1px solid var(--line-strong);
   border-radius: 11px;
@@ -366,6 +370,10 @@
   color: #f4f6fa;
   background: #0d121a;
   font-size: 12px;
+}
+
+.chat-composer textarea::-webkit-scrollbar {
+  display: none;
 }
 
 .chat-composer textarea:focus {

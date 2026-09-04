@@ -69,11 +69,11 @@ test("switching channels keeps the comment stream connected", async ({ page }) =
 
   await page.goto("/watch?channel=big-buck-bunny");
   await expect(page.getByRole("heading", { name: "Big Buck Bunny" })).toBeVisible({ timeout: 15000 });
-  await expect(page.locator(".connection-pill")).toHaveText("接続中", { timeout: 15000 });
+  await expect(page.locator(".connection-pill")).toHaveCount(0);
 
   await page.goto("/watch?channel=coffee-run");
   await expect(page.getByRole("heading", { name: "Coffee Run" })).toBeVisible({ timeout: 15000 });
-  await expect(page.locator(".connection-pill")).toHaveText("接続中", { timeout: 10000 });
+  await expect(page.locator(".connection-pill")).toHaveCount(0);
   expect(streamErrors).toEqual([]);
 });
 

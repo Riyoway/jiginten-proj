@@ -19,9 +19,10 @@ const FILTERS: { id: ChatFilter; label: string }[] = [
 
 export function ChatPanel({ followNotice = null }: ChatPanelProps) {
   const messages = useCommentStore((state) => state.messages);
-  const { connected } = useCommentStream();
+  useCommentStream();
   const listRef = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState<ChatFilter>("all");
+  const [followNoticeVisible, setFollowNoticeVisible] = useState(Boolean(followNotice));
   const filteredMessages = useMemo(
     () =>
       messages.filter((message) =>
@@ -29,7 +30,19 @@ export function ChatPanel({ followNotice = null }: ChatPanelProps) {
       ),
     [filter, messages],
   );
-  const showFollowNotice = Boolean(followNotice) && filter !== "gift";
+
+  useEffect(() => {
+    if (!followNotice) {
+      setFollowNoticeVisible(false);
+      return;
+    }
+
+    setFollowNoticeVisible(true);
+    const timeoutId = window.setTimeout(() => setFollowNoticeVisible(false), 4000);
+    return () => window.clearTimeout(timeoutId);
+  }, [followNotice]);
+
+  const showFollowNotice = Boolean(followNotice) && followNoticeVisible && filter !== "gift";
 
   useEffect(() => {
     const list = listRef.current;
@@ -52,9 +65,6 @@ export function ChatPanel({ followNotice = null }: ChatPanelProps) {
             ユーザー
           </button>
         </div>
-        <span className={`connection-pill ${connected ? "online" : "reconnecting"}`}>
-          {connected ? "接続中" : "再接続中"}
-        </span>
       </div>
 
       <fieldset className="chat-filters">

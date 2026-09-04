@@ -68,7 +68,7 @@ test("shows followed live streams with available channel details", async ({ page
   const panel = page.locator(".rail-panel").filter({ hasText: "フォロー中のライブ" });
   await expect(panel.getByRole("link", { name: "すべて見る" })).toHaveAttribute("href", "/follows");
   await expect(panel.locator(".rail-channel-row")).toHaveCount(1);
-  await expect(panel.locator(".rail-channel-thumbnail")).toBeVisible();
+  await expect(panel.locator(".rail-channel-thumbnail")).toHaveAttribute("src", "/avatars/avatar1.png");
   await expect(panel.getByText("Big Buck Bunny")).toBeVisible();
   await expect(panel.getByText("コメディ")).toBeVisible();
 });

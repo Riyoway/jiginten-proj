@@ -14,6 +14,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   useCommentStore.getState().clear();
 });
 
@@ -38,6 +39,8 @@ describe("ChatPanel", () => {
     render(<ChatPanel />);
 
     expect(screen.getByText("コメントを待っています")).toBeInTheDocument();
+    expect(screen.queryByText("接続中")).not.toBeInTheDocument();
+    expect(screen.queryByText("再接続中")).not.toBeInTheDocument();
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
@@ -79,6 +82,17 @@ describe("ChatPanel", () => {
     expect(screen.getByText("Guestさんがこの配信をフォローしました！")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "ギフト" }));
+
+    expect(screen.queryByText("Guestさんがこの配信をフォローしました！")).not.toBeInTheDocument();
+  });
+
+  it("hides the follow notice after it flows away", () => {
+    vi.useFakeTimers();
+    render(<ChatPanel followNotice="Guestさんがこの配信をフォローしました！" />);
+
+    expect(screen.getByText("Guestさんがこの配信をフォローしました！")).toBeInTheDocument();
+
+    act(() => vi.advanceTimersByTime(4000));
 
     expect(screen.queryByText("Guestさんがこの配信をフォローしました！")).not.toBeInTheDocument();
   });

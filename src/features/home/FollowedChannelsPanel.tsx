@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import type { Channel } from "../../lib/api/contracts";
 import { getStreamlyUserName } from "../../lib/streamlyUsers";
 import { useFollowStore } from "../../store/follows";
-import { StreamThumbnail } from "./StreamThumbnail";
 
 interface FollowedChannelsPanelProps {
   channels: Channel[];
@@ -36,7 +35,7 @@ export function FollowedChannelsPanel({ channels, loading }: FollowedChannelsPan
                 to="/watch"
                 search={{ channel: channel.id }}
               >
-                <StreamThumbnail channel={channel} className="rail-channel-thumbnail" />
+                <img className="rail-channel-thumbnail" src="/avatars/avatar1.png" alt="" />
                 <span className="rail-channel-body">
                   <span className="rail-channel-topline">
                     <span className="live-badge rail-channel-live-badge">LIVE</span>
