@@ -1,16 +1,24 @@
 /* src/features/gifts/GiftPicker.tsx */
 
+/* ponytail: 見出しとグループタブは固定したいので、スクロールするのは .gift-grid だけにする
+   (ピッカー全体をスクロールさせるとタブが上に流れて選べなくなる)。 */
 .gift-picker {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 320px;
   padding: 12px;
   border-bottom: 1px solid var(--line);
-  max-height: 270px;
-  overflow: auto;
-  /* ponytail: chat-listと同じ扱い。パネル内にネイティブスクロールバーを出さない。 */
-  scrollbar-width: none;
 }
 
-.gift-picker::-webkit-scrollbar {
-  display: none;
+/* HeroUIのTabsが出す data-slot は tabs / tabs-list / tabs-tab / tabs-panel。
+   パネルまでflexで縦に伸ばして、はみ出しを .gift-grid に受けさせる。 */
+.gift-tabs,
+.gift-tabs [data-slot="tabs-panel"] {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
 }
 
 .panel-heading.compact {
@@ -39,11 +47,20 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 7px;
+  min-height: 0;
+  overflow: auto;
+  align-content: start;
+  /* ponytail: chat-listと同じ扱い。パネル内にネイティブスクロールバーを出さない。 */
+  scrollbar-width: none;
+}
+
+.gift-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .gift-option {
   min-width: 0;
-  min-height: 72px;
+  min-height: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -56,18 +73,80 @@
   cursor: pointer;
 }
 
-.gift-option img {
+/* ponytail: column flexの中で縮まないよう固定する(overflow:hiddenの兄弟がいると
+   自動最小サイズが0になって、アイコンと名前が潰れる)。 */
+.gift-option-image {
   width: 28px;
   height: 28px;
+  flex: 0 0 auto;
   object-fit: contain;
 }
 
-.gift-option span {
+.gift-option-name {
   max-width: 100%;
+  flex: 0 0 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 9px;
+  line-height: 1.4;
+}
+
+/* ponytail: 長い名前(「大人気よくばりチーズたっぷりマルゲリータ」)があるので幅は固定のまま
+   省略表示。フルネームはtitle属性で見せる(Docs/ITEMS-API.md の要求)。 */
+.gift-option-cost {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+
+.gift-option:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.gift-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* ponytail: 残高の数字が右端で切れないよう、縮むのは見出し側に任せる。 */
+  flex: 0 0 auto;
+}
+
+.gift-balance {
+  color: #c7b7ff;
+  font-size: 10px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.gift-tabs {
+  margin-top: 2px;
+}
+
+/* ponytail: 「すべて」+4グループを幅340pxのパネルに並べるとラベルが2行に折れるので、
+   折り返さずに横スクロールさせる(スクロールバーは他のパネルと同じく隠す)。 */
+.gift-tab-list {
+  margin-bottom: 9px;
+  flex: 0 0 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.gift-tab-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* HeroUIはタブに width:100% を当てて等幅にするが、5個だと1個で幅を使い切ってしまう。
+   内容なりの幅にして横並びにする。 */
+.gift-tab-list [data-slot="tabs-tab"] {
+  flex: 0 0 auto;
+  width: auto;
+  padding-inline: 10px;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .gift-option.selected {

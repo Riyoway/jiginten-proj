@@ -517,13 +517,43 @@ animationUrl
 
 # 未確認事項
 
+## 確認済み: SSE の `item` は `/items` と同じ形
+
+`GET /events` を実測したところ、ギフト付きイベントの `item` は
+`cost` / `group` / `animationUrl` をそのまま含んでいた。
+
+```json
+{
+  "id": "6058...",
+  "text": null,
+  "item": {
+    "id": "star",
+    "name": "スター",
+    "iconUrl": ".../icons/star.webp?v=3440103d",
+    "cost": 50,
+    "group": "気持ち",
+    "animationUrl": null
+  },
+  "timestamp": "..."
+}
+```
+
+受信したギフトを表示・演出するために `/items` と突き合わせる必要はない。
+
+なお `animations/*.webp` は**loop count 0 の無限ループ**(clap は 192x192 / 20フレーム)。
+`<img>` に `play()` / `pause()` は無いので、再生・停止は
+`src` を `iconUrl` ↔ `animationUrl` で差し替えて表現する。
+
+---
+
+# 未確認事項
+
 今回提供された `GET /items` のレスポンスだけでは、
 以下の仕様は確認できていない。
 
 - `cost` が実際にサーバー側で消費・検証されるか
 - ユーザーごとの残高 API が存在するか
 - `animationUrl` をいつ / 何回再生すべきか
-- Gift 送信時に SSE へ `cost` / `group` / `animationUrl` が含まれるか
 - アイテムの並び順が API 上で保証されているか
 - group の順序が保証されているか
 - アイテム一覧の更新頻度

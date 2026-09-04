@@ -2,6 +2,7 @@ import { Expand, MessageSquareText, Pause, Play, Volume2, VolumeX } from "lucide
 import { useEffect, useRef, useState } from "react";
 import { usePreferenceStore } from "../../store/preferences";
 import { DanmakuLayer } from "../danmaku/DanmakuLayer";
+import { GiftOverlay } from "./GiftOverlay";
 import { useHlsPlayer } from "./useHlsPlayer";
 
 interface StreamPlayerProps {
@@ -50,6 +51,7 @@ export function StreamPlayer({ source }: StreamPlayerProps) {
       />
 
       <DanmakuLayer />
+      <GiftOverlay />
 
       <div className="player-badges">
         <span className="live-badge">LIVE</span>

@@ -37,6 +37,19 @@ describe("AppShell", () => {
     expect(screen.getByRole("button", { name: "人気" })).toBeDisabled();
   });
 
+  it("shows the gift credits on a header control that no longer navigates", async () => {
+    render(<RouterProvider router={router} />);
+
+    const credits = await screen.findByRole("button", { name: /ギフトクレジット 3,000/ });
+    // 以前は /watch へのリンクだったが、残高表示に変わったので遷移させない
+    expect(credits.closest("a")).toBeNull();
+
+    // Homeの「ギフトを見る」CTAと混ざらないよう、topbarに絞って確認する
+    const topbar = credits.closest(".topbar");
+    if (!topbar) throw new Error("topbar not found");
+    expect(within(topbar as HTMLElement).queryByRole("link", { name: /ギフト/ })).not.toBeInTheDocument();
+  });
+
   it("keeps search disabled and shows no fabricated notification count", async () => {
     render(<RouterProvider router={router} />);
 

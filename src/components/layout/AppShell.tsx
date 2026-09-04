@@ -1,4 +1,4 @@
-import { Avatar, Button, Dropdown, InputGroup, Kbd, Label, TextField } from "@heroui/react";
+import { Avatar, Button, Dropdown, InputGroup, Kbd, Label, TextField, Tooltip } from "@heroui/react";
 import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
 import {
@@ -20,6 +20,7 @@ import type { PropsWithChildren } from "react";
 import { usePwaInstallPrompt } from "../../lib/pwaInstall";
 import { getStreamlyUserName } from "../../lib/streamlyUsers";
 import { useChannels } from "../../store/channels";
+import { useCreditStore } from "../../store/credits";
 import { ComingSoonPanel, PlaceholderRows } from "../ui/ComingSoonPanel";
 
 const navItems = [
@@ -47,6 +48,7 @@ const userMenuItems = [
 export function AppShell({ children }: PropsWithChildren) {
   const { canInstall, promptInstall } = usePwaInstallPrompt();
   const { channels, status } = useChannels();
+  const credits = useCreditStore((state) => state.balance);
 
   return (
     <div className="app-shell">
@@ -176,13 +178,26 @@ export function AppShell({ children }: PropsWithChildren) {
                 <Download size={22} />
               </Button>
             ) : null}
-            <Link
-              className={`topbar-icon-btn ${buttonVariants({ variant: "ghost", isIconOnly: true, size: "lg" })}`}
-              to="/watch"
-              aria-label="ギフトを見る"
-            >
-              <Gift size={22} />
-            </Link>
+            {/* ponytail: 以前は/watchへのリンクだったが、残高を見せるだけの表示に変えたので遷移しない。
+                Tooltipはhoverとキーボードフォーカスの両方で開く(HeroUIのCSSは@heroui/stylesに入っている)。
+                aria-labelに残高を入れて、ツールチップを開かなくても読み上げられるようにする。 */}
+            <Tooltip delay={150} closeDelay={100}>
+              <Button
+                className="topbar-icon-btn"
+                isIconOnly
+                size="lg"
+                variant="ghost"
+                aria-label={`ギフトクレジット ${credits.toLocaleString()}`}
+              >
+                <Gift size={22} />
+              </Button>
+              <Tooltip.Content>
+                <span className="topbar-credit-value">{credits.toLocaleString()} クレジット</span>
+                <span className="topbar-credit-note">
+                  この端末だけに保存されます(サーバーの残高ではありません)
+                </span>
+              </Tooltip.Content>
+            </Tooltip>
             <Dropdown>
               <Button
                 className="user-menu-trigger"

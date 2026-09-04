@@ -26,6 +26,11 @@ export function HomePage() {
   const banner = useMemo(() => getRandomBanner(), []);
 
   const { channels, status } = useChannels();
+  // ponytail: ギフトCTAの飛び先。channelsは非同期に埋まるので依存は[channels](bannerの[]とは違う)。
+  // 引き直るのは取得完了の1回だけ。未取得ならパラメータ無し = resolveSelectedChannelがdefaultへ落とす。
+  // hrefは描画時に決まるので「アクセスごと」にランダム。onClickでの都度抽選にすると
+  // 中クリックや新規タブが壊れるのでやらない。
+  const giftChannel = useMemo(() => channels[Math.floor(Math.random() * channels.length)], [channels]);
   const channelsLoading = status === "loading" || status === "idle";
 
   return (
@@ -114,7 +119,11 @@ export function HomePage() {
               <Card.Description>ライブ視聴画面から実際にギフトを送れます。</Card.Description>
             </Card.Header>
             <Card.Footer>
-              <Link className={buttonVariants({ variant: "primary" })} to="/watch">
+              <Link
+                className={buttonVariants({ variant: "primary" })}
+                to="/watch"
+                search={{ channel: giftChannel?.id }}
+              >
                 <Gift size={16} /> ギフトを見る
               </Link>
             </Card.Footer>

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { create } from "zustand";
 import type { ChatMessage, IncomingComment } from "../lib/api/contracts";
 
@@ -30,6 +31,9 @@ export const useCommentStore = create<CommentState>((set, get) => ({
             id: payload.item.id,
             name: payload.item.name,
             iconUrl: payload.item.iconUrl ?? "",
+            cost: payload.item.cost,
+            // アニメーション再生に必要。SSEがそのまま持ってくるので/itemsとの突き合わせは不要。
+            animationUrl: payload.item.animationUrl ?? null,
           }
         : undefined,
     };
@@ -44,3 +48,29 @@ export const useCommentStore = create<CommentState>((set, get) => ({
   },
   clear: () => set({ messages: [], seenIds: new Set<string>() }),
 }));
+
+/**
+ * マウント後に新しく届いたメッセージだけを callback に渡す。
+ * マウント時点で store にあった分は「新着」にしない(/watch を出入りしても過去分が再生されない)。
+ */
+// ponytail: 以前は messages.length と前回件数の差分で判定していたが、storeが上限300件に達すると
+// push が append+shift になって length が300に張り付き、それ以降ずっと「新着なし」になっていた
+// (= 弾幕が死ぬ)。最後に見た key を基準にすれば上限に依存しない。
+export function useFreshMessages(onFresh: (messages: ChatMessage[]) => void) {
+  const messages = useCommentStore((state) => state.messages);
+  const lastKey = useRef(messages.at(-1)?.key);
+  const callback = useRef(onFresh);
+
+  // messages の effect より先に宣言して、常に最新のcallbackが呼ばれるようにする。
+  useEffect(() => {
+    callback.current = onFresh;
+  });
+
+  useEffect(() => {
+    const index = messages.findIndex((message) => message.key === lastKey.current);
+    // 直前に見たメッセージが上限で押し出されていた場合(index === -1)は、全件を新着扱いせず何も出さない。
+    const fresh = lastKey.current && index === -1 ? [] : messages.slice(index + 1);
+    lastKey.current = messages.at(-1)?.key;
+    if (fresh.length > 0) callback.current(fresh);
+  }, [messages]);
+}

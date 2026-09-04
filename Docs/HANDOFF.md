@@ -32,7 +32,9 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 | チャンネル一覧(Home グリッド / sidebar) | **実データ** | `features/home/StreamCard.tsx`, `AppShell.tsx` |
 | チャット(SSE受信・送信) | **実データ** | `features/chat/*`, `store/comments.ts`(上限300件) |
 | 弾幕 | **実データ**(チャットと同一ストリーム) | `features/danmaku/DanmakuLayer.tsx` |
-| ギフト送信・一覧 | **実データ** | `features/gifts/*`, `lib/api/gifts.ts` |
+| ギフト送信・一覧 | **実データ**(cost / group / animationUrl まで使用) | `features/gifts/*`, `lib/api/gifts.ts` |
+| ギフトクレジット | **実データだが端末内のみ**(初期3000、送信成功でcost減算、補充なし) | `store/credits.ts` |
+| ギフトのアニメーション演出 | **実データ**(SSEのanimationUrlを5秒再生) | `features/player/GiftOverlay.tsx` |
 | フォロー / お気に入り | **実データだが端末内のみ**(localStorage) | `store/follows.ts`, `favorites.ts`, `createIdSetStore.ts` |
 | 視聴履歴 | **実データだが端末内のみ**(新しい順・上限30件、`WatchPage`のmountで記録) | `store/history.ts` |
 | フォロー中のライブ(Home右カラム) | **実データ**(フォロー済み ∩ 配信中) | `features/home/FollowedChannelsPanel.tsx` |
@@ -61,7 +63,16 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
    紫色の英語マイクロラベル(`CATEGORIES`等)は付けない。Home Heroの「ようこそ Streamly へ」だけが例外。
 7. **Service WorkerでHLS/SSE/APIをキャッシュしない**(`vite.config.ts`の`NetworkOnly`)。
 8. **CSSは機能単位のファイルへ。** `src/styles.css`は`@import`だけ。新規ルールは`src/styles/<feature>.css`。
-9. **「端末内のid集合 ∩ 配信中」の一覧を増やすときはページを複製しない。**
+9. **アニメーションWebPは`src`差し替え以外で止められない。** `animations/*.webp`はloop count 0の
+   無限ループで、`<img>`に`play()`/`pause()`は無い。再生/停止は`iconUrl` ↔ `animationUrl`の差し替えで
+   表現する(`features/gifts/GiftImage.tsx`に集約)。既定は静止アイコンで、
+   ホバー中・プレイヤー演出の5秒間・チャットのギフト枠だけがアニメーションする。
+   `base.css`の`prefers-reduced-motion`はCSSアニメーションにしか効かないので、
+   モーション削減はJS側(`lib/reducedMotion.ts`)で静止アイコンに落とす。
+10. **新着メッセージの検出は`useFreshMessages`を使う。** 件数差分で判定すると、
+   commentストアが上限300件に達した瞬間から`messages.length`が固定されて新着が永久に取れなくなる
+   (弾幕が死ぬバグが実際にあった)。最後に見たkey基準で判定する。
+11. **「端末内のid集合 ∩ 配信中」の一覧を増やすときはページを複製しない。**
    `features/collections/CollectionPages.tsx`の共有コンポーネントに文言を渡すだけで足りる
    (お気に入り / フォロー中 / 履歴の3画面がこれで動いている)。
 
@@ -108,12 +119,22 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
   チャンネル別の3色グラデーション(`thumb-0/1/2`)は依頼により削除。サムネイルAPIが無いのは変わらず、
   実写や偽の内容は出していない。PNG 1MBで受け取ったものを960x540のJPEG(25KB)に落として置いている。
 
+- **ギフト周りを`/items`の全フィールドで作り直した**:
+  `Gift`型を6フィールドに拡張(`gifts.ts`は生のitemsを返していたので実行時には元から乗っていた)、
+  ピッカーにcost表示・グループタブ(HeroUI `Tabs`、**グループはAPIの値から動的生成**)・
+  残高不足カードのdisabled、ヘッダーのギフトボタンをリンクからHeroUI `Tooltip`の残高表示に変更(遷移しない)、
+  プレイヤー上に`GiftOverlay`(受信したギフトのanimationUrlを5秒再生、z-index 7)、
+  チャットのギフト枠は常にアニメーション再生、Homeのギフト CTA はランダムチャンネルへ。
+- **弾幕の実バグを修正**: `DanmakuLayer`が件数差分で新着判定していたため、
+  commentストアが上限300件に達すると以降の弾幕が出なくなっていた。
+  `store/comments.ts`の`useFreshMessages`(最後に見たkey基準)に統一し、回帰テストを追加。
+  `GiftOverlay`も同じhookを使うので同じ罠を踏まない。
+
 ## 5. 未着手 / 既知の穴
 
 - **トップギフター**: 依頼により未着手。ランキングAPIが無いので現状`ComingSoonPanel`のまま。
-- **`/items`の未使用フィールド**: `Docs/ITEMS-API.md`の通り`cost` / `group` / `animationUrl`が実在するが、
-  `lib/api/contracts.ts`の`Gift`型はid/name/iconUrlのみ。価格表示・グループ分けタブ・アニメーション
-  ギフトは**実データで作れる余地がある**。
+- **~~`/items`の未使用フィールド~~ 対応済み**: `cost`(価格表示)・`group`(グループタブ)・
+  `animationUrl`(アニメーション演出)をすべて使用中。`Gift`型も6フィールドに拡張済み。
 - **「人気」はランキングAPIが無いためdisabledのまま。** 一覧を出せる材料が無い。
 - **quality selector**: `Docs/HLS-SERVER.md`の方針通り、hls.jsが実際に複数levelを検出したときだけ出す。未着手。
 - **バンドルサイズ**: JSが約1.1MB(gzip約346KB)。HeroUI導入分。必要なら`dynamic import()`で分割。
@@ -144,7 +165,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 
 ```powershell
 pnpm lint       # biome check .(0件が正常。赤くなったら自分の差分が原因)
-pnpm test       # vitest: unit + component (現在43件)
+pnpm test       # vitest: unit + component (現在75件)
 pnpm build      # tsc -b + vite build
 pnpm test:e2e   # playwright: chromium + mobile (現在8件)
 ```

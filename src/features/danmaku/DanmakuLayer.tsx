@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChatMessage } from "../../lib/api/contracts";
-import { useCommentStore } from "../../store/comments";
+import { useFreshMessages } from "../../store/comments";
 import { usePreferenceStore } from "../../store/preferences";
 
 interface ActiveDanmaku {
@@ -13,15 +13,9 @@ interface ActiveDanmaku {
 const LANE_COUNT = 7;
 
 export function DanmakuLayer() {
-  const messages = useCommentStore((state) => state.messages);
   const enabled = usePreferenceStore((state) => state.danmakuEnabled);
   const opacity = usePreferenceStore((state) => state.danmakuOpacity);
   const [active, setActive] = useState<ActiveDanmaku[]>([]);
-  // ponytail: seed with whatever's already in the (session-persistent)
-  // comment store at mount — otherwise re-mounting this layer (e.g.
-  // navigating away from /watch and back) treats the whole pre-existing
-  // backlog as "fresh" and dumps it all the instant danmaku is on again.
-  const previousCount = useRef(messages.length);
   const nextLane = useRef(0);
   // ponytail: every batch needs its own independent timer — a shared
   // per-effect timer gets clearTimeout'd by the next message's cleanup
@@ -29,14 +23,9 @@ export function DanmakuLayer() {
   // the moment danmaku is turned back on.
   const timers = useRef(new Set<number>());
 
-  useEffect(() => {
-    if (messages.length <= previousCount.current) {
-      previousCount.current = messages.length;
-      return;
-    }
-
-    const fresh = messages.slice(previousCount.current).filter(hasRenderableText);
-    previousCount.current = messages.length;
+  // 新着判定は useFreshMessages に任せる(マウント時点のバックログは再生しない)。
+  useFreshMessages((incoming) => {
+    const fresh = incoming.filter(hasRenderableText);
     // while off, don't queue anything to replay later — only ever show
     // comments that arrive while danmaku is actually on.
     if (!enabled || !fresh.length) return;
@@ -59,7 +48,7 @@ export function DanmakuLayer() {
       setActive((current) => current.filter((item) => !expired.has(item.key)));
     }, 9000);
     timers.current.add(timer);
-  }, [messages, enabled]);
+  });
 
   useEffect(() => {
     const pending = timers.current;
