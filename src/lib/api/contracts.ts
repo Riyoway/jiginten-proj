@@ -1,5 +1,4 @@
-// Docs/ITEMS-API.md の Item そのもの。cost/group/animationUrl は以前から /items が返していたが
-// 型が宣言していなかったためUIから見えなかった(lib/api/gifts.ts は生のitemsを返すので実行時には存在する)。
+// Docs/ITEMS-API.md の Item そのもの。
 export interface Gift {
   id: string;
   name: string;

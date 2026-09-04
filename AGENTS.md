@@ -1,6 +1,7 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file is the single source of project instructions for every coding agent working in this
+repository (Claude Code reads it through `CLAUDE.md`, Codex reads it directly). Edit only this file.
 
 ## Project
 
@@ -16,7 +17,7 @@ pnpm dev            # dev server (port 5173)
 pnpm build          # tsc -b + vite build (typecheck errors fail the build)
 pnpm preview         # preview production build (port 4173)
 pnpm typecheck       # tsc -b only
-pnpm lint            # biome check .
+pnpm lint            # biome check . — 0 findings is the normal state; a red run means your diff
 pnpm lint:fix        # biome check --write .
 pnpm test            # vitest run (unit + component)
 pnpm test:watch      # vitest watch mode
@@ -36,12 +37,13 @@ blank, relative, or non-HTTP(S) values fail before the dev server/build starts.
   before writing anything new, reuse them, keep diffs minimal, don't add abstractions or dependencies
   for speculative future needs, and don't swap an existing stack piece for another library without a
   clear technical reason.
-- **Browser verification** with Codex in Chrome is required after any change to UI, layout, responsive
-  behavior, navigation, forms, Modal/Popover/Dropdown/Tooltip, animation, or loading/empty/error states —
+- **Browser verification** with a browser-automation tool (Claude in Chrome / Codex in Chrome) is
+  required after any change to UI, layout, responsive behavior, navigation, forms,
+  Modal/Popover/Dropdown/Tooltip, animation, or loading/empty/error states —
   don't assume it works from reading the code alone. Check: the feature behaves as expected; no layout
   breakage or overflow; click/input/keyboard interaction works; Modal/Popover positioning is correct;
   loading/empty/error states render appropriately; no new console errors; check both a desktop-width and
-  a mobile-width viewport. Fix and re-verify with Codex in Chrome if anything is off.
+  a mobile-width viewport. Fix and re-verify in the browser if anything is off.
 - **Tests**: add or update tests for any meaningful behavior change, favoring user-visible behavior over
   internals. Priority order: business logic → user interactions → state transitions → error handling →
   edge cases → regression coverage for bug fixes → impact on existing features. Don't add tests purely to
@@ -84,9 +86,17 @@ profile, follow state, viewer count, or ranking API. Consequences enforced throu
   channel-owner/account API giving a real channel name. Fine to show `channel.title` as-is where it's
   clearly content (`StreamCard`, the watch page `<h1>`, `AppShell`'s sidebar heading "おすすめチャンネル").
   Where a channel's *identity* is shown paired with an avatar (sidebar channel rows, the watch page's
-  channel-identity row under the `<h1>`), use `getStreamlyUserName(id)` (`src/lib/streamlyUsers.ts` — a
-  fixed pool of 10 "Streamly User N" labels, picked deterministically per id) instead — same reasoning as
-  chat's `Guest`, don't let a content title pose as an identity.
+  channel-identity row under the `<h1>`), use `getStreamlyUserName(id, channelIds)`
+  (`src/lib/streamlyUsers.ts`) instead — same reasoning as chat's `Guest`, don't let a content title pose
+  as an identity. It takes **the full channel id list** and numbers the sorted ids, so no two channels
+  ever share a label: the old version picked from a fixed pool of 10 by hashing the id, which produced
+  duplicate names once `/channels.json` grew past 10 entries (it is at 13). Every call site must pass the
+  same full list (all three already have `channels` from `useChannels()`) or the same channel would get
+  different names on different screens.
+- The sidebar's "おすすめチャンネル" shows a **random 5** of the live channels (`pickRandom`,
+  `src/lib/pickRandom.ts`, memoized on `channels` so it settles once per load). Listing all 13 overflowed
+  the sidebar; the list also shrinks and scrolls internally on short viewports so the nav, install button
+  and profile card stay reachable. Don't reintroduce a full listing here — Home's grid is the complete one.
 - There's no in-page channel switcher on the watch page (the earlier `ChannelSelector` tabs were removed
   per explicit request) — switching channels happens by navigating to `/watch?channel=<id>` from the Home
   grid or the sidebar, not from a control inside `WatchPage` itself. Don't re-add one without being asked.
@@ -94,7 +104,8 @@ profile, follow state, viewer count, or ranking API. Consequences enforced throu
   `favorites.ts` (`createIdSetStore` — Zustand + `persist`) and `history.ts` (same Zustand + `persist`
   pattern, but an ordered newest-first list capped at 30, recorded by `WatchPage` on mount). All three
   are localStorage only: genuinely interactive, unlike the `ComingSoonPanel` sections, but with no
-  server sync — don't wire them to any API. All three have real listing surfaces: Home's "フォロー中のライブ" panel
+  server sync — don't wire them to any API, and the follow/favorite buttons carry a `title` hint saying
+  so. All three have real listing surfaces: Home's "フォロー中のライブ" panel
   (`src/features/home/FollowedChannelsPanel.tsx`) plus the `/favorites`, `/follows` and `/history` pages,
   which are one shared component with different copy (`src/features/collections/CollectionPages.tsx`) —
   add a fourth "saved ids ∩ live" surface there rather than copying the page. Each renders the real
@@ -112,7 +123,28 @@ profile, follow state, viewer count, or ranking API. Consequences enforced throu
 - Only one `EventSource` connection exists for `/events`, shared by both `ChatPanel` and `DanmakuLayer`
   through `useCommentStream` / `useCommentStore` — never open a second connection for danmaku.
 - Gift catalog (`GET /items`) is lazy-fetched on first open of the gift picker, then cached in memory for
-  the session — not fetched on page load.
+  the session — not fetched on page load. Items carry `cost` / `group` / `animationUrl` and all three are
+  in use: cost on the picker cards, `group` driving the picker's HeroUI `Tabs` (**derived from the data,
+  never a hardcoded list of the current 4 groups**), and `animationUrl` driving the animation. Never infer
+  "has an animation" from `cost === 1000` — check `animationUrl` directly.
+- Gift **credits** are local-only (`src/store/credits.ts`, initial 3000, `streamly-credits`). There is no
+  balance API (`Docs/LIMITATIONS.md` lists `gift point balance` as unavailable), so the UI says
+  "サーバーの残高ではありません" — not just "device-local". Deduction happens when `POST /messages`
+  resolves 2xx (a `202 Accepted`), which is where the server has accepted the send; there is no reason to
+  wait for the SSE echo and waiting would just risk never deducting. No top-up/reset.
+  `POST /messages` does return `{id, timestamp}` and **that `id` matches the SSE event's `id`** (verified),
+  so a send *can* be correlated to its own echo if a feature ever needs it — `sendMessage` simply doesn't
+  read the body today because nothing needs it. Don't repeat the old claim that correlation is impossible.
+- Animated gifts: `animations/*.webp` are **infinite-loop** animated WebPs and `<img>` has no
+  `play()`/`pause()`, so the only play/stop lever is swapping `src` between `iconUrl` and `animationUrl`.
+  That lives in one place — `src/features/gifts/GiftImage.tsx` (which also does the
+  animation → icon → Lucide fallback chain). Default state is the static icon; the exceptions that
+  animate are picker hover/focus, the 5s `GiftOverlay` on the player, and the chat gift box. `base.css`'s
+  `prefers-reduced-motion` block only affects CSS animations, so reduced motion is handled in JS
+  (`src/lib/reducedMotion.ts`) by keeping the static icon.
+- New-message detection goes through `useFreshMessages` (`src/store/comments.ts`), not a
+  `messages.length` diff — the store caps at 300, so a count diff silently stops firing forever once the
+  cap is hit (this was a real bug that killed danmaku). `DanmakuLayer` and `GiftOverlay` both use it.
 - Comment store caps at 300 messages (`src/store/comments.ts`) to bound DOM growth; raise this only with
   virtualization in place.
 
@@ -202,9 +234,8 @@ Full rationale in `Docs/STACK.md`; skim it before swapping a dependency. Short v
 - Native `EventSource`/`fetch` — no axios/query library added for four simple, mostly long-lived
   connections.
 - Zustand only, no Redux — state surface is intentionally small.
-- PWA caches the app shell and static assets only; external HLS/SSE/API requests are not registered
-  with Workbox and go directly to the network — do not change `.m3u8`, SSE, `/messages`, or `/items`
-  to a caching strategy.
+- PWA caches the app shell only; `NetworkOnly` is set for the HLS and comment-server origins in
+  `vite.config.ts` — do not change `.m3u8`, SSE, `/messages`, or `/items` to a caching strategy.
 
 ## UI quality and animation
 

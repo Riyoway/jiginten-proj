@@ -14,7 +14,6 @@ beforeEach(() => {
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
-  useCommentStore.getState().clear();
 });
 
 function pushGift(id: string, animationUrl: string | null) {

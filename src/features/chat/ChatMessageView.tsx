@@ -5,10 +5,8 @@ import { getRandomAvatar } from "../../lib/avatars";
 import { GIFT_ANIMATION_DURATION_MS, GiftImage } from "../gifts/GiftImage";
 
 export function ChatMessageView({ message }: { message: ChatMessage }) {
-  // ponytail: ChatPanelが key={message.key} で描画するのでインスタンス=1メッセージ。
-  // 依存なしで「そのメッセージの間だけ固定」になる(再描画で引き直さない)。
-  // message.key は payload.id なので、そこからアバターを導出してはいけない
-  // (CLAUDE.md: idやテキストから発言者の同一性を作らない)。
+  // ponytail: インスタンス=1メッセージなので、依存なしでそのメッセージの間だけ固定になる。
+  // message.key(= payload.id)からアバターを導出してはいけない(発言者の同一性を作らない)。
   const avatar = useMemo(() => getRandomAvatar(), []);
   const animationUrl = message.gift?.animationUrl;
   const [animateGift, setAnimateGift] = useState(Boolean(animationUrl));

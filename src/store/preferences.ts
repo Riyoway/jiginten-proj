@@ -28,15 +28,7 @@ export const usePreferenceStore = create<PreferenceState>()(
       setDanmakuOpacity: (danmakuOpacity) => set({ danmakuOpacity }),
       setChatVisible: (chatVisible) => set({ chatVisible }),
     }),
-    {
-      name: "streamly-preferences",
-      partialize: ({ muted, volume, danmakuEnabled, danmakuOpacity, chatVisible }) => ({
-        muted,
-        volume,
-        danmakuEnabled,
-        danmakuOpacity,
-        chatVisible,
-      }),
-    },
+    // ponytail: partializeは不要。JSON.stringifyがsetterを落とすので保存されるのは値だけ。
+    { name: "streamly-preferences" },
   ),
 );

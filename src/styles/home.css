@@ -13,10 +13,7 @@
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 24px;
-  background-color: #0b1018;
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: cover;
+  background: #0b1018 url("/banners/banner1.png") left center / cover no-repeat;
 }
 
 /* ponytail: banner art has its own dark left-hand side meant for text, but

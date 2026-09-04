@@ -28,8 +28,7 @@ export function StreamCard({ channel }: StreamCardProps) {
   );
 }
 
-// ponytail: /channels.json取得中だけ表示する本物のローディングskeleton
-// (以前の「機能が無いので誤魔化す」placeholderとは意味が違うので注意)。
+// ponytail: /channels.json取得中だけ出すローディングskeleton(ComingSoonPanelとは別物)。
 export function StreamCardSkeleton() {
   return (
     <div className="stream-card stream-card-placeholder" aria-hidden="true">

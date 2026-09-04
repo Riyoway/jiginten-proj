@@ -5,8 +5,7 @@ import { useChannels } from "../../store/channels";
 import { useFavoriteStore } from "../../store/favorites";
 import { useFollowStore } from "../../store/follows";
 import { useHistoryStore } from "../../store/history";
-// ponytail: カードはHomeのライブグリッドと同じ見た目にしたいので、features/homeのものを再利用する
-// (3箇所目の利用が出てきたらcomponents/uiへ昇格させる)。
+// ponytail: Homeのライブグリッドと同じ見た目にしたいので再利用(3箇所目が出たらcomponents/uiへ)。
 import { StreamCard, StreamCardSkeleton } from "../home/StreamCard";
 
 const SKELETON_KEYS = ["collection-skeleton-1", "collection-skeleton-2"] as const;
@@ -21,8 +20,7 @@ interface ChannelCollectionPageProps {
   action?: ReactNode;
 }
 
-// ponytail: お気に入り / フォロー中 / 履歴はどれも「端末内のid集合 ∩ 配信中」で形が同じなので、
-// 1つのページコンポーネントに文言だけ差し替えて使う(FollowedChannelsPanelと同じ考え方)。
+// ponytail: お気に入り/フォロー中/履歴はどれも「端末内のid集合 ∩ 配信中」。文言だけ差し替えて使う。
 function ChannelCollectionPage({
   title,
   ids,
@@ -34,8 +32,7 @@ function ChannelCollectionPage({
   const { channels, status } = useChannels();
   const loading = status === "loading" || status === "idle";
 
-  // /channels.jsonは配信中のチャンネルしか返さないため、保存済み ∩ 配信中 が表示対象。
-  // 残りは「今は配信していない分」として件数だけ伝える(名前は取得できないので出さない)。
+  // 配信していない分は件数だけ伝える(名前は/channels.jsonから取得できないので出さない)。
   const live = ids
     .map((id) => channels.find((channel) => channel.id === id))
     .filter((channel): channel is Channel => channel !== undefined);

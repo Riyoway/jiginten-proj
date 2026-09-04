@@ -7,9 +7,8 @@ interface IdSetState {
   toggle: (id: string) => void;
 }
 
-// ponytail: Follow/お気に入りはどちらも「idの集合をこの端末に保存するだけ」で形が同じなので、
-// 1つのfactoryにまとめる(preferences.tsと同じZustand+persistパターン)。
-// サーバー同期APIが無いことを前提にしており、サーバーと同期しているように見せない。
+// ponytail: Follow/お気に入りはどちらも「idの集合を端末に保存するだけ」で形が同じなのでまとめる。
+// 同期APIは無い前提。サーバーと同期しているように見せない。
 export function createIdSetStore(storageKey: string) {
   return create<IdSetState>()(
     persist(

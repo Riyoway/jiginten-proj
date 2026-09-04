@@ -12,13 +12,11 @@ interface PlayingGift {
   animationUrl: string;
 }
 
-// ponytail: 受信したギフトのうち animationUrl を持つものだけをプレイヤー上で5秒再生する。
-// animated WebP は loop count 0 で無限に回るため、止める手段は「DOMから外す」しかない。
-// 自分が送ったものに限定しないのは要件どおり(SSEにuserIdが無いので判別もできない)。
+// ponytail: animationUrl を持つギフトだけ5秒再生する。animated WebPは無限ループなので、
+// 止める手段はDOMから外すことだけ。SSEにuserIdが無いので自分の送信だけに絞ることはできない。
 export function GiftOverlay() {
   const [playing, setPlaying] = useState<PlayingGift[]>([]);
-  // ponytail: DanmakuLayerと同じ理由でバッチごとに独立したtimerを持つ。共有timerだと
-  // 次の到着のcleanupに消されて、古いものが期限切れにならない。
+  // ponytail: DanmakuLayerと同じ理由でバッチごとに独立したtimerを持つ。
   const timers = useRef(new Set<number>());
 
   useFreshMessages((fresh) => {

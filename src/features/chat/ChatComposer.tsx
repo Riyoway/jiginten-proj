@@ -3,6 +3,7 @@ import { type FormEvent, useLayoutEffect, useRef, useState } from "react";
 import type { Gift } from "../../lib/api/contracts";
 import { sendMessage } from "../../lib/api/messages";
 import { useCreditStore } from "../../store/credits";
+import { GiftImage } from "../gifts/GiftImage";
 import { GiftPicker } from "../gifts/GiftPicker";
 
 const MAX_COMMENT_LENGTH = 200;
@@ -42,10 +43,7 @@ export function ChatComposer() {
         ...(cleanText ? { text: cleanText } : {}),
         ...(selectedGift ? { itemId: selectedGift.id } : {}),
       });
-      // ponytail: 減算はPOSTが2xxを返した時点。サーバーが受理したことをここで確定できる。
-      // (POSTは 202 + {id, timestamp} を返し、そのidはSSEイベントのidと一致するので、
-      //  「自分の送信」をSSE側で特定することも一応できる。ただし残高を引くのに待つ理由が無く、
-      //  待つと取りこぼし時に引き忘れるだけなので採用しない。チャット表示は従来どおりSSE任せ。)
+      // ponytail: 減算はPOSTが2xxを返した時点。SSEのechoを待つと取りこぼし時に引き忘れる。
       if (selectedGift) spend(selectedGift.cost);
       setText("");
       setSelectedGift(null);
@@ -61,7 +59,11 @@ export function ChatComposer() {
     <div className="composer-wrap">
       {selectedGift ? (
         <div className="selected-gift">
-          <img src={selectedGift.iconUrl} alt="" />
+          <GiftImage
+            className="selected-gift-image"
+            iconUrl={selectedGift.iconUrl}
+            animationUrl={selectedGift.animationUrl}
+          />
           <span>{selectedGift.name}</span>
           <small>
             {unaffordable

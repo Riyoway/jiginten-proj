@@ -12,10 +12,9 @@ interface GiftImageProps {
 
 export const GIFT_ANIMATION_DURATION_MS = 5000;
 
-// ponytail: animated WebP には play/pause が無く loop count 0 で回り続けるので、
-// 再生/停止の唯一の手段が iconUrl ↔ animationUrl の src 差し替え。
-// 読み込み失敗時は animation -> icon -> lucideアイコン の順に落とす(Docs/ITEMS-API.md の要求)。
-// 4箇所(ピッカー/チャット/選択中チップ/プレイヤー)で同じ処理が要るのでここに集約する。
+// ponytail: animated WebP には play/pause が無く無限に回り続けるので、再生/停止の唯一の手段が
+// iconUrl ↔ animationUrl の src 差し替え。読み込み失敗時は animation -> icon -> lucide の順に落とす
+// (Docs/ITEMS-API.md の要求)。ピッカー/チャット/選択中チップ/プレイヤーの4箇所で使う。
 export function GiftImage({ iconUrl, animationUrl, animate = false, className }: GiftImageProps) {
   const [broken, setBroken] = useState<readonly string[]>([]);
 

@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// ponytail: 残高APIが無い(Docs/LIMITATIONS.md の「gift point balance」)ため端末内(localStorage)完結。
-// follow/お気に入り/履歴と同じ扱いで、サーバー残高のようには見せない。
-// 補充・リセット手段は依頼により作らない(使い切ったらブラウザのlocalStorageを消すまで戻らない)。
+// ponytail: 残高APIが無い(Docs/LIMITATIONS.md)ため端末内完結。サーバー残高のようには見せない。
+// 補充・リセット手段は依頼により作らない。
 const INITIAL_CREDITS = 3000;
 
 interface CreditState {
