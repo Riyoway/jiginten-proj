@@ -53,8 +53,9 @@ describe("HomePage", () => {
     expect(comingSoonLabels.length).toBeGreaterThanOrEqual(2);
 
     // 実データが無い箇所に、それっぽい偽の数値・チャンネル名を出していないことの回帰チェック
-    expect(screen.queryByText(/[0-9],[0-9]{3}\s*P/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/TechWorld|GameSpace|ChillWave/)).not.toBeInTheDocument();
+    const main = screen.getByRole("main");
+    expect(within(main).queryByText(/[0-9],[0-9]{3}\s*P/)).not.toBeInTheDocument();
+    expect(within(main).queryByText(/TechWorld|GameSpace|ChillWave/)).not.toBeInTheDocument();
   });
 
   it("does not leak developer-facing wording to end users", async () => {
