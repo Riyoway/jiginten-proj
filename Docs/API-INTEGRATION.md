@@ -131,6 +131,26 @@ Gift + message:
 }
 ```
 
+### レスポンス(実測)
+
+```text
+202 Accepted
+Content-Type: application/json
+
+{"id": "5f410107-dc9c-48bd-8fda-36a7ec8ac622", "timestamp": "2026-09-04T02:14:15.899Z"}
+```
+
+**この`id`はSSEイベントの`id`と一致します**(実測で確認)。`sendMessage`は現状レスポンスを
+読んでいませんが、「自分が送ったものだけ演出する」等が必要になればここを使えます。
+
+**`/messages`はPOST専用で、GETすると404を返します。** `curl .../messages`(既定はGET)で404を見て
+「エンドポイントが無い」と誤診しやすいので注意。疎通確認は必ずPOSTで行うこと。
+
+```powershell
+curl -X POST https://intern-comment-server.intern-comment-server.deno.net/messages `
+  -H "Content-Type: application/json" --data '{"text":"接続確認"}'
+```
+
 ### 表示は3種類に分ける
 
 1. Normal message
