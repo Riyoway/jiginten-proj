@@ -83,6 +83,19 @@ describe("AppShell", () => {
     expect(screen.queryByText(/^[0-9]+$/)).not.toBeInTheDocument();
   });
 
+  it("places the install control immediately before notifications in the header", async () => {
+    render(<RouterProvider router={router} />);
+
+    const topbar = (await screen.findByRole("textbox", { name: "配信を検索" })).closest(".topbar");
+    if (!topbar) throw new Error("topbar not found");
+
+    const install = within(topbar).getByRole("button", { name: "インストール" });
+    const notifications = within(topbar).getByRole("button", { name: "通知（近日公開）" });
+    expect(install).toBeDisabled();
+    expect(install.nextElementSibling).toBe(notifications);
+    expect(install.closest("aside")).toBeNull();
+  });
+
   it("links to every real channel without displaying content titles as a streamer identity", async () => {
     render(<RouterProvider router={router} />);
 

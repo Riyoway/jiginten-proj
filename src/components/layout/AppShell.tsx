@@ -41,7 +41,7 @@ const disabledNavItems = [{ label: "人気", icon: Flame }];
 // ponytail: プロフィール/設定/ヘルプも同じ理由(実装先のページ・APIが無い)で
 // 選択不可のまま項目だけ用意しておく。
 // ponytail: 「おすすめ」なので全件並べる必要はない。13チャンネルを全部出すとsidebarが
-// 縦に溢れてプロフィール/インストールがスクロールしないと届かなくなるため、ランダムに絞る。
+// 縦に溢れてプロフィールがスクロールしないと届かなくなるため、ランダムに絞る。
 const SIDEBAR_CHANNEL_COUNT = 5;
 
 const userMenuItems = [
@@ -135,16 +135,6 @@ export function AppShell({ children }: PropsWithChildren) {
           </ComingSoonPanel>
         )}
 
-        <Button
-          className="pwa-install-btn"
-          variant="ghost"
-          fullWidth
-          isDisabled={!canInstall}
-          onPress={promptInstall}
-        >
-          <Download size={16} /> インストール
-        </Button>
-
         <div className="sidebar-spacer" />
         <div className="profile-card">
           <Avatar size="sm">
@@ -184,6 +174,17 @@ export function AppShell({ children }: PropsWithChildren) {
               配信を見る
             </Link>
             <Button
+              className="topbar-icon-btn topbar-install-btn"
+              isIconOnly
+              size="lg"
+              variant="ghost"
+              aria-label="インストール"
+              isDisabled={!canInstall}
+              onPress={promptInstall}
+            >
+              <Download size={22} />
+            </Button>
+            <Button
               className="topbar-icon-btn"
               isIconOnly
               size="lg"
@@ -193,20 +194,6 @@ export function AppShell({ children }: PropsWithChildren) {
             >
               <Bell size={22} />
             </Button>
-            {/* ponytail: モバイルではsidebarがdock(nav専用)になりインストールボタンの
-                置き場が無くなるため、インストール可能なときだけtopbarへ出す。 */}
-            {canInstall ? (
-              <Button
-                className="topbar-icon-btn topbar-install-btn"
-                isIconOnly
-                size="lg"
-                variant="ghost"
-                aria-label="インストール"
-                onPress={promptInstall}
-              >
-                <Download size={22} />
-              </Button>
-            ) : null}
             {/* ponytail: 以前は/watchへのリンクだったが、残高を見せるだけの表示に変えたので遷移しない。
                 aria-labelに残高を入れて、ツールチップを開かなくても読み上げられるようにする。 */}
             <Tooltip delay={150} closeDelay={100}>

@@ -94,25 +94,8 @@
   cursor: not-allowed;
 }
 
-/* ponytail: matches .nav-item's flat sidebar-row look — HeroUI's own
-   ghost/secondary chrome (rounded pill, centered label) reads as a
-   generic button dropped into the sidebar rather than another row in it. */
-.pwa-install-btn {
-  width: 100%;
-  min-height: 44px;
-  justify-content: flex-start;
-  gap: 12px;
-  padding-inline: 12px;
-  border-radius: 12px;
-  color: #bbc4d3;
-}
-
-.pwa-install-btn:not([aria-disabled="true"]):hover {
-  color: #fff;
-}
-
 /* ponytail: 画面が低いとき(700px程度)に溢れる分は、チャンネル一覧が縮んで吸収する。
-   ブランド/ナビ/インストール/プロフィールは常に見えるようにしたい。 */
+   ブランド/ナビ/プロフィールは常に見えるようにしたい。 */
 .sidebar-channels {
   display: flex;
   flex-direction: column;
@@ -286,12 +269,6 @@ main {
   font-weight: 600;
 }
 
-/* ponytail: dockに入らないインストールボタンだけモバイルのtopbarへ出す
-   (desktopはsidebarの.pwa-install-btnが担当するので、そちらでは隠す)。 */
-.topbar-install-btn {
-  display: none;
-}
-
 /* ponytail: HeroUI's own .button svg rule forces a 16px icon at this
    breakpoint via a more specific selector than a plain class match beats;
    !important is the lazy, correctly-scoped way past it. */
@@ -312,8 +289,7 @@ main {
   .profile-card div,
   .sidebar .profile-card,
   .sidebar .coming-soon-panel,
-  .sidebar-channels,
-  .pwa-install-btn {
+  .sidebar-channels {
     display: none;
   }
 
@@ -359,8 +335,7 @@ main {
   .profile-card,
   .sidebar > .sidebar-icon-btn,
   .sidebar .coming-soon-panel,
-  .sidebar-channels,
-  .pwa-install-btn {
+  .sidebar-channels {
     display: none;
   }
 
@@ -448,9 +423,5 @@ main {
   .top-actions .topbar-cta,
   .top-actions .topbar-icon-btn:not(.topbar-install-btn) {
     display: none;
-  }
-
-  .topbar-install-btn {
-    display: inline-flex;
   }
 }
