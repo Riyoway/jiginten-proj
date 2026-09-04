@@ -71,9 +71,7 @@ describe("HomePage", () => {
     render(<RouterProvider router={router} />);
 
     expect(await screen.findByText("フォロー中のライブ")).toBeInTheDocument();
-    expect(
-      screen.getByText("配信画面でフォローすると、ここに表示されます(この端末のみ)"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("配信画面でフォローすると、ここに表示されます")).toBeInTheDocument();
   });
 
   it("lists followed channels that are currently live", async () => {

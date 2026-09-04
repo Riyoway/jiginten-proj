@@ -48,6 +48,7 @@ describe("AppShell", () => {
     const topbar = credits.closest(".topbar");
     if (!topbar) throw new Error("topbar not found");
     expect(within(topbar as HTMLElement).queryByRole("link", { name: /ギフト/ })).not.toBeInTheDocument();
+    expect(within(topbar as HTMLElement).queryByText(/この端末|サーバーの残高/)).not.toBeInTheDocument();
   });
 
   it("keeps search disabled and shows no fabricated notification count", async () => {

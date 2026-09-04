@@ -13,11 +13,6 @@ interface GiftPickerProps {
 
 const ALL_TAB = "all";
 
-// ponytail: 残高は端末内(store/credits.ts)。ヘッダーのギフトボタンはモバイルで非表示になるので、
-// 実際に消費するこの画面にも出しておく。「端末内」だけだとサーバーに本物の残高がある前提に
-// 読めてしまうので、そうでないことまで書く。
-const CREDIT_HINT = "この端末だけに保存されます(サーバーの残高ではありません)";
-
 export function GiftPicker({ open, selectedId, onSelect }: GiftPickerProps) {
   const { gifts, loaded, error } = useGiftCatalog(open);
   const balance = useCreditStore((state) => state.balance);
@@ -41,9 +36,7 @@ export function GiftPicker({ open, selectedId, onSelect }: GiftPickerProps) {
           <strong>ギフトを送る</strong>
         </div>
         <div className="gift-heading-actions">
-          <span className="gift-balance" title={CREDIT_HINT}>
-            残高 {balance.toLocaleString()}
-          </span>
+          <span className="gift-balance">残高 {balance.toLocaleString()}</span>
           {selectedId ? (
             <button type="button" className="text-button" onClick={() => onSelect(null)}>
               選択解除

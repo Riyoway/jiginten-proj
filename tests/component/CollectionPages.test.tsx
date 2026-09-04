@@ -42,7 +42,7 @@ describe("FavoritesPage", () => {
     const page = await renderPage("/favorites", "お気に入り");
 
     expect(
-      within(page).getByText("配信画面の「お気に入り」を押すと、ここにまとまります(この端末のみ)。"),
+      within(page).getByText("配信画面の「お気に入り」を押すと、ここにまとまります。"),
     ).toBeInTheDocument();
   });
 
@@ -76,7 +76,7 @@ describe("FollowsPage", () => {
     const page = await renderPage("/follows", "フォロー中");
 
     expect(
-      within(page).getByText("配信画面の「フォロー」を押すと、ここにまとまります(この端末のみ)。"),
+      within(page).getByText("配信画面の「フォロー」を押すと、ここにまとまります。"),
     ).toBeInTheDocument();
   });
 
@@ -95,9 +95,7 @@ describe("HistoryPage", () => {
   it("shows no clear button while the history is empty", async () => {
     const page = await renderPage("/history", "履歴");
 
-    expect(
-      within(page).getByText("配信を視聴すると、ここに履歴が残ります(この端末のみ)。"),
-    ).toBeInTheDocument();
+    expect(within(page).getByText("配信を視聴すると、ここに履歴が残ります。")).toBeInTheDocument();
     expect(within(page).queryByRole("button", { name: "履歴を削除" })).not.toBeInTheDocument();
   });
 
@@ -122,8 +120,6 @@ describe("HistoryPage", () => {
     fireEvent.click(clearButton);
 
     expect(useHistoryStore.getState().ids).toEqual([]);
-    expect(
-      within(page).getByText("配信を視聴すると、ここに履歴が残ります(この端末のみ)。"),
-    ).toBeInTheDocument();
+    expect(within(page).getByText("配信を視聴すると、ここに履歴が残ります。")).toBeInTheDocument();
   });
 });

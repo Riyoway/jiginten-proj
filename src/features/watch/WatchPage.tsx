@@ -11,9 +11,7 @@ import { useHistoryStore } from "../../store/history";
 import { ChatPanel } from "../chat/ChatPanel";
 import { StreamPlayer } from "../player/StreamPlayer";
 
-// ponytail: フォロー/お気に入りAPIが無いため端末内保存のみ。サーバー同期のように見せない
-// (hoverで見えるtitle属性に明記)。
-const LOCAL_ONLY_HINT = "この端末だけに保存されます(アカウント同期なし)";
+// ponytail: フォロー/お気に入りAPIが無いため端末内保存のみ。サーバー同期はしない。
 
 export function WatchPage() {
   const { channel: requestedChannelId } = watchRoute.useSearch();
@@ -61,7 +59,6 @@ export function WatchPage() {
                     type="button"
                     className={`follow-button ${following ? "active" : ""}`}
                     aria-pressed={following}
-                    title={LOCAL_ONLY_HINT}
                     onClick={() => toggleFollow(selectedChannel.id)}
                   >
                     {following ? <UserCheck size={15} /> : <UserPlus size={15} />}
@@ -76,7 +73,6 @@ export function WatchPage() {
                 type="button"
                 aria-pressed={favorited}
                 disabled={!selectedChannel}
-                title={LOCAL_ONLY_HINT}
                 onClick={() => selectedChannel && toggleFavorite(selectedChannel.id)}
               >
                 <Heart size={18} fill={favorited ? "currentColor" : "none"} /> お気に入り

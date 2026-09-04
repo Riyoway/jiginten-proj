@@ -13,7 +13,6 @@ const SKELETON_KEYS = ["collection-skeleton-1", "collection-skeleton-2"] as cons
 
 interface ChannelCollectionPageProps {
   title: string;
-  note: string;
   /** 表示したい順に並んだチャンネルid(お気に入り/フォローは追加順、履歴は新しい順)。 */
   ids: string[];
   emptyText: string;
@@ -26,7 +25,6 @@ interface ChannelCollectionPageProps {
 // 1つのページコンポーネントに文言だけ差し替えて使う(FollowedChannelsPanelと同じ考え方)。
 function ChannelCollectionPage({
   title,
-  note,
   ids,
   emptyText,
   offlineText,
@@ -49,7 +47,6 @@ function ChannelCollectionPage({
         <div className="section-title">
           <div>
             <h2>{title}</h2>
-            <span className="collection-note">{note}</span>
           </div>
           {action}
         </div>
@@ -83,17 +80,14 @@ function ChannelCollectionPage({
   );
 }
 
-const LOCAL_ONLY_NOTE = "この端末に保存されています";
-
 export function FavoritesPage() {
   const ids = useFavoriteStore((state) => state.ids);
 
   return (
     <ChannelCollectionPage
       title="お気に入り"
-      note={LOCAL_ONLY_NOTE}
       ids={ids}
-      emptyText="配信画面の「お気に入り」を押すと、ここにまとまります(この端末のみ)。"
+      emptyText="配信画面の「お気に入り」を押すと、ここにまとまります。"
       offlineText="お気に入りのチャンネルは現在配信していません。"
       offlineCountText={(count) => `他${count}件のお気に入りは現在配信していません。`}
     />
@@ -106,9 +100,8 @@ export function FollowsPage() {
   return (
     <ChannelCollectionPage
       title="フォロー中"
-      note={LOCAL_ONLY_NOTE}
       ids={ids}
-      emptyText="配信画面の「フォロー」を押すと、ここにまとまります(この端末のみ)。"
+      emptyText="配信画面の「フォロー」を押すと、ここにまとまります。"
       offlineText="フォロー中のチャンネルは現在配信していません。"
       offlineCountText={(count) => `他${count}件のフォロー中チャンネルは現在配信していません。`}
     />
@@ -122,9 +115,8 @@ export function HistoryPage() {
   return (
     <ChannelCollectionPage
       title="履歴"
-      note="この端末に保存されています(新しい順)"
       ids={ids}
-      emptyText="配信を視聴すると、ここに履歴が残ります(この端末のみ)。"
+      emptyText="配信を視聴すると、ここに履歴が残ります。"
       offlineText="履歴のチャンネルは現在配信していません。"
       offlineCountText={(count) => `他${count}件の履歴は現在配信していません。`}
       action={

@@ -94,8 +94,7 @@ profile, follow state, viewer count, or ranking API. Consequences enforced throu
   `favorites.ts` (`createIdSetStore` — Zustand + `persist`) and `history.ts` (same Zustand + `persist`
   pattern, but an ordered newest-first list capped at 30, recorded by `WatchPage` on mount). All three
   are localStorage only: genuinely interactive, unlike the `ComingSoonPanel` sections, but with no
-  server sync — don't wire them to any API, and the follow/favorite buttons carry a `title` hint saying
-  so. All three have real listing surfaces: Home's "フォロー中のライブ" panel
+  server sync — don't wire them to any API. All three have real listing surfaces: Home's "フォロー中のライブ" panel
   (`src/features/home/FollowedChannelsPanel.tsx`) plus the `/favorites`, `/follows` and `/history` pages,
   which are one shared component with different copy (`src/features/collections/CollectionPages.tsx`) —
   add a fourth "saved ids ∩ live" surface there rather than copying the page. Each renders the real

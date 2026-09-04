@@ -44,12 +44,14 @@ describe("WatchPage", () => {
     const followButton = await screen.findByRole("button", { name: /フォロー/, pressed: false });
     fireEvent.click(followButton);
     expect(followButton).toHaveAttribute("aria-pressed", "true");
+    expect(followButton).not.toHaveAttribute("title");
     expect(useFollowStore.getState().has("llamigos")).toBe(true);
 
     // sidebarの無効化された「お気に入り」nav項目と名前が被るため、同様にpressedで絞り込む
     const favoriteButton = screen.getByRole("button", { name: /お気に入り/, pressed: false });
     fireEvent.click(favoriteButton);
     expect(favoriteButton).toHaveAttribute("aria-pressed", "true");
+    expect(favoriteButton).not.toHaveAttribute("title");
     expect(useFavoriteStore.getState().has("llamigos")).toBe(true);
   });
 });
