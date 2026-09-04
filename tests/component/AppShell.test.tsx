@@ -135,4 +135,16 @@ describe("AppShell", () => {
     // reference画像のsidebarに紫色の英語eyebrowは存在しない(CATEGORIES/LIVE等)。
     expect(sidebar.querySelector(".eyebrow")).toBeNull();
   });
+
+  it("prevents saving images through the context menu or image dragging", async () => {
+    render(<RouterProvider router={router} />);
+
+    const image = document.querySelector("img");
+    if (!image) throw new Error("image not found");
+    for (const eventType of ["contextmenu", "dragstart"] as const) {
+      const event = new Event(eventType, { bubbles: true, cancelable: true });
+      image.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(true);
+    }
+  });
 });

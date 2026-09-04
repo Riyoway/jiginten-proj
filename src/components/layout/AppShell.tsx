@@ -17,7 +17,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { type PropsWithChildren, useMemo } from "react";
+import { type PropsWithChildren, useEffect, useMemo } from "react";
 import { pickRandom } from "../../lib/pickRandom";
 import { usePwaInstallPrompt } from "../../lib/pwaInstall";
 import { getStreamlyUserName } from "../../lib/streamlyUsers";
@@ -51,7 +51,23 @@ const userMenuItems = [
   { id: "help", label: "ヘルプ", icon: CircleHelp },
 ];
 
+function preventImageSaving(event: Event) {
+  if (event.target instanceof HTMLImageElement) {
+    event.preventDefault();
+  }
+}
+
 export function AppShell({ children }: PropsWithChildren) {
+  useEffect(() => {
+    document.addEventListener("contextmenu", preventImageSaving);
+    document.addEventListener("dragstart", preventImageSaving);
+
+    return () => {
+      document.removeEventListener("contextmenu", preventImageSaving);
+      document.removeEventListener("dragstart", preventImageSaving);
+    };
+  }, []);
+
   const { canInstall, promptInstall } = usePwaInstallPrompt();
   const { channels, status } = useChannels();
   const credits = useCreditStore((state) => state.balance);
