@@ -47,10 +47,10 @@
 
 ### Follow / Favorites / History
 
-Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetStore`、Zustand + localStorage)で端末内完結のトグルとして実装済みです。ボタンには「この端末だけに保存されます」というhoverヒントを付け、サーバー同期機能のように見せません。
+Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetStore`、Zustand + localStorage)で端末内完結のトグルとして実装済みです。サーバー同期機能はありません。
 
 - フォロー → Home右カラムの「フォロー中のライブ」に反映(配信中のチャンネルのみ)
-- お気に入り → `/favorites`ページ(`features/favorites/FavoritesPage.tsx`)に一覧表示。画面上部に「この端末に保存されています」と明記します
+- お気に入り → `/favorites`ページ(`features/favorites/FavoritesPage.tsx`)に一覧表示
 - お気に入りのうち配信していないものは、名前を捏造せず**件数だけ**伝えます(`/channels.json`は配信中のチャンネルしか返さないため)
 - 履歴とフォロー中の専用ページはまだ無いため、sidebarの該当nav項目は引き続き無効化のままです
 
@@ -68,8 +68,6 @@ Follow・お気に入りは`src/store/follows.ts` / `favorites.ts`(`createIdSetS
   「流れてきたどのイベントが自分の送信か」を特定することは可能です。
   現状その必要が無いので`sendMessage`はレスポンスを読んでいません
 - 補充・リセット手段は用意していません(依頼による判断)
-- 表示には「この端末だけに保存されます(サーバーの残高ではありません)」を明記します。
-  「端末内」だけだと、サーバーに本物の残高がある前提に読めてしまうため
 
 ## 追加APIが来たら優先する順番
 

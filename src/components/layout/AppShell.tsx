@@ -194,7 +194,6 @@ export function AppShell({ children }: PropsWithChildren) {
               </Button>
             ) : null}
             {/* ponytail: 以前は/watchへのリンクだったが、残高を見せるだけの表示に変えたので遷移しない。
-                Tooltipはhoverとキーボードフォーカスの両方で開く(HeroUIのCSSは@heroui/stylesに入っている)。
                 aria-labelに残高を入れて、ツールチップを開かなくても読み上げられるようにする。 */}
             <Tooltip delay={150} closeDelay={100}>
               <Button
@@ -208,9 +207,6 @@ export function AppShell({ children }: PropsWithChildren) {
               </Button>
               <Tooltip.Content>
                 <span className="topbar-credit-value">{credits.toLocaleString()} クレジット</span>
-                <span className="topbar-credit-note">
-                  この端末だけに保存されます(サーバーの残高ではありません)
-                </span>
               </Tooltip.Content>
             </Tooltip>
             <Dropdown>

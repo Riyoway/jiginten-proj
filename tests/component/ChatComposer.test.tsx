@@ -57,7 +57,8 @@ describe("ChatComposer credits", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "送信" }));
 
-    expect(await screen.findByText(/送信に失敗しました/)).toBeInTheDocument();
+    expect(await screen.findByText("送信に失敗しました。")).toBeInTheDocument();
+    expect(screen.queryByText("入力内容は残しています。")).not.toBeInTheDocument();
     expect(balance()).toBe(3000);
     // 選択したギフトは残る(既存の「入力内容は残す」挙動)
     expect(screen.getByRole("button", { name: /拍手/ })).toBeInTheDocument();

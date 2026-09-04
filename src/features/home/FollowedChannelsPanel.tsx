@@ -46,7 +46,7 @@ export function FollowedChannelsPanel({ channels, loading }: FollowedChannelsPan
         ) : (
           <Card.Description>
             {followedIds.length === 0
-              ? "配信画面でフォローすると、ここに表示されます(この端末のみ)"
+              ? "配信画面でフォローすると、ここに表示されます"
               : loading
                 ? "読み込み中…"
                 : "フォロー中のチャンネルは現在配信していません"}

@@ -283,20 +283,10 @@ main {
   gap: 9px;
 }
 
-/* ギフトクレジットのツールチップ。枠と背景は@heroui/stylesの.tooltipが持っているので、
-   ここでは中身の2行組みだけ整える。 */
+/* ギフトクレジットのツールチップ。枠と背景は@heroui/stylesの.tooltipが持っている。 */
 .topbar-credit-value {
   display: block;
   font-weight: 600;
-}
-
-.topbar-credit-note {
-  display: block;
-  margin-top: 2px;
-  max-width: 220px;
-  opacity: 0.75;
-  font-size: 11px;
-  line-height: 1.4;
 }
 
 /* ponytail: dockに入らないインストールボタンだけモバイルのtopbarへ出す

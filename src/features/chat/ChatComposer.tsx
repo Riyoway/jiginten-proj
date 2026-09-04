@@ -41,7 +41,7 @@ export function ChatComposer() {
       setSelectedGift(null);
       setGiftOpen(false);
     } catch {
-      setError("送信に失敗しました。入力内容は残しています。");
+      setError("送信に失敗しました。");
     } finally {
       setSending(false);
     }

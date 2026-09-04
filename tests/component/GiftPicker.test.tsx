@@ -59,14 +59,13 @@ describe("GiftPicker", () => {
     expect(within(screen.getByRole("button", { name: /ハート/ })).getByText("10")).toBeInTheDocument();
   });
 
-  it("shows the device-local credit balance", async () => {
+  it("shows the credit balance without an extra storage note", async () => {
     useCreditStore.setState({ balance: 1850 });
     await renderPicker();
 
     const balance = screen.getByText("残高 1,850");
     expect(balance).toBeInTheDocument();
-    // サーバー残高だと誤解させない注記
-    expect(balance).toHaveAttribute("title", expect.stringContaining("サーバーの残高ではありません"));
+    expect(balance).not.toHaveAttribute("title");
   });
 
   it("builds the group tabs from the API data instead of a hardcoded list", async () => {
