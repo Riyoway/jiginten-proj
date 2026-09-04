@@ -1,5 +1,4 @@
 export const ENDPOINT_ENV_KEYS = {
-  stream: "VITE_STREAM_URL",
   channels: "VITE_CHANNELS_URL",
   comments: "VITE_COMMENTS_URL",
   messages: "VITE_MESSAGES_URL",

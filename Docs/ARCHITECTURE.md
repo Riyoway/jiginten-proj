@@ -37,11 +37,11 @@ feature-firstにしている理由は、配信サービスではplayer/chat/gift
 GET /channels.json (useChannelStore, 一度だけ取得)
     |
     +--> AppShell: sidebarのリンク一覧(遷移先=channel.id、表示名は固定 "Streamly User")
-    +--> HomePage: ライブグリッド(1チャンネル=1 StreamCard、表示名にchannel.titleを使用)
+    +--> HomePage: category集計・絞り込み + ライブグリッド(1チャンネル=1 StreamCard)
     +--> WatchPage: resolveSelectedChannel(channels, URLのchannel)
 ```
 
-選択中チャンネルはstoreではなくURL(`/watch?channel=<id>`)が正。取得失敗/空なら`endpoints.stream`(単一互換ストリーム)にフォールバックする。
+選択中チャンネルはstoreではなくURL(`/watch?channel=<id>`)が正。取得失敗/空なら再生せず、取得エラーを表示する。
 
 フォロー/お気に入り(`store/follows.ts` / `favorites.ts`、localStorage)はこのカタログと突き合わせて
 「保存済み ∩ 配信中」を表示する。カタログに無いidは配信していないだけなので、名前を作らず件数で示す。

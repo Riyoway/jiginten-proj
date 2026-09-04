@@ -2,8 +2,9 @@
 
 ## APIから確認できるもの
 
-- HLSチャンネル一覧(`/channels.json`、id/title/playlist/default)
-- チャンネル別HLS再生(`/ch/<id>/stream.m3u8`)、単一互換ストリームURL(`/stream.m3u8`)
+- HLSチャンネル一覧(`/channels.json`、id/title/category/playlist/default)
+- チャンネル別HLS再生(`/ch/<id>/stream.m3u8`)
+- チャンネル単位のカテゴリーと、配信中チャンネルから導出するカテゴリー件数
 - SSE comments
 - message POST
 - gift item list
@@ -19,7 +20,7 @@
 - follow state
 - favorites sync
 - real viewer count
-- category list
+- 独立したcategory master
 - recommendation
 - ranking
 - gift point balance
@@ -43,7 +44,7 @@
 
 ### Home recommendations
 
-配信グリッドは`/channels.json`により実データになりました(チャンネル数ぶんの`StreamCard`をレンダー、水増しのダミーカードは追加しません)。右カラムの「フォロー中のライブ」も端末内フォロー(`store/follows.ts`)と`/channels.json`の突き合わせで実データ表示になりました(`FollowedChannelsPanel`)。一方カテゴリー・トップギフターは引き続き対応APIが無いため、数値・名前・ランキングを実データとして見せません。該当セクションは`ComingSoonPanel`で「近日公開」と明示し、抽象的なplaceholder行のみを表示します。
+配信グリッドは`/channels.json`により実データになりました(チャンネル数ぶんの`StreamCard`をレンダー、水増しのダミーカードは追加しません)。カテゴリーは各チャンネルの`category`を集計し、件数表示とライブ一覧の絞り込みに使います。0件のカテゴリーはUI上の選択肢として表示しつつdisabledにします。右カラムの「フォロー中のライブ」も端末内フォロー(`store/follows.ts`)と`/channels.json`の突き合わせで実データ表示になりました(`FollowedChannelsPanel`)。トップギフターだけは対応APIが無いため、`ComingSoonPanel`で抽象的なplaceholder行のみを表示します。
 
 ### Follow / Favorites / History
 

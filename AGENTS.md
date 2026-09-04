@@ -26,8 +26,8 @@ pnpm test:e2e        # playwright (builds + previews first, see webServer in pla
 Single test file: `pnpm vitest run tests/unit/messages.test.ts` (or any path). Single Playwright spec:
 `pnpm playwright test tests/e2e/home.spec.ts`.
 
-All five endpoint variables (`VITE_STREAM_URL`, `VITE_CHANNELS_URL`, `VITE_COMMENTS_URL`,
-`VITE_MESSAGES_URL`, `VITE_GIFTS_URL`) are required in `.env` or the hosting environment. Missing,
+All four endpoint variables (`VITE_CHANNELS_URL`, `VITE_COMMENTS_URL`, `VITE_MESSAGES_URL`,
+`VITE_GIFTS_URL`) are required in `.env` or the hosting environment. Missing,
 blank, relative, or non-HTTP(S) values fail before the dev server/build starts.
 
 ## Development workflow
@@ -58,8 +58,8 @@ The backend cannot be extended beyond what's documented in `Docs/API-INTEGRATION
 implementation):
 
 ```
-GET  /channels.json          -> HLS channel catalog (id/title/playlist/default) — source of truth
-GET  /stream.m3u8            -> default-channel compat fallback (channels.json failure only)
+GET  /channels.json          -> HLS channel catalog (id/title/category/playlist/default) — source of truth
+GET  /stream.m3u8            -> backend compatibility endpoint; the frontend does not use it
 GET  /ch/<id>/stream.m3u8    -> per-channel HLS playlist
 GET  /ch/<id>/segments/{n}.ts
 GET  /events                 -> SSE comments
@@ -102,10 +102,11 @@ profile, follow state, viewer count, or ranking API. Consequences enforced throu
   yet" vs "saved channels are offline". Offline entries are reported as a **count only** — never invent a
   name for an id that `/channels.json` no longer lists. Only the sidebar's "人気" item stays disabled
   (no ranking API).
-- Home page sections with no real data source (categories, top gifters) render through
-  `src/components/ui/ComingSoonPanel.tsx` with abstract placeholder text only — never fabricated
-  names/numbers/counts. The live-stream grid itself IS real now (one `StreamCard` per `/channels.json`
-  entry) — don't pad it with fake placeholder cards.
+- Home categories use each channel's `category` from `/channels.json`; counts are derived from the live
+  catalog, category buttons filter the live grid, and zero-count categories stay visible but disabled.
+  Sections with no real data source (such as top gifters) render through
+  `src/components/ui/ComingSoonPanel.tsx` with abstract placeholder text only. The live-stream grid is
+  one `StreamCard` per matching `/channels.json` entry — don't pad it with fake placeholder cards.
 - SSE is the single source of truth for chat: after `POST /messages` succeeds, do not optimistically
   append the message locally — wait for it to arrive via the EventSource stream.
 - Only one `EventSource` connection exists for `/events`, shared by both `ChatPanel` and `DanmakuLayer`
@@ -115,7 +116,7 @@ profile, follow state, viewer count, or ranking API. Consequences enforced throu
 - Comment store caps at 300 messages (`src/store/comments.ts`) to bound DOM growth; raise this only with
   virtualization in place.
 
-Endpoint URLs come only from the five required `VITE_*_URL` variables and are validated by
+Endpoint URLs come only from the four required `VITE_*_URL` variables and are validated by
 `src/lib/api/endpointConfig.ts`; feature components call through
 `src/lib/api/{channels,comments,messages,gifts}.ts` and never construct request URLs themselves.
 

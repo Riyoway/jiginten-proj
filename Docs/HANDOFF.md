@@ -40,7 +40,8 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 | フォロー中のライブ(Home右カラム) | **実データ**(フォロー済み ∩ 配信中) | `features/home/FollowedChannelsPanel.tsx` |
 | お気に入り / フォロー中 / 履歴の一覧ページ | **実データ**(保存済み ∩ 配信中、配信していない分は件数のみ) | `features/collections/CollectionPages.tsx`(3画面で1コンポーネントを共有) |
 | PWAインストール導線 | 実装済み | `lib/pwaInstall.ts` |
-| カテゴリー / トップギフター | **未対応**(`ComingSoonPanel`) | `components/ui/ComingSoonPanel.tsx` |
+| カテゴリー | **実データ**(`channel.category`を集計・絞り込み、0件はdisabled) | `features/home/HomePage.tsx` |
+| トップギフター | **未対応**(`ComingSoonPanel`) | `components/ui/ComingSoonPanel.tsx` |
 | 検索 / 通知 / 人気 / プロフィール・設定メニュー | **未対応**(disabled表示のみ) | `AppShell.tsx` |
 | 視聴者数・フォロワー数・ランキング・配信スケジュール | **出さない**(APIに無い) | — |
 
@@ -48,8 +49,9 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 
 ## 3. 壊してはいけない設計判断
 
-1. **APIに無いデータを捏造しない。** 視聴者数・フォロワー数・ランキング・カテゴリー件数などは
-   数値を出さず、`ComingSoonPanel`で「近日公開」と明示する。`Docs/LIMITATIONS.md`が一次資料。
+1. **APIに無いデータを捏造しない。** 視聴者数・フォロワー数・ランキングは
+   数値を出さず、`ComingSoonPanel`で「近日公開」と明示する。カテゴリー件数は
+   `/channels.json`の`category`から導出する。`Docs/LIMITATIONS.md`が一次資料。
 2. **`channel.title` はコンテンツ名で、配信者名ではない。** 1チャンネル=最大1ライブなので、
    `/channels.json`のN件は「N個の別チャンネル」(**3件から13件に増えた実績あり。件数を前提にしない**)。
    チャンネル識別をアバターと並べて出す箇所
@@ -60,7 +62,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
    全チャンネル共通の1本のまま。フロントだけの偽の分離は禁止。
 4. **`EventSource`は1本だけ。** `useCommentStream`/`useCommentStore`経由でチャットと弾幕が共有する。
 5. **チャンネル一覧をコードに固定しない。** 必ず`fetchChannels()`→`useChannels()`経由で取得し、
-   選択は`resolveSelectedChannel()`(URL指定 → `default:true` → 先頭 → `/stream.m3u8`)。
+   選択は`resolveSelectedChannel()`(URL指定 → `default:true` → 先頭)。playlistはレスポンス値を使う。
 6. **リファレンス画像(`Docs/reference/ui/*.png`)に無い装飾を足さない。** 特に、セクション見出しの上に
    紫色の英語マイクロラベル(`CATEGORIES`等)は付けない。Home Heroの「ようこそ Streamly へ」だけが例外。
 7. **Service WorkerでHLS/SSE/APIを扱わない。** 外部APIはruntimeCachingに登録せず、ブラウザから直接ネットワークへ送る。
@@ -81,6 +83,14 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 ---
 
 ## 4. これまでにやったこと(新しい順)
+
+### Homeカテゴリー / HLS設定(直近)
+
+- **カテゴリーを実データ化**: `/channels.json`の`category`を集計して件数順に表示し、選択すると
+  Homeのライブ一覧を絞り込む。既存のカテゴリー選択肢は0件でも残し、操作だけdisabledにする。
+- **単体ストリーム設定を廃止**: 専用の環境変数とendpoint定義を削除。
+  再生URLは常に選択した`channel.playlist`を`VITE_CHANNELS_URL`基準で解決する。
+  `/channels.json`取得失敗・空の場合は互換ストリームへ切り替えず、取得エラーを表示する。
 
 ### ギフト / クレジット(直近)
 
@@ -135,8 +145,8 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 
 ### それ以前(いまは前提として定着している)
 
-- **マルチチャンネルHLS対応**: `/channels.json`起点へ変更。`/watch?channel=<id>`、`/stream.m3u8`
-  フォールバック、Homeグリッドとsidebarの実データ化(→ §3-5)。
+- **マルチチャンネルHLS対応**: `/channels.json`起点へ変更。`/watch?channel=<id>`、
+  Homeグリッドとsidebarの実データ化(→ §3-5)。
 - **ユーザー向け文言の監査**: 開発者向け文言(「固定 HLS endpoint」等)を削除・書き換え。
   PWAマニフェスト/metaの英語説明も日本語の実文に変更。
 - **リファレンス再照合**: 紫色の英語eyebrowを全削除(Hero以外)、sidebar見出しを

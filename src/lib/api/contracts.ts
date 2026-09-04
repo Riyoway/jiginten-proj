@@ -13,6 +13,7 @@ export interface Gift {
 export interface Channel {
   id: string;
   title: string;
+  category: string;
   playlist: string;
   default: boolean;
   // 出典情報など、実レスポンスにしか存在しない未確定フィールド用。

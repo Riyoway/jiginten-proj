@@ -1,8 +1,23 @@
 import { Card } from "@heroui/react";
 import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Gamepad2, Gift, MessageCircle, Music, Palette, Play, Trophy } from "lucide-react";
-import { useMemo } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  BookOpen,
+  Clapperboard,
+  Gamepad2,
+  Gift,
+  Laugh,
+  MessageCircle,
+  Music,
+  Palette,
+  Play,
+  Rocket,
+  Shapes,
+  Sparkles,
+  Trophy,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../../components/ui/ComingSoonPanel";
 import { getRandomBanner } from "../../lib/banners";
 import { useChannels } from "../../store/channels";
@@ -11,21 +26,50 @@ import { StreamCard, StreamCardSkeleton } from "./StreamCard";
 
 const SKELETON_KEYS = ["skeleton-1", "skeleton-2", "skeleton-3"] as const;
 
-// ponytail: ラベルのみ。カウントは出さない(カテゴリー別の配信数APIが無いため)。
-const CATEGORIES = [
+const CATEGORY_OPTIONS: { label: string; icon: LucideIcon }[] = [
+  { label: "コメディ", icon: Laugh },
+  { label: "ドラマ", icon: Clapperboard },
+  { label: "ファンタジー", icon: Sparkles },
+  { label: "SF", icon: Rocket },
   { label: "ゲーム", icon: Gamepad2 },
   { label: "雑談", icon: MessageCircle },
   { label: "音楽", icon: Music },
   { label: "学習・教育", icon: BookOpen },
   { label: "クリエイティブ", icon: Palette },
   { label: "スポーツ", icon: Trophy },
+  { label: "その他", icon: Shapes },
 ];
+
+const CATEGORY_ICONS = new Map(CATEGORY_OPTIONS.map(({ label, icon }) => [label, icon]));
+
+function normalizeCategory(category: string) {
+  return category.trim() || "その他";
+}
 
 export function HomePage() {
   // ponytail: random per page load, memoized so it doesn't swap mid-session.
   const banner = useMemo(() => getRandomBanner(), []);
 
   const { channels, status } = useChannels();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const categories = useMemo(() => {
+    const counts = new Map(CATEGORY_OPTIONS.map(({ label }) => [label, 0]));
+    for (const channel of channels) {
+      const category = normalizeCategory(channel.category);
+      counts.set(category, (counts.get(category) ?? 0) + 1);
+    }
+
+    return [...counts]
+      .map(([label, count]) => ({
+        label,
+        count,
+        Icon: CATEGORY_ICONS.get(label) ?? Shapes,
+      }))
+      .sort((left, right) => right.count - left.count);
+  }, [channels]);
+  const visibleChannels = selectedCategory
+    ? channels.filter((channel) => normalizeCategory(channel.category) === selectedCategory)
+    : channels;
   // ponytail: ギフトCTAの飛び先。channelsは非同期に埋まるので依存は[channels](bannerの[]とは違う)。
   // 引き直るのは取得完了の1回だけ。未取得ならパラメータ無し = resolveSelectedChannelがdefaultへ落とす。
   // hrefは描画時に決まるので「アクセスごと」にランダム。onClickでの都度抽選にすると
@@ -60,16 +104,27 @@ export function HomePage() {
                 <h2>人気のカテゴリー</h2>
               </div>
             </div>
-            <ComingSoonPanel title="カテゴリー一覧" note="近日、カテゴリーごとの絞り込みに対応予定です">
-              <div className="category-row">
-                {CATEGORIES.map(({ label, icon: Icon }) => (
-                  <span className="category-pill" key={label}>
-                    <Icon size={16} />
-                    {label}
+            <fieldset className="category-row" aria-label="カテゴリーで絞り込む">
+              {categories.map(({ label, count, Icon }) => (
+                <button
+                  type="button"
+                  className="category-card"
+                  aria-label={`${label} ${count}件`}
+                  aria-pressed={selectedCategory === label}
+                  disabled={count === 0}
+                  onClick={() => setSelectedCategory((current) => (current === label ? null : label))}
+                  key={label}
+                >
+                  <span className="category-icon">
+                    <Icon size={18} />
                   </span>
-                ))}
-              </div>
-            </ComingSoonPanel>
+                  <span className="category-copy">
+                    <strong>{label}</strong>
+                    <span>{count}件</span>
+                  </span>
+                </button>
+              ))}
+            </fieldset>
           </section>
 
           <section className="section-block">
@@ -81,26 +136,14 @@ export function HomePage() {
             <div className="stream-grid">
               {channelsLoading ? (
                 SKELETON_KEYS.map((key) => <StreamCardSkeleton key={key} />)
-              ) : channels.length > 0 ? (
-                channels.map((channel) => <StreamCard key={channel.id} channel={channel} />)
+              ) : visibleChannels.length > 0 ? (
+                visibleChannels.map((channel) => <StreamCard key={channel.id} channel={channel} />)
               ) : (
-                // channels.json取得失敗/空 -> 互換エンドポイントの単一配信にフォールバック
-                <Link className="stream-card stream-card-live" to="/watch">
-                  <div className="stream-card-thumb live-thumb">
-                    <img src="/noimage.jpg" alt="" loading="lazy" />
-                    <span className="live-badge">LIVE</span>
-                    <span className="stream-card-play">
-                      <Play size={22} fill="currentColor" />
-                    </span>
-                  </div>
-                  <div className="stream-card-body">
-                    <img src="/avatars/avatar1.png" alt="" />
-                    <div>
-                      <strong>ライブ配信中</strong>
-                      <span>Streamly</span>
-                    </div>
-                  </div>
-                </Link>
+                <p className="inline-error">
+                  {status === "error"
+                    ? "配信一覧を取得できませんでした。"
+                    : "現在配信中のチャンネルはありません。"}
+                </p>
               )}
             </div>
           </section>

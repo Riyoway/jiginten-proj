@@ -1,10 +1,18 @@
 import { expect, test } from "@playwright/test";
 
 test("watch page plays the default stream", async ({ page }) => {
+  const playlistPaths: string[] = [];
+  page.on("request", (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.endsWith(".m3u8")) playlistPaths.push(path);
+  });
+
   await page.goto("/watch");
 
   await expect(page.locator(".player-frame")).toBeVisible();
   await expect(page.locator(".live-badge").first()).toBeVisible();
+  await expect.poll(() => playlistPaths.some((path) => path.startsWith("/ch/"))).toBe(true);
+  expect(playlistPaths).not.toContain("/stream.m3u8");
 });
 
 test("watch page resolves a channel requested via the URL", async ({ page }) => {

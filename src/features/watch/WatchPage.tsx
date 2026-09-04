@@ -2,7 +2,6 @@ import { Heart, Share2, UserCheck, UserPlus } from "lucide-react";
 import { useEffect } from "react";
 import { watchRoute } from "../../app/router";
 import { resolvePlaylistUrl, resolveSelectedChannel } from "../../lib/api/channels";
-import { endpoints } from "../../lib/api/endpoints";
 import { getStreamlyUserName } from "../../lib/streamlyUsers";
 import { useChannels } from "../../store/channels";
 import { useFavoriteStore } from "../../store/favorites";
@@ -18,9 +17,13 @@ export function WatchPage() {
   const { channels, status } = useChannels();
 
   const selectedChannel = resolveSelectedChannel(channels, requestedChannelId);
-  // channels.jsonが失敗/空の場合は、従来通り互換エンドポイントの単一配信にフォールバックする。
-  const source = selectedChannel ? resolvePlaylistUrl(selectedChannel.playlist) : endpoints.stream;
-  const title = selectedChannel?.title ?? "雪景色の線路を眺める配信";
+  const source = selectedChannel ? resolvePlaylistUrl(selectedChannel.playlist) : null;
+  const unavailableMessage =
+    status === "error"
+      ? "配信情報を取得できませんでした。"
+      : status === "loaded"
+        ? "現在配信中のチャンネルはありません。"
+        : "配信情報を読み込んでいます。";
 
   const followedIds = useFollowStore((state) => state.ids);
   const toggleFollow = useFollowStore((state) => state.toggle);
@@ -41,13 +44,21 @@ export function WatchPage() {
   return (
     <div className="watch-page">
       <div className="watch-main">
-        <StreamPlayer source={source} />
-        <section className="stream-meta">
-          <div className="channel-row">
-            <img src="/avatars/avatar1.png" alt="Channel avatar" />
-            <div className="stream-copy">
-              <h1>{title}</h1>
-              {selectedChannel ? (
+        {source ? (
+          <StreamPlayer source={source} />
+        ) : (
+          <section className="player-frame" aria-label="ライブ配信プレイヤー">
+            <div className="player-error" role="status">
+              {unavailableMessage}
+            </div>
+          </section>
+        )}
+        {selectedChannel ? (
+          <section className="stream-meta">
+            <div className="channel-row">
+              <img src="/avatars/avatar1.png" alt="Channel avatar" />
+              <div className="stream-copy">
+                <h1>{selectedChannel.title}</h1>
                 <div className="channel-identity">
                   <strong>
                     {getStreamlyUserName(
@@ -65,29 +76,23 @@ export function WatchPage() {
                     {following ? "フォロー中" : "フォロー"}
                   </button>
                 </div>
-              ) : null}
-              <p>Streamlyでお届けする、ゆったり視聴できるライブ配信です。</p>
+                <p>Streamlyでお届けする、ゆったり視聴できるライブ配信です。</p>
+              </div>
+              <div className="stream-actions">
+                <button
+                  type="button"
+                  aria-pressed={favorited}
+                  onClick={() => toggleFavorite(selectedChannel.id)}
+                >
+                  <Heart size={18} fill={favorited ? "currentColor" : "none"} /> お気に入り
+                </button>
+                <button type="button">
+                  <Share2 size={18} /> シェア
+                </button>
+              </div>
             </div>
-            <div className="stream-actions">
-              <button
-                type="button"
-                aria-pressed={favorited}
-                disabled={!selectedChannel}
-                onClick={() => selectedChannel && toggleFavorite(selectedChannel.id)}
-              >
-                <Heart size={18} fill={favorited ? "currentColor" : "none"} /> お気に入り
-              </button>
-              <button type="button">
-                <Share2 size={18} /> シェア
-              </button>
-            </div>
-          </div>
-          {status === "error" ? (
-            <p className="inline-error channel-fallback-note">
-              配信一覧を取得できなかったため、既定の配信を表示しています。
-            </p>
-          ) : null}
-        </section>
+          </section>
+        ) : null}
       </div>
       <ChatPanel />
     </div>
