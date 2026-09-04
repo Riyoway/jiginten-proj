@@ -85,8 +85,9 @@ describe("HomePage", () => {
 
     const row = within(panel).getByRole("link", { name: /Streamly User/ });
     expect(row.getAttribute("href")).toContain("channel=llama-drama");
-    expect(within(panel).getByText(getStreamlyUserName("llama-drama"))).toBeInTheDocument();
+    const channelIds = MOCK_CHANNELS.map((channel) => channel.id);
+    expect(within(panel).getByText(getStreamlyUserName("llama-drama", channelIds))).toBeInTheDocument();
     // フォローしていないチャンネルはここに出さない
-    expect(within(panel).queryByText(getStreamlyUserName("llamigos"))).not.toBeInTheDocument();
+    expect(within(panel).queryByText(getStreamlyUserName("llamigos", channelIds))).not.toBeInTheDocument();
   });
 });

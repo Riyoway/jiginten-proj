@@ -16,7 +16,8 @@ import {
   User,
   Users,
 } from "lucide-react";
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren, useMemo } from "react";
+import { pickRandom } from "../../lib/pickRandom";
 import { usePwaInstallPrompt } from "../../lib/pwaInstall";
 import { getStreamlyUserName } from "../../lib/streamlyUsers";
 import { useChannels } from "../../store/channels";
@@ -39,6 +40,10 @@ const disabledNavItems = [{ label: "人気", icon: Flame }];
 
 // ponytail: プロフィール/設定/ヘルプも同じ理由(実装先のページ・APIが無い)で
 // 選択不可のまま項目だけ用意しておく。
+// ponytail: 「おすすめ」なので全件並べる必要はない。13チャンネルを全部出すとsidebarが
+// 縦に溢れてプロフィール/インストールがスクロールしないと届かなくなるため、ランダムに絞る。
+const SIDEBAR_CHANNEL_COUNT = 5;
+
 const userMenuItems = [
   { id: "profile", label: "プロフィール", icon: User },
   { id: "settings", label: "設定", icon: Settings },
@@ -49,6 +54,10 @@ export function AppShell({ children }: PropsWithChildren) {
   const { canInstall, promptInstall } = usePwaInstallPrompt();
   const { channels, status } = useChannels();
   const credits = useCreditStore((state) => state.balance);
+  // 仮の表示名は「一覧全体」を基準に振る(表示するのは5件でも番号は全13件で一意にする)。
+  const channelIds = useMemo(() => channels.map((channel) => channel.id), [channels]);
+  // channelsは非同期に埋まるので依存は[channels]。引き直るのは取得完了の1回だけ。
+  const featuredChannels = useMemo(() => pickRandom(channels, SIDEBAR_CHANNEL_COUNT), [channels]);
 
   return (
     <div className="app-shell">
@@ -82,7 +91,7 @@ export function AppShell({ children }: PropsWithChildren) {
                 3つの別チャンネルが存在するということ。「おすすめチャンネル」表記が正しい。 */}
             <strong className="sidebar-channels-title">おすすめチャンネル</strong>
             <div className="sidebar-channel-list">
-              {channels.map((channel) => (
+              {featuredChannels.map((channel) => (
                 <Link
                   key={channel.id}
                   className="sidebar-channel-link"
@@ -93,7 +102,7 @@ export function AppShell({ children }: PropsWithChildren) {
                   {/* ponytail: channel.titleはコンテンツ名であって配信者名ではない。
                       配信者アカウントAPIが無いのはchatのGuestと同じ制約なので、
                       id単位で決定的に選んだ仮の表示名(Streamly User N)にする。 */}
-                  <span>{getStreamlyUserName(channel.id)}</span>
+                  <span>{getStreamlyUserName(channel.id, channelIds)}</span>
                   {/* ponytail: 数値(視聴者数等)は出さないが、実際に配信中という事実だけは示す。
                       一覧の全行が常にliveなので情報量が無く、リンクのaccessible nameには含めない。 */}
                   <span className="sidebar-channel-live-dot" aria-hidden="true" />

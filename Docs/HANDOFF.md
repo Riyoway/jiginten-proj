@@ -52,8 +52,9 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
    数値を出さず、`ComingSoonPanel`で「近日公開」と明示する。`Docs/LIMITATIONS.md`が一次資料。
 2. **`channel.title` はコンテンツ名で、配信者名ではない。** 1チャンネル=最大1ライブなので、
    同時に3ライブが立っている今は「3つの別チャンネル」。チャンネル識別をアバターと並べて出す箇所
-   (sidebar行 / 視聴画面のチャンネル行)は `getStreamlyUserName(id)`(`lib/streamlyUsers.ts`)の
-   仮名を使い、`channel.title`は「配信中の内容」として別要素で表示する。chatの`Guest`と同じ理屈。
+   (sidebar行 / 視聴画面のチャンネル行)は `getStreamlyUserName(id, channelIds)`(`lib/streamlyUsers.ts`)の
+   仮名を使う。`channelIds`には取得したチャンネル一覧全体を渡し、`channel.title`は「配信中の内容」として
+   別要素で表示する。chatの`Guest`と同じ理屈。
 3. **チャットはチャンネル別に分けない。** `/events`・`/messages`に`channelId`が無いため、
    全チャンネル共通の1本のまま。フロントだけの偽の分離は禁止。
 4. **`EventSource`は1本だけ。** `useCommentStream`/`useCommentStore`経由でチャットと弾幕が共有する。
@@ -119,6 +120,13 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
   チャンネル別の3色グラデーション(`thumb-0/1/2`)は依頼により削除。サムネイルAPIが無いのは変わらず、
   実写や偽の内容は出していない。PNG 1MBで受け取ったものを960x540のJPEG(25KB)に落として置いている。
 
+- **sidebarのチャンネル一覧をランダム5件に絞り、仮名の重複を直した**:
+  `/channels.json`が3→13件に増えた結果、(1)sidebarが縦に溢れてプロフィール/インストールが
+  スクロールしないと届かず、(2)`getStreamlyUserName`が10個の固定プールから選んでいたため
+  別チャンネルに同じ「Streamly User 4」が付いていた。
+  前者は`pickRandom(channels, 5)`(`lib/pickRandom.ts`)+ チャンネル一覧側で縦の余りを吸収する形にし、
+  後者は**一覧全体を基準に一意な番号を振る**方式(`getStreamlyUserName(id, channelIds)`)へ変更。
+  3つの呼び出し箇所すべてに同じ一覧を渡すこと(渡す一覧が違うと同じチャンネルが画面ごとに別名になる)。
 - **ギフト周りを`/items`の全フィールドで作り直した**:
   `Gift`型を6フィールドに拡張(`gifts.ts`は生のitemsを返していたので実行時には元から乗っていた)、
   ピッカーにcost表示・グループタブ(HeroUI `Tabs`、**グループはAPIの値から動的生成**)・
@@ -165,7 +173,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 
 ```powershell
 pnpm lint       # biome check .(0件が正常。赤くなったら自分の差分が原因)
-pnpm test       # vitest: unit + component (現在75件)
+pnpm test       # vitest: unit + component (現在83件)
 pnpm build      # tsc -b + vite build
 pnpm test:e2e   # playwright: chromium + mobile (現在8件)
 ```
