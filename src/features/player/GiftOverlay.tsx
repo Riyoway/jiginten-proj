@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useFreshMessages } from "../../store/comments";
-import { GiftImage } from "../gifts/GiftImage";
+import { GIFT_ANIMATION_DURATION_MS, GiftImage } from "../gifts/GiftImage";
 
-// 5秒。WCAG 2.2.2(Pause, Stop, Hide)は「5秒を超える」自動再生を対象にするので、
-// ちょうど5秒なら停止操作を用意しなくてよい。styles/player.css のkeyframesと対になっている。
-const HOLD_MS = 5000;
 // ponytail: /eventsは全チャンネル共通の1本で詰まることがある。同時表示は3件までにして
 // あふれたら古い方から捨てる(最新のギフトは必ず見せる)。
 const MAX_CONCURRENT = 3;
@@ -44,7 +41,7 @@ export function GiftOverlay() {
       timers.current.delete(timer);
       const expired = new Set(additions.map((item) => item.key));
       setPlaying((current) => current.filter((item) => !expired.has(item.key)));
-    }, HOLD_MS);
+    }, GIFT_ANIMATION_DURATION_MS);
     timers.current.add(timer);
   });
 

@@ -24,12 +24,12 @@ function push(id: string, text: string) {
   });
 }
 
-function pushGift(id: string) {
+function pushGift(id: string, animationUrl: string | null = null) {
   act(() => {
     useCommentStore.getState().push({
       id,
       text: "ギフトを送りました",
-      item: { id: "heart", name: "ハート", iconUrl: "/heart.png", cost: 10, animationUrl: null },
+      item: { id: "heart", name: "ハート", iconUrl: "/heart.png", cost: 10, animationUrl },
     });
   });
 }
@@ -74,6 +74,21 @@ describe("ChatPanel", () => {
 
     expect(screen.getByText("こんにちは")).toBeInTheDocument();
     expect(screen.queryByText("ハート")).not.toBeInTheDocument();
+  });
+
+  it("stops an animated chat gift after 5 seconds", () => {
+    vi.useFakeTimers();
+    pushGift("g1", "https://example.test/animations/heart.webp");
+    render(<ChatPanel />);
+
+    const image = () => document.querySelector(".gift-highlight-image");
+    expect(image()).toHaveAttribute("src", "https://example.test/animations/heart.webp");
+
+    act(() => vi.advanceTimersByTime(4999));
+    expect(image()).toHaveAttribute("src", "https://example.test/animations/heart.webp");
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(image()).toHaveAttribute("src", "/heart.png");
   });
 
   it("shows the follow notice locally and hides it from the gift filter", () => {

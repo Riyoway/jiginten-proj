@@ -1,8 +1,8 @@
 import { Gift as GiftIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ChatMessage } from "../../lib/api/contracts";
 import { getRandomAvatar } from "../../lib/avatars";
-import { GiftImage } from "../gifts/GiftImage";
+import { GIFT_ANIMATION_DURATION_MS, GiftImage } from "../gifts/GiftImage";
 
 export function ChatMessageView({ message }: { message: ChatMessage }) {
   // ponytail: ChatPanelが key={message.key} で描画するのでインスタンス=1メッセージ。
@@ -10,6 +10,16 @@ export function ChatMessageView({ message }: { message: ChatMessage }) {
   // message.key は payload.id なので、そこからアバターを導出してはいけない
   // (CLAUDE.md: idやテキストから発言者の同一性を作らない)。
   const avatar = useMemo(() => getRandomAvatar(), []);
+  const animationUrl = message.gift?.animationUrl;
+  const [animateGift, setAnimateGift] = useState(Boolean(animationUrl));
+
+  useEffect(() => {
+    if (!animationUrl) return;
+
+    setAnimateGift(true);
+    const timer = window.setTimeout(() => setAnimateGift(false), GIFT_ANIMATION_DURATION_MS);
+    return () => window.clearTimeout(timer);
+  }, [animationUrl]);
 
   if (message.gift) {
     return (
@@ -23,16 +33,14 @@ export function ChatMessageView({ message }: { message: ChatMessage }) {
               <GiftIcon size={12} /> GIFT
             </span>
           </div>
-          {/* ponytail: 「アニメーション付きのギフトだ」と分かるように、ここだけは常に再生する
-              (他の場所の既定は静止アイコン)。loop count 0 なので回り続けるが、
-              画面外のチャットはブラウザがアニメーションを止めるので放置してよい。
-              reduced-motion のときは GiftImage が静止アイコンに落とす。 */}
+          {/* ponytail: チャットに流れてくる演出もプレイヤー上と同じ5秒で静止アイコンへ戻す。
+              reduced-motion のときは GiftImage が最初から静止アイコンに落とす。 */}
           <div className="gift-highlight">
             <GiftImage
               className="gift-highlight-image"
               iconUrl={message.gift.iconUrl}
               animationUrl={message.gift.animationUrl}
-              animate
+              animate={animateGift}
             />
             <div className="gift-highlight-body">
               <strong>{message.gift.name}</strong>
