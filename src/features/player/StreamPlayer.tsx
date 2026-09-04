@@ -17,6 +17,7 @@ export function StreamPlayer({ source }: StreamPlayerProps) {
   const volume = usePreferenceStore((state) => state.volume);
   const danmakuEnabled = usePreferenceStore((state) => state.danmakuEnabled);
   const setMuted = usePreferenceStore((state) => state.setMuted);
+  const setVolume = usePreferenceStore((state) => state.setVolume);
   const setDanmakuEnabled = usePreferenceStore((state) => state.setDanmakuEnabled);
   const { orientation, error } = useHlsPlayer(video, source);
 
@@ -24,8 +25,19 @@ export function StreamPlayer({ source }: StreamPlayerProps) {
     if (!video) return;
     video.muted = muted;
     video.volume = volume;
-    video.play().catch(() => undefined);
   }, [muted, video, volume]);
+
+  useEffect(() => {
+    if (!video || !source) return;
+
+    video.play().catch(() => {
+      // 音声付きの自動再生が拒否された場合も、映像だけは自動再生する。
+      if (video.muted) return;
+      video.muted = true;
+      setMuted(true);
+      video.play().catch(() => undefined);
+    });
+  }, [setMuted, source, video]);
 
   const togglePlay = () => {
     if (!video) return;
@@ -44,6 +56,7 @@ export function StreamPlayer({ source }: StreamPlayerProps) {
       <video
         ref={setVideo}
         className="stream-video"
+        autoPlay
         playsInline
         muted={muted}
         onPlay={() => setPlaying(true)}
@@ -63,13 +76,25 @@ export function StreamPlayer({ source }: StreamPlayerProps) {
         <button type="button" onClick={togglePlay} aria-label={playing ? "一時停止" : "再生"}>
           {playing ? <Pause size={21} /> : <Play size={21} />}
         </button>
-        <button
-          type="button"
-          onClick={() => setMuted(!muted)}
-          aria-label={muted ? "ミュート解除" : "ミュート"}
-        >
-          {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-        </button>
+        <div className="volume-control">
+          <button
+            type="button"
+            onClick={() => setMuted(!muted)}
+            aria-label={muted ? "ミュート解除" : "ミュート"}
+          >
+            {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+          </button>
+          <input
+            className="volume-slider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            aria-label={`音量 ${Math.round(volume * 100)}%`}
+            onChange={(event) => setVolume(Number(event.currentTarget.value))}
+          />
+        </div>
         <span className="live-dot" />
         <span className="live-label">LIVE</span>
         <span className="control-spacer" />

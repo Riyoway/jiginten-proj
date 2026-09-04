@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatPanel } from "../../src/features/chat/ChatPanel";
 import type { IncomingComment } from "../../src/lib/api/contracts";
@@ -14,6 +14,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   useCommentStore.getState().clear();
 });
 
@@ -23,11 +24,23 @@ function push(id: string, text: string) {
   });
 }
 
+function pushGift(id: string) {
+  act(() => {
+    useCommentStore.getState().push({
+      id,
+      text: "ギフトを送りました",
+      item: { id: "heart", name: "ハート", iconUrl: "/heart.png", cost: 10, animationUrl: null },
+    });
+  });
+}
+
 describe("ChatPanel", () => {
   it("shows the empty state and does not scroll when there are no messages", () => {
     render(<ChatPanel />);
 
     expect(screen.getByText("コメントを待っています")).toBeInTheDocument();
+    expect(screen.queryByText("接続中")).not.toBeInTheDocument();
+    expect(screen.queryByText("再接続中")).not.toBeInTheDocument();
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
@@ -40,5 +53,47 @@ describe("ChatPanel", () => {
     expect(scrollTo).toHaveBeenCalledTimes(2);
     expect(scrollTo).toHaveBeenLastCalledWith(expect.objectContaining({ behavior: "smooth" }));
     expect(screen.getByText("こんばんは")).toBeInTheDocument();
+  });
+
+  it("keeps unavailable chat views disabled and filters messages by type", () => {
+    push("c1", "こんにちは");
+    pushGift("g1");
+    render(<ChatPanel />);
+
+    expect(screen.getByRole("tab", { name: "ギフトランキング" })).toBeDisabled();
+    expect(screen.getByRole("tab", { name: "ユーザー" })).toBeDisabled();
+    expect(screen.getByText("こんにちは")).toBeInTheDocument();
+    expect(screen.getByText("ハート")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "ギフト" }));
+
+    expect(screen.queryByText("こんにちは")).not.toBeInTheDocument();
+    expect(screen.getByText("ハート")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "メッセージ" }));
+
+    expect(screen.getByText("こんにちは")).toBeInTheDocument();
+    expect(screen.queryByText("ハート")).not.toBeInTheDocument();
+  });
+
+  it("shows the follow notice locally and hides it from the gift filter", () => {
+    render(<ChatPanel followNotice="Guestさんがこの配信をフォローしました！" />);
+
+    expect(screen.getByText("Guestさんがこの配信をフォローしました！")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "ギフト" }));
+
+    expect(screen.queryByText("Guestさんがこの配信をフォローしました！")).not.toBeInTheDocument();
+  });
+
+  it("hides the follow notice after it flows away", () => {
+    vi.useFakeTimers();
+    render(<ChatPanel followNotice="Guestさんがこの配信をフォローしました！" />);
+
+    expect(screen.getByText("Guestさんがこの配信をフォローしました！")).toBeInTheDocument();
+
+    act(() => vi.advanceTimersByTime(4000));
+
+    expect(screen.queryByText("Guestさんがこの配信をフォローしました！")).not.toBeInTheDocument();
   });
 });

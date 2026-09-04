@@ -76,6 +76,37 @@
   font-size: 11px;
 }
 
+.volume-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-slider {
+  width: 0;
+  min-width: 0;
+  height: 4px;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  accent-color: var(--purple-2);
+  transition:
+    width 160ms ease,
+    opacity 160ms ease;
+}
+
+.volume-control:hover .volume-slider,
+.volume-control:focus-within .volume-slider {
+  width: 84px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.volume-slider:focus-visible {
+  outline: 2px solid var(--purple-2);
+  outline-offset: 3px;
+}
+
 .player-controls .active-control {
   color: #d8ccff;
   border-color: rgba(154, 120, 255, 0.5);
@@ -130,6 +161,11 @@
 
   .player-frame.portrait .stream-video {
     width: 100%;
+  }
+
+  .volume-control:hover .volume-slider,
+  .volume-control:focus-within .volume-slider {
+    width: 68px;
   }
 }
 

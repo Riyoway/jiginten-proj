@@ -30,6 +30,7 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 |---|---|---|
 | HLS再生(マルチチャンネル) | **実データ** | `lib/api/channels.ts`, `store/channels.ts`, `features/player/*` |
 | チャンネル一覧(Homeグリッド=全件 / sidebar=ランダム5件) | **実データ** | `features/home/StreamCard.tsx`, `AppShell.tsx`, `lib/pickRandom.ts` |
+| 配信サムネイル | **実データ**(playlistの初回フレームを端末内キャッシュ、取得失敗時はnoimage) | `features/home/StreamThumbnail.tsx` |
 | チャット(SSE受信・送信) | **実データ** | `features/chat/*`, `store/comments.ts`(上限300件) |
 | 弾幕 | **実データ**(チャットと同一ストリーム) | `features/danmaku/DanmakuLayer.tsx` |
 | ギフト送信・一覧 | **実データ**(cost / group / animationUrl まで使用) | `features/gifts/*`, `lib/api/gifts.ts` |
@@ -130,9 +131,9 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
 - **ネイティブスクロールバーを隠す範囲を整理**: `<html>`のスクロールバーはHomeだけがclassで
   隠していたが、ルート間で有無が変わると幅が変動して内容が横にずれるので`base.css`で全画面に適用し、
   `HomePage`のuseEffectを削除。`.gift-picker`も`.chat-list`と同じ扱いにした。スクロール自体は効く。
-- **カードのサムネイルを「画像なし」プレースホルダーに変更**(`public/noimage.jpg`)。
-  チャンネル別の3色グラデーション(`thumb-0/1/2`)は依頼により削除。サムネイルAPIが無いのは変わらず、
-  実写や偽の内容は出していない。PNG 1MBで受け取ったものを960x540のJPEG(25KB)に落として置いている。
+- **配信サムネイルを実装**(`features/home/StreamThumbnail.tsx`)。表示領域に近づいたカードの`playlist`から
+  初回に取得できたフレームをJPEG化し、チャンネル単位で端末内キャッシュする。取得前・失敗時は
+  `public/noimage.jpg`を表示し、サムネイルAPIや偽の映像は追加していない。
 - **sidebarの余白調整**: おすすめチャンネル行を詰め、Home右カラム「フォロー中のライブ」の行を大きくした。
 
 ### 一覧ページ / 端末内ステート

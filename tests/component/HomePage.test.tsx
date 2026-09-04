@@ -83,6 +83,28 @@ describe("HomePage", () => {
     expect(within(liveSection).queryByText("Caminandes 1: Llama Drama")).not.toBeInTheDocument();
   });
 
+  it("keeps categories on one row until the viewer expands the list", async () => {
+    render(<RouterProvider router={router} />);
+
+    const categorySection = (await screen.findByRole("heading", { name: "人気のカテゴリー" })).closest(
+      "section",
+    );
+    if (!categorySection) throw new Error("category section not found");
+
+    const toggle = within(categorySection).getByRole("button", { name: "すべて見る" });
+    const categoryRow = within(categorySection).getByRole("group");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(categoryRow).not.toHaveClass("expanded");
+
+    fireEvent.click(toggle);
+
+    expect(within(categorySection).getByRole("button", { name: "折りたたむ" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(categoryRow).toHaveClass("expanded");
+  });
+
   it("does not leak developer-facing wording to end users", async () => {
     render(<RouterProvider router={router} />);
     await screen.findByRole("heading", { name: /好きな配信を見つけて/ });
@@ -109,8 +131,11 @@ describe("HomePage", () => {
 
     const row = within(panel).getByRole("link", { name: /Streamly User/ });
     expect(row.getAttribute("href")).toContain("channel=llama-drama");
+    expect(row.querySelector(".rail-channel-thumbnail")).toHaveAttribute("src", "/avatars/avatar1.png");
     const channelIds = MOCK_CHANNELS.map((channel) => channel.id);
     expect(within(panel).getByText(getStreamlyUserName("llama-drama", channelIds))).toBeInTheDocument();
+    expect(within(panel).getByText("すべて見る")).toHaveAttribute("href", "/follows");
+    expect(within(panel).getByText("ドラマ")).toBeInTheDocument();
     // フォローしていないチャンネルはここに出さない
     expect(within(panel).queryByText(getStreamlyUserName("llamigos", channelIds))).not.toBeInTheDocument();
   });

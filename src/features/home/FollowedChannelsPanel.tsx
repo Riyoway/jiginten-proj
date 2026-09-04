@@ -19,8 +19,11 @@ export function FollowedChannelsPanel({ channels, loading }: FollowedChannelsPan
 
   return (
     <Card className="rail-panel" variant="transparent">
-      <Card.Header>
+      <Card.Header className="rail-panel-header">
         <Card.Title>フォロー中のライブ</Card.Title>
+        <Link className="rail-panel-link" to="/follows">
+          すべて見る
+        </Link>
       </Card.Header>
       <Card.Content>
         {followedLive.length > 0 ? (
@@ -32,13 +35,16 @@ export function FollowedChannelsPanel({ channels, loading }: FollowedChannelsPan
                 to="/watch"
                 search={{ channel: channel.id }}
               >
-                <img src="/avatars/avatar1.png" alt="" />
+                <img className="rail-channel-thumbnail" src="/avatars/avatar1.png" alt="" />
                 <span className="rail-channel-body">
-                  <span className="rail-channel-name">
-                    {getStreamlyUserName(channel.id, channelIds)}
-                    <span className="rail-channel-live-dot" aria-hidden="true" />
+                  <span className="rail-channel-topline">
+                    <span className="live-badge rail-channel-live-badge">LIVE</span>
+                    <span className="rail-channel-name">{getStreamlyUserName(channel.id, channelIds)}</span>
                   </span>
-                  <span className="rail-channel-title">{channel.title}</span>
+                  <strong className="rail-channel-title">{channel.title}</strong>
+                  {channel.category.trim() ? (
+                    <span className="rail-channel-category">{channel.category}</span>
+                  ) : null}
                 </span>
               </Link>
             ))}

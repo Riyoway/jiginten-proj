@@ -14,24 +14,23 @@
 
 .stream-meta {
   margin-top: 12px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  overflow: hidden;
-  background: var(--surface);
+  padding: 2px 6px 0;
 }
 
 .channel-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 13px;
-  padding: 17px;
+  gap: 14px;
+  padding: 4px 4px 8px;
 }
 
 .channel-row > img {
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid var(--line-strong);
 }
 
 .stream-copy {
@@ -40,36 +39,36 @@
 }
 
 .stream-copy h1 {
-  margin: 5px 0 2px;
-  font-size: clamp(17px, 2vw, 22px);
+  margin: 0 0 7px;
+  font-size: clamp(18px, 2.2vw, 24px);
   letter-spacing: -0.03em;
-}
-
-.stream-copy p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
 }
 
 .channel-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 4px 0 7px;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 0;
   font-size: 12px;
   color: var(--muted);
 }
 
+.channel-identity strong {
+  color: #edf0f7;
+  font-size: 13px;
+}
+
 .follow-button {
-  height: 26px;
+  height: 29px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 0 10px;
-  border: 1px solid var(--line-strong);
+  padding: 0 12px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  color: #c6ceda;
+  background: var(--purple);
+  color: #fff;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -81,22 +80,52 @@
   background: rgba(124, 77, 255, 0.18);
 }
 
+.follower-count {
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.stream-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.stream-tags span {
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: #b9c2d2;
+  background: #111721;
+  font-size: 10px;
+  line-height: 1;
+}
+
 .stream-actions {
   display: flex;
   gap: 8px;
+  align-self: start;
 }
 
 .stream-actions button {
-  height: 38px;
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 0 12px;
+  padding: 0 15px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.035);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.025);
   cursor: pointer;
-  border-radius: 10px;
   color: #c6ceda;
+  white-space: nowrap;
+}
+
+.stream-actions button:hover {
+  color: #fff;
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .stream-actions button[aria-pressed="true"] {
@@ -108,6 +137,16 @@
 .stream-actions button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.share-status {
+  margin: 0 0 3px 70px;
+  color: #9be7c0;
+  font-size: 11px;
+}
+
+.share-status.error {
+  color: #ff94a3;
 }
 
 @media (max-width: 960px) {
@@ -124,8 +163,7 @@
   }
 
   .channel-row {
-    align-items: flex-start;
-    flex-wrap: wrap;
+    align-items: start;
   }
 
   .channel-row > img {
@@ -134,16 +172,20 @@
   }
 
   .stream-copy {
-    width: calc(100% - 62px);
-    flex: none;
+    width: auto;
   }
 
   .stream-actions {
+    grid-column: 1 / -1;
     width: 100%;
   }
 
   .stream-actions button {
     flex: 1;
     justify-content: center;
+  }
+
+  .share-status {
+    margin-left: 0;
   }
 }

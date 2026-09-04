@@ -1,6 +1,6 @@
 import { RouterProvider } from "@tanstack/react-router";
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { router } from "../../src/app/router";
 import type { Channel } from "../../src/lib/api/contracts";
 import { getStreamlyUserName } from "../../src/lib/streamlyUsers";
@@ -38,6 +38,9 @@ describe("WatchPage", () => {
     if (!streamCopy) throw new Error("stream-copy not found");
     const channelIds = MOCK_CHANNELS.map((channel) => channel.id);
     expect(within(streamCopy).getByText(getStreamlyUserName("llamigos", channelIds))).toBeInTheDocument();
+    expect(within(streamCopy).getByText("フォロワー 0")).toBeInTheDocument();
+    expect(within(streamCopy).getByText("ライブ配信")).toBeInTheDocument();
+    expect(within(streamCopy).getByText("コメディ")).toBeInTheDocument();
 
     expect(screen.queryByText("LIVE STREAM")).not.toBeInTheDocument();
   });
@@ -52,6 +55,8 @@ describe("WatchPage", () => {
     expect(followButton).toHaveAttribute("aria-pressed", "true");
     expect(followButton).not.toHaveAttribute("title");
     expect(useFollowStore.getState().has("llamigos")).toBe(true);
+    expect(screen.getByText("フォロワー 1")).toBeInTheDocument();
+    expect(screen.getByText("Guestさんがこの配信をフォローしました！")).toBeInTheDocument();
 
     // sidebarの無効化された「お気に入り」nav項目と名前が被るため、同様にpressedで絞り込む
     const favoriteButton = screen.getByRole("button", { name: /お気に入り/, pressed: false });
@@ -59,6 +64,22 @@ describe("WatchPage", () => {
     expect(favoriteButton).toHaveAttribute("aria-pressed", "true");
     expect(favoriteButton).not.toHaveAttribute("title");
     expect(useFavoriteStore.getState().has("llamigos")).toBe(true);
+  });
+
+  it("shares the current watch URL", async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "share", { configurable: true, value: share });
+    render(<RouterProvider router={router} />);
+
+    fireEvent.click(await screen.findByRole("button", { name: "シェア" }));
+
+    await waitFor(() =>
+      expect(share).toHaveBeenCalledWith({
+        title: "Caminandes 3: Llamigos",
+        url: expect.stringContaining("/watch"),
+      }),
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("リンクを共有しました");
   });
 
   it("shows an error instead of falling back to a standalone stream URL", async () => {

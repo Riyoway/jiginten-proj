@@ -1,5 +1,5 @@
 import { Heart, Share2, UserCheck, UserPlus } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { watchRoute } from "../../app/router";
 import { resolvePlaylistUrl, resolveSelectedChannel } from "../../lib/api/channels";
 import { getStreamlyUserName } from "../../lib/streamlyUsers";
@@ -40,6 +40,58 @@ export function WatchPage() {
 
   const following = selectedChannel ? followedIds.includes(selectedChannel.id) : false;
   const favorited = selectedChannel ? favoritedIds.includes(selectedChannel.id) : false;
+  const streamerName = selectedChannel
+    ? getStreamlyUserName(
+        selectedChannel.id,
+        channels.map((channel) => channel.id),
+      )
+    : null;
+  const category = selectedChannel?.category.trim();
+  const [followNotice, setFollowNotice] = useState(false);
+  const [shareState, setShareState] = useState<"idle" | "shared" | "error">("idle");
+
+  useEffect(() => {
+    if (!selectedChannelId) return;
+    setFollowNotice(false);
+    setShareState("idle");
+  }, [selectedChannelId]);
+
+  const handleFollow = () => {
+    if (!selectedChannel) return;
+    const willFollow = !following;
+    toggleFollow(selectedChannel.id);
+    setFollowNotice(willFollow);
+  };
+
+  const handleShare = async () => {
+    if (!selectedChannel) return;
+
+    const shareData = { title: selectedChannel.title, url: window.location.href };
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share(shareData);
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareData.url);
+      } else {
+        const input = document.createElement("textarea");
+        input.value = shareData.url;
+        input.setAttribute("readonly", "true");
+        input.style.position = "fixed";
+        input.style.opacity = "0";
+        document.body.append(input);
+        input.select();
+        try {
+          if (!document.execCommand("copy")) throw new Error("copy failed");
+        } finally {
+          input.remove();
+        }
+      }
+      setShareState("shared");
+    } catch (reason) {
+      if (reason instanceof DOMException && reason.name === "AbortError") return;
+      setShareState("error");
+    }
+  };
 
   return (
     <div className="watch-page">
@@ -56,27 +108,26 @@ export function WatchPage() {
         {selectedChannel ? (
           <section className="stream-meta">
             <div className="channel-row">
-              <img src="/avatars/avatar1.png" alt="Channel avatar" />
+              <img src="/avatars/avatar1.png" alt="" />
               <div className="stream-copy">
                 <h1>{selectedChannel.title}</h1>
                 <div className="channel-identity">
-                  <strong>
-                    {getStreamlyUserName(
-                      selectedChannel.id,
-                      channels.map((channel) => channel.id),
-                    )}
-                  </strong>
+                  <strong>{streamerName}</strong>
                   <button
                     type="button"
                     className={`follow-button ${following ? "active" : ""}`}
                     aria-pressed={following}
-                    onClick={() => toggleFollow(selectedChannel.id)}
+                    onClick={handleFollow}
                   >
                     {following ? <UserCheck size={15} /> : <UserPlus size={15} />}
                     {following ? "フォロー中" : "フォロー"}
                   </button>
+                  <span className="follower-count">フォロワー {following ? 1 : 0}</span>
                 </div>
-                <p>Streamlyでお届けする、ゆったり視聴できるライブ配信です。</p>
+                <div className="stream-tags">
+                  <span>ライブ配信</span>
+                  {category ? <span>{category}</span> : null}
+                </div>
               </div>
               <div className="stream-actions">
                 <button
@@ -86,15 +137,20 @@ export function WatchPage() {
                 >
                   <Heart size={18} fill={favorited ? "currentColor" : "none"} /> お気に入り
                 </button>
-                <button type="button">
+                <button type="button" onClick={handleShare}>
                   <Share2 size={18} /> シェア
                 </button>
               </div>
             </div>
+            {shareState !== "idle" ? (
+              <p className={`share-status ${shareState}`} role="status">
+                {shareState === "shared" ? "リンクを共有しました" : "リンクを共有できませんでした"}
+              </p>
+            ) : null}
           </section>
         ) : null}
       </div>
-      <ChatPanel />
+      <ChatPanel followNotice={followNotice ? "Guestさんがこの配信をフォローしました！" : null} />
     </div>
   );
 }
