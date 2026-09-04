@@ -152,7 +152,7 @@ PWAはApp Shellのみキャッシュ対象にします。
 - `/messages`
 - `/items`
 
-このスターターでは既存APIのoriginを`NetworkOnly`にしています。
+このスターターでは外部APIをruntimeCachingに登録せず、Service Workerを通さずにネットワークへ直接送ります。
 
 ## Testing
 

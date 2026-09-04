@@ -260,4 +260,4 @@ GET /items:
 
 ストリームやリアルタイムAPIはService Worker cacheに入れません。
 
-App shellと静的assetだけをcacheし、APIはNetworkOnlyにします。
+App shellと静的assetだけをcacheし、外部APIはruntimeCachingに登録せずネットワークへ直接送ります。

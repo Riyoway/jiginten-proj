@@ -62,7 +62,7 @@ SPA fallbackで`index.html`へrewriteしてください。
 
 ## PWA caveat
 
-Service Workerは外部APIをNetworkOnlyにしています。
+Service Workerは外部APIをruntimeCachingに登録せず、ブラウザから直接ネットワークへ送ります。
 配信manifest/segmentやSSEをcacheする設定に変更しないでください。
 
 ## Testing strategy

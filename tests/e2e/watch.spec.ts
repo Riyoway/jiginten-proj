@@ -18,3 +18,28 @@ test("watch page resolves a channel requested via the URL", async ({ page }) => 
     timeout: 15000,
   });
 });
+
+test("switching channels keeps the comment stream connected", async ({ page }) => {
+  const streamErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && /cors|events|workbox|no-response/i.test(message.text())) {
+      streamErrors.push(message.text());
+    }
+  });
+
+  await page.goto("/watch?channel=big-buck-bunny");
+  await expect(page.getByRole("heading", { name: "Big Buck Bunny" })).toBeVisible({ timeout: 15000 });
+  await expect(page.locator(".connection-pill")).toHaveText("接続中", { timeout: 15000 });
+
+  await page.goto("/watch?channel=coffee-run");
+  await expect(page.getByRole("heading", { name: "Coffee Run" })).toBeVisible({ timeout: 15000 });
+  await expect(page.locator(".connection-pill")).toHaveText("接続中", { timeout: 10000 });
+  expect(streamErrors).toEqual([]);
+});
+
+test("service worker does not register runtime API caching", async ({ request }) => {
+  const response = await request.get("/sw.js");
+
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).not.toContain("NetworkOnly");
+});
