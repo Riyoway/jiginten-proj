@@ -30,7 +30,8 @@ describe("WatchPage", () => {
     // sidebarにも同じ仮名が出るため(同じチャンネルなので)、h1と同じ.stream-copyに絞り込む
     const streamCopy = heading.closest(".stream-copy");
     if (!streamCopy) throw new Error("stream-copy not found");
-    expect(within(streamCopy).getByText(getStreamlyUserName("llamigos"))).toBeInTheDocument();
+    const channelIds = MOCK_CHANNELS.map((channel) => channel.id);
+    expect(within(streamCopy).getByText(getStreamlyUserName("llamigos", channelIds))).toBeInTheDocument();
 
     expect(screen.queryByText("LIVE STREAM")).not.toBeInTheDocument();
   });

@@ -111,9 +111,13 @@
   color: #fff;
 }
 
+/* ponytail: 画面が低いとき(700px程度)に溢れる分は、チャンネル一覧が縮んで吸収する。
+   ブランド/ナビ/インストール/プロフィールは常に見えるようにしたい。 */
 .sidebar-channels {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
+  min-height: 0;
 }
 
 .sidebar-channels-title {
@@ -125,6 +129,14 @@
 .sidebar-channel-list {
   display: grid;
   gap: 0;
+  min-height: 0;
+  overflow-y: auto;
+  /* 他のパネルと同じくネイティブスクロールバーは出さない */
+  scrollbar-width: none;
+}
+
+.sidebar-channel-list::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar-channel-link {
@@ -241,6 +253,22 @@ main {
   display: flex;
   align-items: center;
   gap: 9px;
+}
+
+/* ギフトクレジットのツールチップ。枠と背景は@heroui/stylesの.tooltipが持っているので、
+   ここでは中身の2行組みだけ整える。 */
+.topbar-credit-value {
+  display: block;
+  font-weight: 600;
+}
+
+.topbar-credit-note {
+  display: block;
+  margin-top: 2px;
+  max-width: 220px;
+  opacity: 0.75;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 /* ponytail: dockに入らないインストールボタンだけモバイルのtopbarへ出す

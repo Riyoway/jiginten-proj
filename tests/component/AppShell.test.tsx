@@ -37,6 +37,19 @@ describe("AppShell", () => {
     expect(screen.getByRole("button", { name: "人気" })).toBeDisabled();
   });
 
+  it("shows the gift credits on a header control that no longer navigates", async () => {
+    render(<RouterProvider router={router} />);
+
+    const credits = await screen.findByRole("button", { name: /ギフトクレジット 3,000/ });
+    // 以前は /watch へのリンクだったが、残高表示に変わったので遷移させない
+    expect(credits.closest("a")).toBeNull();
+
+    // Homeの「ギフトを見る」CTAと混ざらないよう、topbarに絞って確認する
+    const topbar = credits.closest(".topbar");
+    if (!topbar) throw new Error("topbar not found");
+    expect(within(topbar as HTMLElement).queryByRole("link", { name: /ギフト/ })).not.toBeInTheDocument();
+  });
+
   it("keeps search disabled and shows no fabricated notification count", async () => {
     render(<RouterProvider router={router} />);
 
@@ -54,12 +67,37 @@ describe("AppShell", () => {
 
     // channel.titleはコンテンツ名(配信者名ではない)なので、chatのGuestと同じく
     // sidebarの表示名はid単位で決定的な "Streamly User N" にする(実データを人物名っぽく見せない)。
+    const channelIds = MOCK_CHANNELS.map((channel) => channel.id);
     for (const channel of MOCK_CHANNELS) {
-      const link = within(sidebar).getByRole("link", { name: getStreamlyUserName(channel.id) });
+      const link = within(sidebar).getByRole("link", {
+        name: getStreamlyUserName(channel.id, channelIds),
+      });
       expect(link.getAttribute("href")).toContain(`channel=${channel.id}`);
     }
 
     expect(within(sidebar).queryByText(MOCK_CHANNELS[0].title)).not.toBeInTheDocument();
+  });
+
+  // /channels.json は13件まで増えた。全部並べるとsidebarが縦に溢れるので、おすすめは5件に絞る。
+  it("shows at most 5 channels in the sidebar and never repeats a display name", async () => {
+    const many: Channel[] = Array.from({ length: 13 }, (_, index) => ({
+      id: `channel-${index}`,
+      title: `Title ${index}`,
+      playlist: `/ch/channel-${index}/stream.m3u8`,
+      default: index === 0,
+    }));
+    useChannelStore.setState({ channels: many, status: "loaded" });
+
+    render(<RouterProvider router={router} />);
+    const sidebar = (await screen.findByRole("link", { name: /^ホーム$/ })).closest("aside");
+    if (!sidebar) throw new Error("sidebar not found");
+
+    const rows = sidebar.querySelectorAll(".sidebar-channel-link");
+    expect(rows).toHaveLength(5);
+
+    // 以前は10個の固定プールから選んでいたため、13件だと同じ仮名が2行に出ていた
+    const names = [...rows].map((row) => row.querySelector("span")?.textContent);
+    expect(new Set(names).size).toBe(names.length);
   });
 
   it("labels the channel list 'おすすめチャンネル' with no purple English eyebrow", async () => {

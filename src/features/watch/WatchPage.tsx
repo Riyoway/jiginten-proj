@@ -51,7 +51,12 @@ export function WatchPage() {
               <h1>{title}</h1>
               {selectedChannel ? (
                 <div className="channel-identity">
-                  <strong>{getStreamlyUserName(selectedChannel.id)}</strong>
+                  <strong>
+                    {getStreamlyUserName(
+                      selectedChannel.id,
+                      channels.map((channel) => channel.id),
+                    )}
+                  </strong>
                   <button
                     type="button"
                     className={`follow-button ${following ? "active" : ""}`}

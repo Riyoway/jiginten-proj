@@ -2,6 +2,7 @@ import { Gift as GiftIcon } from "lucide-react";
 import { useMemo } from "react";
 import type { ChatMessage } from "../../lib/api/contracts";
 import { getRandomAvatar } from "../../lib/avatars";
+import { GiftImage } from "../gifts/GiftImage";
 
 export function ChatMessageView({ message }: { message: ChatMessage }) {
   // ponytail: ChatPanelが key={message.key} で描画するのでインスタンス=1メッセージ。
@@ -21,9 +22,23 @@ export function ChatMessageView({ message }: { message: ChatMessage }) {
               <GiftIcon size={12} /> GIFT
             </span>
           </div>
+          {/* ponytail: 「アニメーション付きのギフトだ」と分かるように、ここだけは常に再生する
+              (他の場所の既定は静止アイコン)。loop count 0 なので回り続けるが、
+              画面外のチャットはブラウザがアニメーションを止めるので放置してよい。
+              reduced-motion のときは GiftImage が静止アイコンに落とす。 */}
           <div className="gift-highlight">
-            {message.gift.iconUrl ? <img src={message.gift.iconUrl} alt="" /> : <GiftIcon size={24} />}
-            <strong>{message.gift.name}</strong>
+            <GiftImage
+              className="gift-highlight-image"
+              iconUrl={message.gift.iconUrl}
+              animationUrl={message.gift.animationUrl}
+              animate
+            />
+            <div className="gift-highlight-body">
+              <strong>{message.gift.name}</strong>
+              {message.gift.cost != null ? (
+                <span className="gift-highlight-cost">{message.gift.cost.toLocaleString()}</span>
+              ) : null}
+            </div>
           </div>
           {message.text ? <p className="gift-caption">{message.text}</p> : null}
         </div>

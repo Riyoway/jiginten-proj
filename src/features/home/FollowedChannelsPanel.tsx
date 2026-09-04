@@ -13,6 +13,8 @@ interface FollowedChannelsPanelProps {
 // /channels.jsonは配信中のチャンネルしか返さないため「フォロー済み ∩ 配信中」がこの一覧になる。
 export function FollowedChannelsPanel({ channels, loading }: FollowedChannelsPanelProps) {
   const followedIds = useFollowStore((state) => state.ids);
+  // 仮の表示名は一覧全体を基準にする(フォロー分だけで番号を振ると他画面と食い違う)。
+  const channelIds = channels.map((channel) => channel.id);
   const followedLive = channels.filter((channel) => followedIds.includes(channel.id));
 
   return (
@@ -33,7 +35,7 @@ export function FollowedChannelsPanel({ channels, loading }: FollowedChannelsPan
                 <img src="/avatars/avatar1.png" alt="" />
                 <span className="rail-channel-body">
                   <span className="rail-channel-name">
-                    {getStreamlyUserName(channel.id)}
+                    {getStreamlyUserName(channel.id, channelIds)}
                     <span className="rail-channel-live-dot" aria-hidden="true" />
                   </span>
                   <span className="rail-channel-title">{channel.title}</span>

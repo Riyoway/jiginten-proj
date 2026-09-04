@@ -1,7 +1,13 @@
+// Docs/ITEMS-API.md の Item そのもの。cost/group/animationUrl は以前から /items が返していたが
+// 型が宣言していなかったためUIから見えなかった(lib/api/gifts.ts は生のitemsを返すので実行時には存在する)。
 export interface Gift {
   id: string;
   name: string;
   iconUrl: string;
+  cost: number;
+  group: string;
+  // アニメーションを持たないギフトは null。cost からアニメーションの有無を推測しないこと。
+  animationUrl: string | null;
 }
 
 export interface Channel {
@@ -13,6 +19,8 @@ export interface Channel {
   [key: string]: unknown;
 }
 
+// SSEのpayload。実測では item に /items と同じ6フィールドが入ってくるが、
+// 受信側では欠けていても壊れないよう全て optional のままにしておく。
 export interface IncomingComment {
   id?: string;
   text?: string;
@@ -20,6 +28,9 @@ export interface IncomingComment {
     id?: string;
     name?: string;
     iconUrl?: string;
+    cost?: number;
+    group?: string;
+    animationUrl?: string | null;
   };
 }
 
@@ -32,6 +43,8 @@ export interface ChatMessage {
     id?: string;
     name: string;
     iconUrl: string;
+    cost?: number;
+    animationUrl?: string | null;
   };
 }
 
