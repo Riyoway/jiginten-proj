@@ -141,12 +141,12 @@
 
 .category-row.expanded {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(164px, 1fr));
   overflow: visible;
 }
 
 .category-card {
-  flex: 0 0 136px;
+  flex: 0 0 164px;
   min-width: 0;
   min-height: 64px;
   display: grid;
@@ -248,6 +248,7 @@
   min-width: 0;
   display: grid;
   gap: 2px;
+  white-space: nowrap;
 }
 
 .category-copy strong {
@@ -533,6 +534,6 @@
   }
 
   .category-row.expanded {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(164px, 1fr));
   }
 }

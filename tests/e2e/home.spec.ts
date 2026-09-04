@@ -46,6 +46,20 @@ test("keeps categories on one row until the list is expanded", async ({ page }) 
   await expect(page.getByRole("button", { name: "折りたたむ" })).toHaveAttribute("aria-expanded", "true");
 });
 
+test("keeps category labels on one line", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".category-card").first()).toBeVisible();
+
+  const wrappedLabels = await page.locator(".category-copy strong").evaluateAll(
+    (elements) =>
+      elements.filter((element) => {
+        const style = getComputedStyle(element);
+        return style.whiteSpace !== "nowrap" || element.scrollWidth > element.clientWidth;
+      }).length,
+  );
+  expect(wrappedLabels).toBe(0);
+});
+
 test("uses a captured stream frame for live thumbnails", async ({ page }) => {
   await page.goto("/");
 
