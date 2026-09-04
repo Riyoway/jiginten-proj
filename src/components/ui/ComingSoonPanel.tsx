@@ -7,9 +7,7 @@ interface ComingSoonPanelProps {
   children: ReactNode;
 }
 
-// ponytail: 配信一覧/フォロー/ギフトランキングAPIが無いため、実データの代わりに
-// 誠実な「近日公開」表示にしている。API追加時はこのラッパーごと実データ表示に差し替える。
-// (紫色の英語eyebrowはreferenceデザインに存在しないため付けない。)
+// ponytail: データ源が無いセクション用。API追加時はこのラッパーごと実データ表示に差し替える。
 export function ComingSoonPanel({ title, note, children }: ComingSoonPanelProps) {
   return (
     <Card className="coming-soon-panel" variant="transparent">
@@ -29,14 +27,13 @@ export function ComingSoonPanel({ title, note, children }: ComingSoonPanelProps)
   );
 }
 
-const ROW_KEYS = ["row-1", "row-2", "row-3", "row-4", "row-5"] as const;
+const ROW_KEYS = ["row-1", "row-2", "row-3"] as const;
 
-// ponytail: 3箇所(おすすめチャンネル/フォロー中/トップギフター)で同じ抽象行を使うための共通部品。
-// 具体的な名前・数値は絶対に入れない(存在しないユーザーを捏造しないため)。
-export function PlaceholderRows({ count = 3 }: { count?: number }) {
+// ponytail: 具体的な名前・数値は絶対に入れない(存在しないユーザーを捏造しないため)。
+export function PlaceholderRows() {
   return (
     <div className="placeholder-list">
-      {ROW_KEYS.slice(0, count).map((key) => (
+      {ROW_KEYS.map((key) => (
         <div className="placeholder-row" key={key}>
           <span className="placeholder-avatar" />
           <span className="placeholder-line" />

@@ -8,7 +8,6 @@ interface CommentState {
   messages: ChatMessage[];
   seenIds: Set<string>;
   push: (payload: IncomingComment) => void;
-  clear: () => void;
 }
 
 export const useCommentStore = create<CommentState>((set, get) => ({
@@ -46,16 +45,13 @@ export const useCommentStore = create<CommentState>((set, get) => ({
 
     set({ messages: nextMessages, seenIds: nextSeen });
   },
-  clear: () => set({ messages: [], seenIds: new Set<string>() }),
 }));
 
 /**
  * マウント後に新しく届いたメッセージだけを callback に渡す。
  * マウント時点で store にあった分は「新着」にしない(/watch を出入りしても過去分が再生されない)。
  */
-// ponytail: 以前は messages.length と前回件数の差分で判定していたが、storeが上限300件に達すると
-// push が append+shift になって length が300に張り付き、それ以降ずっと「新着なし」になっていた
-// (= 弾幕が死ぬ)。最後に見た key を基準にすれば上限に依存しない。
+// ponytail: 判定は最後に見た key 基準。件数の差分だと上限300件に張り付いた時点で新着を検出できなくなる。
 export function useFreshMessages(onFresh: (messages: ChatMessage[]) => void) {
   const messages = useCommentStore((state) => state.messages);
   const lastKey = useRef(messages.at(-1)?.key);

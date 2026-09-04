@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ComingSoonPanel, PlaceholderRows } from "../../components/ui/ComingSoonPanel";
-import { getRandomBanner } from "../../lib/banners";
 import { useChannels } from "../../store/channels";
 import { FollowedChannelsPanel } from "./FollowedChannelsPanel";
 import { StreamCard, StreamCardSkeleton } from "./StreamCard";
@@ -40,17 +39,14 @@ const CATEGORY_OPTIONS: { label: string; icon: LucideIcon; tone: string }[] = [
   { label: "その他", icon: Shapes, tone: "slate" },
 ];
 
-const CATEGORY_ICONS = new Map(CATEGORY_OPTIONS.map(({ label, icon }) => [label, icon]));
-const CATEGORY_TONES = new Map(CATEGORY_OPTIONS.map(({ label, tone }) => [label, tone]));
+const CATEGORY_BY_LABEL = new Map(CATEGORY_OPTIONS.map((option) => [option.label, option]));
+const FALLBACK_CATEGORY = { icon: Shapes, tone: "violet" };
 
 function normalizeCategory(category: string) {
   return category.trim() || "その他";
 }
 
 export function HomePage() {
-  // ponytail: random per page load, memoized so it doesn't swap mid-session.
-  const banner = useMemo(() => getRandomBanner(), []);
-
   const { channels, status } = useChannels();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -62,21 +58,17 @@ export function HomePage() {
     }
 
     return [...counts]
-      .map(([label, count]) => ({
-        label,
-        count,
-        Icon: CATEGORY_ICONS.get(label) ?? Shapes,
-        tone: CATEGORY_TONES.get(label) ?? "violet",
-      }))
+      .map(([label, count]) => {
+        const { icon: Icon, tone } = CATEGORY_BY_LABEL.get(label) ?? FALLBACK_CATEGORY;
+        return { label, count, Icon, tone };
+      })
       .sort((left, right) => right.count - left.count);
   }, [channels]);
   const visibleChannels = selectedCategory
     ? channels.filter((channel) => normalizeCategory(channel.category) === selectedCategory)
     : channels;
-  // ponytail: ギフトCTAの飛び先。channelsは非同期に埋まるので依存は[channels](bannerの[]とは違う)。
-  // 引き直るのは取得完了の1回だけ。未取得ならパラメータ無し = resolveSelectedChannelがdefaultへ落とす。
-  // hrefは描画時に決まるので「アクセスごと」にランダム。onClickでの都度抽選にすると
-  // 中クリックや新規タブが壊れるのでやらない。
+  // ponytail: ギフトCTAの飛び先。未取得ならパラメータ無し = resolveSelectedChannelがdefaultへ落とす。
+  // hrefは描画時に決める。onClickで都度抽選すると中クリックや新規タブが壊れる。
   const giftChannel = useMemo(() => channels[Math.floor(Math.random() * channels.length)], [channels]);
   const channelsLoading = status === "loading" || status === "idle";
 
@@ -84,7 +76,7 @@ export function HomePage() {
     <div className="home-page">
       <div className="home-layout">
         <div className="home-main">
-          <section className="hero-panel" style={{ backgroundImage: `url(${banner})` }}>
+          <section className="hero-panel">
             <div className="hero-copy">
               <span className="eyebrow">ようこそ Streamly へ</span>
               <h1>

@@ -1,8 +1,7 @@
 import type { Channel } from "./contracts";
 import { endpoints } from "./endpoints";
 
-// ponytail: channels.json の実JSON全体(配列直下か{channels:[...]}か)はDocs/HLS-SERVER.mdでも
-// 未確定と明記されているため、両方の形を受け付けて決め打ちを避ける。
+// ponytail: 配列直下か{channels:[...]}かはDocs/HLS-SERVER.mdでも未確定なので両方受け付ける。
 export async function fetchChannels(signal?: AbortSignal): Promise<Channel[]> {
   const response = await fetch(endpoints.channels, { signal });
   if (!response.ok) {

@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { hashToIndex } from "../../src/lib/hash";
 import { pickRandom } from "../../src/lib/pickRandom";
 import { getStreamlyUserName } from "../../src/lib/streamlyUsers";
 
@@ -20,20 +19,6 @@ const THIRTEEN_IDS = [
   "wing-it",
 ];
 
-describe("hashToIndex", () => {
-  it("stays within [0, mod)", () => {
-    for (const value of ["a", "llamigos", "gran-dillama", ""]) {
-      const index = hashToIndex(value, 10);
-      expect(index).toBeGreaterThanOrEqual(0);
-      expect(index).toBeLessThan(10);
-    }
-  });
-
-  it("is deterministic for the same input", () => {
-    expect(hashToIndex("llamigos", 10)).toBe(hashToIndex("llamigos", 10));
-  });
-});
-
 describe("getStreamlyUserName", () => {
   it("returns a stable 'Streamly User N' label for the same id", () => {
     const first = getStreamlyUserName("llamigos", THIRTEEN_IDS);
@@ -45,8 +30,7 @@ describe("getStreamlyUserName", () => {
     expect(getStreamlyUserName("llamigos", THIRTEEN_IDS)).not.toContain("llamigos");
   });
 
-  // 回帰テスト: 10個の固定プールからハッシュで選んでいた頃は、13チャンネルだと
-  // 別チャンネルに同じ「Streamly User 4」が付いていた
+  // 回帰テスト: 固定プール方式では13チャンネルで名前が衝突していた
   it("never gives two channels the same label, even past the old 10-name pool", () => {
     const names = THIRTEEN_IDS.map((id) => getStreamlyUserName(id, THIRTEEN_IDS));
 

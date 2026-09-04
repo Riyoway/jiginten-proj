@@ -11,8 +11,7 @@ interface ChannelState {
   load: () => void;
 }
 
-// ponytail: useGiftCatalogと同じ「初回だけ取得、以降はキャッシュ」パターンをstoreに載せたもの。
-// AppShell/HomePage/WatchPageが同時にマウントされても/channels.jsonへのリクエストは実質1回。
+// ponytail: 初回だけ取得して以降はキャッシュ。同時マウントでも/channels.jsonへのリクエストは1回。
 export const useChannelStore = create<ChannelState>((set, get) => ({
   channels: [],
   status: "idle",

@@ -10,8 +10,6 @@ import { useHistoryStore } from "../../store/history";
 import { ChatPanel } from "../chat/ChatPanel";
 import { StreamPlayer } from "../player/StreamPlayer";
 
-// ponytail: フォロー/お気に入りAPIが無いため端末内保存のみ。サーバー同期はしない。
-
 export function WatchPage() {
   const { channel: requestedChannelId } = watchRoute.useSearch();
   const { channels, status } = useChannels();
@@ -30,8 +28,7 @@ export function WatchPage() {
   const favoritedIds = useFavoriteStore((state) => state.ids);
   const toggleFavorite = useFavoriteStore((state) => state.toggle);
 
-  // ponytail: 視聴履歴は「このチャンネルを開いた」だけを端末内に記録する(再生開始や視聴時間の
-  // 判定はAPIが無く自前計測になるので、必要になってから足す)。
+  // ponytail: 記録するのは「開いた」だけ。再生開始や視聴時間はAPIが無く自前計測になるので足さない。
   const recordHistory = useHistoryStore((state) => state.record);
   const selectedChannelId = selectedChannel?.id;
   useEffect(() => {
@@ -70,21 +67,8 @@ export function WatchPage() {
     try {
       if (typeof navigator.share === "function") {
         await navigator.share(shareData);
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(shareData.url);
       } else {
-        const input = document.createElement("textarea");
-        input.value = shareData.url;
-        input.setAttribute("readonly", "true");
-        input.style.position = "fixed";
-        input.style.opacity = "0";
-        document.body.append(input);
-        input.select();
-        try {
-          if (!document.execCommand("copy")) throw new Error("copy failed");
-        } finally {
-          input.remove();
-        }
+        await navigator.clipboard.writeText(shareData.url);
       }
       setShareState("shared");
     } catch (reason) {

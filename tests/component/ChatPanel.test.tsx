@@ -15,7 +15,6 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
-  useCommentStore.getState().clear();
 });
 
 function push(id: string, text: string) {
@@ -55,13 +54,11 @@ describe("ChatPanel", () => {
     expect(screen.getByText("こんばんは")).toBeInTheDocument();
   });
 
-  it("keeps unavailable chat views disabled and filters messages by type", () => {
+  it("filters messages by type", () => {
     push("c1", "こんにちは");
     pushGift("g1");
     render(<ChatPanel />);
 
-    expect(screen.getByRole("tab", { name: "ギフトランキング" })).toBeDisabled();
-    expect(screen.getByRole("tab", { name: "ユーザー" })).toBeDisabled();
     expect(screen.getByText("こんにちは")).toBeInTheDocument();
     expect(screen.getByText("ハート")).toBeInTheDocument();
 

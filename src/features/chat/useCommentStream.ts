@@ -5,11 +5,5 @@ import { useCommentStore } from "../../store/comments";
 export function useCommentStream() {
   const push = useCommentStore((state) => state.push);
 
-  useEffect(() => {
-    return openCommentStream({
-      onMessage: (comment) => {
-        push(comment);
-      },
-    });
-  }, [push]);
+  useEffect(() => openCommentStream({ onMessage: push }), [push]);
 }

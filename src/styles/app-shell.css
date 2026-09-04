@@ -176,8 +176,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 
-.profile-card img,
-.top-avatar {
+.profile-card img {
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -333,7 +332,6 @@ main {
   .brand,
   .sidebar-spacer,
   .profile-card,
-  .sidebar > .sidebar-icon-btn,
   .sidebar .coming-soon-panel,
   .sidebar-channels {
     display: none;

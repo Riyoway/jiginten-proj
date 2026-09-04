@@ -54,17 +54,7 @@ export function ChatPanel({ followNotice = null }: ChatPanelProps) {
   return (
     <aside className="chat-panel" aria-label="ライブチャット">
       <div className="chat-header">
-        <div className="chat-tabs" role="tablist" aria-label="チャット表示">
-          <button className="chat-tab active" type="button" role="tab" aria-selected="true">
-            チャット
-          </button>
-          <button className="chat-tab" type="button" role="tab" disabled aria-selected="false">
-            ギフトランキング
-          </button>
-          <button className="chat-tab" type="button" role="tab" disabled aria-selected="false">
-            ユーザー
-          </button>
-        </div>
+        <h2 className="chat-title">ライブチャット</h2>
       </div>
 
       <fieldset className="chat-filters">

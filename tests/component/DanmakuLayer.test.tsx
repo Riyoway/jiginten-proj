@@ -1,5 +1,5 @@
 import { act, render } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { DanmakuLayer } from "../../src/features/danmaku/DanmakuLayer";
 import { useCommentStore } from "../../src/store/comments";
 import { usePreferenceStore } from "../../src/store/preferences";
@@ -7,10 +7,6 @@ import { usePreferenceStore } from "../../src/store/preferences";
 beforeEach(() => {
   useCommentStore.setState({ messages: [], seenIds: new Set() });
   usePreferenceStore.setState({ danmakuEnabled: true });
-});
-
-afterEach(() => {
-  useCommentStore.getState().clear();
 });
 
 function push(id: string, text: string) {

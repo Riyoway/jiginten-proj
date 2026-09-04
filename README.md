@@ -35,13 +35,11 @@ pnpm preview
 
 - `/` — ホーム
 - `/watch` — ライブ配信視聴画面
+- `/favorites` — お気に入り
+- `/follows` — フォロー中
+- `/history` — 視聴履歴
 
 ## Documentation
 
-- [`Docs/STACK.md`](Docs/STACK.md)
-- [`Docs/API-INTEGRATION.md`](Docs/API-INTEGRATION.md)
-- [`Docs/ARCHITECTURE.md`](Docs/ARCHITECTURE.md)
-- [`Docs/FRONTEND-UX.md`](Docs/FRONTEND-UX.md)
-- [`Docs/DEVELOPMENT.md`](Docs/DEVELOPMENT.md)
-- [`Docs/LIMITATIONS.md`](Docs/LIMITATIONS.md)
-- [`Docs/SOURCES.md`](Docs/SOURCES.md)
+読む順番と各資料の役割は [`Docs/README.md`](Docs/README.md) にまとまっています。
+実装状況と壊してはいけない判断は [`Docs/HANDOFF.md`](Docs/HANDOFF.md) から。

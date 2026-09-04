@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 
-// ponytail: not in any TS lib.dom.d.ts yet — the browser-standard shape is
-// small enough to declare inline rather than pull in a types package for it.
+// ponytail: lib.dom.d.ts に未収録。型パッケージを足すほどの形でもないのでインラインで宣言する。
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
 function isStandalone() {
-  // ponytail: jsdom (unit tests) and very old browsers don't implement
-  // matchMedia — treat that as "can't tell, assume not installed" rather
-  // than throwing.
+  // ponytail: matchMediaが無い環境(jsdom等)は「判断できない = 未インストール扱い」にする。
   if (typeof window.matchMedia !== "function") return false;
   return (
     window.matchMedia("(display-mode: standalone)").matches ||
@@ -44,7 +41,7 @@ export function usePwaInstallPrompt() {
     if (!deferredPrompt) return;
     await deferredPrompt.prompt();
     await deferredPrompt.userChoice;
-    // one-time use per browser spec — clear it either way
+    // 仕様上1回しか使えないので結果に関わらず捨てる
     setDeferredPrompt(null);
   }
 

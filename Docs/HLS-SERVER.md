@@ -252,11 +252,11 @@ src/lib/api/
 
 src/features/player/
 ├─ StreamPlayer.tsx
-├─ ChannelSelector.tsx
 └─ useHlsPlayer.ts
 ```
 
 UI から直接 URL を組み立てず、API adapter に閉じ込める。
+(この節の当初案にあった視聴画面内の `ChannelSelector` は依頼により削除済み。`ARCHITECTURE.md` を参照。)
 
 ### 推奨 API
 

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import type { ChatMessage } from "../../lib/api/contracts";
 import { useFreshMessages } from "../../store/comments";
 import { usePreferenceStore } from "../../store/preferences";
 
@@ -17,17 +16,13 @@ export function DanmakuLayer() {
   const opacity = usePreferenceStore((state) => state.danmakuOpacity);
   const [active, setActive] = useState<ActiveDanmaku[]>([]);
   const nextLane = useRef(0);
-  // ponytail: every batch needs its own independent timer — a shared
-  // per-effect timer gets clearTimeout'd by the next message's cleanup
-  // before it can fire, so old items never expire and dump all at once
-  // the moment danmaku is turned back on.
+  // ponytail: バッチごとに独立したtimer。共有timerだと次の到着のcleanupに消されて期限切れにならない。
   const timers = useRef(new Set<number>());
 
   // 新着判定は useFreshMessages に任せる(マウント時点のバックログは再生しない)。
   useFreshMessages((incoming) => {
-    const fresh = incoming.filter(hasRenderableText);
-    // while off, don't queue anything to replay later — only ever show
-    // comments that arrive while danmaku is actually on.
+    const fresh = incoming.filter((message) => message.text.trim().length > 0);
+    // ponytail: OFFの間は溜めない。ONの間に届いたものだけを流す。
     if (!enabled || !fresh.length) return;
 
     const additions = fresh.map((message) => {
@@ -75,8 +70,4 @@ export function DanmakuLayer() {
       ))}
     </div>
   );
-}
-
-function hasRenderableText(message: ChatMessage) {
-  return message.text.trim().length > 0;
 }
