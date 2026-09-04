@@ -13,9 +13,9 @@ const channels: Channel[] = [
 ];
 
 describe("resolvePlaylistUrl", () => {
-  it("resolves a relative playlist against the HLS base URL", () => {
+  it("resolves a relative playlist against the configured channels URL", () => {
     expect(resolvePlaylistUrl("/ch/llamigos/stream.m3u8")).toBe(
-      "https://intern-hls-server.tomaton.workers.dev/ch/llamigos/stream.m3u8",
+      "https://stream.example.test/ch/llamigos/stream.m3u8",
     );
   });
 

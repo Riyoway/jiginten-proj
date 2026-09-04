@@ -11,10 +11,11 @@
 PowerShell:
 
 ```powershell
-corepack enable; corepack prepare pnpm@10.15.1 --activate; pnpm install; Copy-Item .env.example .env -ErrorAction SilentlyContinue; pnpm dev
+corepack enable; corepack prepare pnpm@10.15.1 --activate; pnpm install; Copy-Item .env.example .env -ErrorAction SilentlyContinue
 ```
 
-`.env`を作らなくても、現在の固定endpointがdefault値として入っています。
+コピーした`.env`の5つのURLを設定してから`pnpm dev`を実行します。未設定・空・相対URL・
+HTTP(S)以外の値は、dev server/buildの開始前にエラーになります。
 
 ## Commands
 
@@ -32,12 +33,14 @@ pnpm test:e2e  Playwright
 
 ```text
 VITE_STREAM_URL
+VITE_CHANNELS_URL
 VITE_COMMENTS_URL
 VITE_MESSAGES_URL
 VITE_GIFTS_URL
 ```
 
-固定APIを差し替える必要がない限り変更不要です。
+5つすべて必須です。ローカルはGit管理外の`.env`、デプロイ先は環境ごとの設定画面で管理します。
+`VITE_*`はクライアントのbundleへ入るため秘密値には使えません。
 
 ## Deploy
 

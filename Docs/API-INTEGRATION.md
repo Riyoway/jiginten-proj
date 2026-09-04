@@ -39,7 +39,9 @@ GET /channels.json
   +-- failure -> /stream.m3u8 にフォールバック
 ```
 
-`playlist`はそのまま使い、相対URLの場合は`resolvePlaylistUrl`(`new URL(playlist, HLS_BASE_URL)`)で正規化します(`src/lib/api/channels.ts`)。チャンネル一覧をコードに固定しません。
+`playlist`はそのまま使い、相対URLの場合は`resolvePlaylistUrl`
+(`new URL(playlist, endpoints.channels)`)でenv設定済みのチャンネルURLを基準に正規化します
+(`src/lib/api/channels.ts`)。チャンネル一覧をコードに固定しません。
 
 選択中チャンネルはZustand storeではなく**URL(`/watch?channel=<id>`)をsource of truthにします**(`src/app/router.tsx`の`validateSearch`)。
 

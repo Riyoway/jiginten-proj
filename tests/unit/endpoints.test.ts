@@ -1,28 +1,40 @@
 import { describe, expect, it } from "vitest";
-import { endpoints, resolveEndpoint } from "../../src/lib/api/endpoints";
+import { resolveEndpoints } from "../../src/lib/api/endpointConfig";
+import { endpoints } from "../../src/lib/api/endpoints";
 
-const FALLBACK = "https://example.test/messages";
+const VALID_ENV = {
+  VITE_STREAM_URL: "https://stream.example.test/stream.m3u8",
+  VITE_CHANNELS_URL: "https://stream.example.test/channels.json",
+  VITE_COMMENTS_URL: "https://comments.example.test/events",
+  VITE_MESSAGES_URL: "https://comments.example.test/messages",
+  VITE_GIFTS_URL: "https://comments.example.test/items",
+};
 
-describe("resolveEndpoint", () => {
-  it("uses the configured URL when there is one", () => {
-    expect(resolveEndpoint("https://proxy.test/messages", FALLBACK)).toBe("https://proxy.test/messages");
+describe("resolveEndpoints", () => {
+  it("maps and trims every required endpoint", () => {
+    expect(resolveEndpoints({ ...VALID_ENV, VITE_MESSAGES_URL: "  https://proxy.test/messages  " })).toEqual({
+      stream: VALID_ENV.VITE_STREAM_URL,
+      channels: VALID_ENV.VITE_CHANNELS_URL,
+      comments: VALID_ENV.VITE_COMMENTS_URL,
+      messages: "https://proxy.test/messages",
+      gifts: VALID_ENV.VITE_GIFTS_URL,
+    });
   });
 
-  it("falls back when the variable is not defined at all", () => {
-    expect(resolveEndpoint(undefined, FALLBACK)).toBe(FALLBACK);
+  it.each([undefined, "", "   "])("rejects a missing or blank endpoint (%s)", (value) => {
+    expect(() => resolveEndpoints({ ...VALID_ENV, VITE_MESSAGES_URL: value })).toThrow(
+      "VITE_MESSAGES_URL is required",
+    );
   });
 
-  // 回帰テスト: `??` だと "" を通してしまい、fetch("")/new EventSource("") が現在のページURLへ
-  // リクエストして404になっていた(ホスティング側でVITE_*を値なしで登録した状態)
-  it("falls back when the variable is defined but blank", () => {
-    expect(resolveEndpoint("", FALLBACK)).toBe(FALLBACK);
-    expect(resolveEndpoint("   ", FALLBACK)).toBe(FALLBACK);
-    expect(resolveEndpoint("\n\t", FALLBACK)).toBe(FALLBACK);
-  });
-
-  it("trims stray whitespace around a configured URL", () => {
-    expect(resolveEndpoint("  https://proxy.test/messages  ", FALLBACK)).toBe("https://proxy.test/messages");
-  });
+  it.each(["/messages", "not-a-url", "ftp://example.test/messages"])(
+    "rejects an invalid URL (%s)",
+    (value) => {
+      expect(() => resolveEndpoints({ ...VALID_ENV, VITE_MESSAGES_URL: value })).toThrow(
+        "VITE_MESSAGES_URL must be an absolute HTTP(S) URL",
+      );
+    },
+  );
 });
 
 describe("endpoints", () => {
