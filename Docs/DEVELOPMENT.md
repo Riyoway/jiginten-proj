@@ -32,14 +32,13 @@ pnpm test:e2e  Playwright
 ## Environment variables
 
 ```text
-VITE_STREAM_URL
 VITE_CHANNELS_URL
 VITE_COMMENTS_URL
 VITE_MESSAGES_URL
 VITE_GIFTS_URL
 ```
 
-5つすべて必須です。ローカルはGit管理外の`.env`、デプロイ先は環境ごとの設定画面で管理します。
+4つすべて必須です。ローカルはGit管理外の`.env`、デプロイ先は環境ごとの設定画面で管理します。
 `VITE_*`はクライアントのbundleへ入るため秘密値には使えません。
 
 ## Deploy

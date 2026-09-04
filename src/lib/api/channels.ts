@@ -18,7 +18,7 @@ export function resolvePlaylistUrl(playlist: string): string {
   return new URL(playlist, endpoints.channels).href;
 }
 
-// フォールバック順: URL指定のchannel id → default:true → 先頭 → (呼び出し側で/stream.m3u8へ)
+// 選択順: URL指定のchannel id → default:true → 先頭
 export function resolveSelectedChannel(channels: Channel[], requestedId?: string): Channel | null {
   const requested = requestedId ? channels.find((channel) => channel.id === requestedId) : undefined;
   return requested ?? channels.find((channel) => channel.default) ?? channels[0] ?? null;

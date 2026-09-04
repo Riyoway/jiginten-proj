@@ -9,10 +9,17 @@ import { useChannelStore } from "../../src/store/channels";
 // ponytail: /channels.jsonへの実ネットワークアクセスをテストで発生させないため、
 // storeへ直接シードしてload()を早期returnさせる(Docs/DEVELOPMENT.mdの方針通り)。
 const MOCK_CHANNELS: Channel[] = [
-  { id: "llamigos", title: "Caminandes 3: Llamigos", playlist: "/ch/llamigos/stream.m3u8", default: true },
+  {
+    id: "llamigos",
+    title: "Caminandes 3: Llamigos",
+    category: "コメディ",
+    playlist: "/ch/llamigos/stream.m3u8",
+    default: true,
+  },
   {
     id: "llama-drama",
     title: "Caminandes 1: Llama Drama",
+    category: "ドラマ",
     playlist: "/ch/llama-drama/stream.m3u8",
     default: false,
   },
@@ -99,6 +106,7 @@ describe("AppShell", () => {
     const many: Channel[] = Array.from({ length: 13 }, (_, index) => ({
       id: `channel-${index}`,
       title: `Title ${index}`,
+      category: "テスト",
       playlist: `/ch/channel-${index}/stream.m3u8`,
       default: index === 0,
     }));

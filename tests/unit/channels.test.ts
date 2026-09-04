@@ -3,10 +3,17 @@ import { resolvePlaylistUrl, resolveSelectedChannel } from "../../src/lib/api/ch
 import type { Channel } from "../../src/lib/api/contracts";
 
 const channels: Channel[] = [
-  { id: "llamigos", title: "Caminandes 3: Llamigos", playlist: "/ch/llamigos/stream.m3u8", default: true },
+  {
+    id: "llamigos",
+    title: "Caminandes 3: Llamigos",
+    category: "コメディ",
+    playlist: "/ch/llamigos/stream.m3u8",
+    default: true,
+  },
   {
     id: "llama-drama",
     title: "Caminandes 1: Llama Drama",
+    category: "ドラマ",
     playlist: "/ch/llama-drama/stream.m3u8",
     default: false,
   },

@@ -11,7 +11,7 @@ POST /messages     -> comment / gift / gift+message
 GET  /items        -> gift catalog
 ```
 
-HLSサーバーは`Docs/HLS-SERVER.md`の更新により単一固定ストリームから3チャンネル配信になりました(下記「1. HLS」参照)。
+HLSサーバーは`Docs/HLS-SERVER.md`の更新により単一固定ストリームからマルチチャンネル配信になりました(下記「1. HLS」参照)。
 
 フロントエンドはこの契約を拡張したふりをせず、「既存APIから取れる情報をどう良い体験に変換するか」に集中します。
 
@@ -25,7 +25,6 @@ https://intern-hls-server.tomaton.workers.dev
 
 ```text
 GET /channels.json          -> チャンネル一覧(source of truth)
-GET /stream.m3u8            -> デフォルトチャンネルの互換フォールバック
 GET /ch/<id>/stream.m3u8    -> チャンネル別プレイリスト
 GET /ch/<id>/segments/{n}.ts
 ```
@@ -36,10 +35,10 @@ GET /ch/<id>/segments/{n}.ts
 GET /channels.json
   +-- success -> resolveSelectedChannel(channels, URLのchannel id)
   |               -> URL指定 -> default:true -> channels[0]
-  +-- failure -> /stream.m3u8 にフォールバック
+  +-- failure -> 取得エラーを表示
 ```
 
-`playlist`はそのまま使い、相対URLの場合は`resolvePlaylistUrl`
+各チャンネルの`category`はHomeのカテゴリー件数と絞り込みに使います。`playlist`はそのまま使い、相対URLの場合は`resolvePlaylistUrl`
 (`new URL(playlist, endpoints.channels)`)でenv設定済みのチャンネルURLを基準に正規化します
 (`src/lib/api/channels.ts`)。チャンネル一覧をコードに固定しません。
 
@@ -69,7 +68,7 @@ APIが固定でも改善できるもの:
 
 ### コメント/ギフトはチャンネル別にしない
 
-`/events`・`/messages`・`/items`のpayloadに`channelId`は含まれていません。HLSが3チャンネルになっても、**チャットは全チャンネル共通の1本のまま**扱います。「今見ているチャンネルのコメントだけ表示」のようなフロント側だけの偽の分離はしません。バックエンドに`channelId`付きの契約が追加されない限りこの方針は変わりません。
+`/events`・`/messages`・`/items`のpayloadに`channelId`は含まれていません。HLSがマルチチャンネルになっても、**チャットは全チャンネル共通の1本のまま**扱います。「今見ているチャンネルのコメントだけ表示」のようなフロント側だけの偽の分離はしません。バックエンドに`channelId`付きの契約が追加されない限りこの方針は変わりません。
 
 ## 2. SSE comments
 

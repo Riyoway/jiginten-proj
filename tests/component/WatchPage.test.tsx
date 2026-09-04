@@ -9,7 +9,13 @@ import { useFavoriteStore } from "../../src/store/favorites";
 import { useFollowStore } from "../../src/store/follows";
 
 const MOCK_CHANNELS: Channel[] = [
-  { id: "llamigos", title: "Caminandes 3: Llamigos", playlist: "/ch/llamigos/stream.m3u8", default: true },
+  {
+    id: "llamigos",
+    title: "Caminandes 3: Llamigos",
+    category: "コメディ",
+    playlist: "/ch/llamigos/stream.m3u8",
+    default: true,
+  },
 ];
 
 beforeEach(() => {
@@ -53,5 +59,13 @@ describe("WatchPage", () => {
     expect(favoriteButton).toHaveAttribute("aria-pressed", "true");
     expect(favoriteButton).not.toHaveAttribute("title");
     expect(useFavoriteStore.getState().has("llamigos")).toBe(true);
+  });
+
+  it("shows an error instead of falling back to a standalone stream URL", async () => {
+    useChannelStore.setState({ channels: [], status: "loaded" });
+    render(<RouterProvider router={router} />);
+
+    expect(await screen.findByText("現在配信中のチャンネルはありません。")).toBeInTheDocument();
+    expect(document.querySelector("video")).toBeNull();
   });
 });

@@ -1,5 +1,5 @@
 import { RouterProvider } from "@tanstack/react-router";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { router } from "../../src/app/router";
 import type { Channel } from "../../src/lib/api/contracts";
@@ -10,10 +10,17 @@ import { useFollowStore } from "../../src/store/follows";
 // ponytail: /channels.jsonへの実ネットワークアクセスをテストで発生させないため、
 // storeへ直接シードしてload()を早期returnさせる(Docs/DEVELOPMENT.mdの方針通り)。
 const MOCK_CHANNELS: Channel[] = [
-  { id: "llamigos", title: "Caminandes 3: Llamigos", playlist: "/ch/llamigos/stream.m3u8", default: true },
+  {
+    id: "llamigos",
+    title: "Caminandes 3: Llamigos",
+    category: "コメディ",
+    playlist: "/ch/llamigos/stream.m3u8",
+    default: true,
+  },
   {
     id: "llama-drama",
     title: "Caminandes 1: Llama Drama",
+    category: "ドラマ",
     playlist: "/ch/llama-drama/stream.m3u8",
     default: false,
   },
@@ -45,17 +52,35 @@ describe("HomePage", () => {
     }
   });
 
-  it("shows coming-soon placeholders instead of fabricated data", async () => {
+  it("shows a coming-soon placeholder only for unsupported top gifters", async () => {
     render(<RouterProvider router={router} />);
 
-    // カテゴリー / トップギフター の2箇所(フォロー中のライブは実データ表示になった)
     const comingSoonLabels = await screen.findAllByText("近日公開");
-    expect(comingSoonLabels.length).toBeGreaterThanOrEqual(2);
+    expect(comingSoonLabels).toHaveLength(1);
 
     // 実データが無い箇所に、それっぽい偽の数値・チャンネル名を出していないことの回帰チェック
     const main = screen.getByRole("main");
     expect(within(main).queryByText(/[0-9],[0-9]{3}\s*P/)).not.toBeInTheDocument();
     expect(within(main).queryByText(/TechWorld|GameSpace|ChillWave/)).not.toBeInTheDocument();
+  });
+
+  it("derives category counts from channels, disables zero-count categories, and filters the grid", async () => {
+    render(<RouterProvider router={router} />);
+
+    const categorySection = (await screen.findByRole("heading", { name: "人気のカテゴリー" })).closest(
+      "section",
+    );
+    if (!categorySection) throw new Error("category section not found");
+
+    const comedy = within(categorySection).getByRole("button", { name: "コメディ 1件" });
+    expect(comedy).toBeEnabled();
+    expect(within(categorySection).getByRole("button", { name: "ゲーム 0件" })).toBeDisabled();
+
+    fireEvent.click(comedy);
+    const liveSection = screen.getByRole("heading", { name: "おすすめのライブ" }).closest("section");
+    if (!liveSection) throw new Error("live section not found");
+    expect(within(liveSection).getByText("Caminandes 3: Llamigos")).toBeInTheDocument();
+    expect(within(liveSection).queryByText("Caminandes 1: Llama Drama")).not.toBeInTheDocument();
   });
 
   it("does not leak developer-facing wording to end users", async () => {

@@ -3,7 +3,6 @@ import { resolveEndpoints } from "../../src/lib/api/endpointConfig";
 import { endpoints } from "../../src/lib/api/endpoints";
 
 const VALID_ENV = {
-  VITE_STREAM_URL: "https://stream.example.test/stream.m3u8",
   VITE_CHANNELS_URL: "https://stream.example.test/channels.json",
   VITE_COMMENTS_URL: "https://comments.example.test/events",
   VITE_MESSAGES_URL: "https://comments.example.test/messages",
@@ -13,7 +12,6 @@ const VALID_ENV = {
 describe("resolveEndpoints", () => {
   it("maps and trims every required endpoint", () => {
     expect(resolveEndpoints({ ...VALID_ENV, VITE_MESSAGES_URL: "  https://proxy.test/messages  " })).toEqual({
-      stream: VALID_ENV.VITE_STREAM_URL,
       channels: VALID_ENV.VITE_CHANNELS_URL,
       comments: VALID_ENV.VITE_COMMENTS_URL,
       messages: "https://proxy.test/messages",

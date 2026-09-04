@@ -4,7 +4,7 @@
 
 ## 概要
 
-HLS サーバー `intern-hls-server.tomaton.workers.dev` は、従来の単一チャンネル配信から **3 チャンネル配信**へ更新された。
+HLS サーバー `intern-hls-server.tomaton.workers.dev` は、従来の単一チャンネル配信からマルチチャンネル配信へ更新された。
 
 フロントエンドは今後、固定の `/stream.m3u8` だけを直接再生するのではなく、まず `/channels.json` からチャンネル一覧を取得し、ユーザーが選択したチャンネルの `playlist` を HLS プレイヤーへ渡す構成を基本とする。
 
@@ -26,7 +26,7 @@ HLS.js / Native HLS
 GET /ch/<id>/segments/{n}.ts
 ```
 
-`/stream.m3u8` は引き続き存在し、**デフォルトチャンネルを再生する互換エンドポイント**として利用できる。
+`/stream.m3u8` はサーバー互換用として存在するが、フロントエンドは`channels.json`の`playlist`だけを使い、このURL用のenvは持たない。
 
 ---
 
@@ -57,12 +57,11 @@ https://intern-hls-server.tomaton.workers.dev
 type Channel = {
   id: string;
   title: string;
+  category: string;
   playlist: string;
   default: boolean;
 
-  // 出典情報も含まれる。
-  // 共有された説明だけではキー名・構造までは確定できないため、
-  // 実レスポンスを source of truth とする。
+  // attribution / license / sourceなどの出典情報も含まれる。
   [key: string]: unknown;
 };
 ```
@@ -95,7 +94,6 @@ const playlistUrl = new URL(channel.playlist, BASE_URL).href;
 1. URL / route で明示された channel id
 2. channels.json の default === true
 3. channels[0]
-4. /stream.m3u8
 ```
 
 ---
@@ -108,9 +106,7 @@ const playlistUrl = new URL(channel.playlist, BASE_URL).href;
 GET https://intern-hls-server.tomaton.workers.dev/stream.m3u8
 ```
 
-従来フロントとの互換性維持や、`channels.json` の取得に失敗した場合のフォールバックとして有用。
-
-ただし複数チャンネル UI を構築する場合、これだけを固定 URL として使い続けるのではなく `/channels.json` を起点にする。
+従来フロントとの互換性維持用。現行フロントエンドからは参照しない。
 
 ---
 
@@ -242,7 +238,7 @@ GET /channels.json
   +--> failure
          |
          v
-     fallback /stream.m3u8
+     show catalog error
 ```
 
 ### API adapter
@@ -357,7 +353,7 @@ channels.json と照合
 
 以前はバックエンドに配信一覧 API がなかったため Home のライブ一覧を本物のデータで構築できなかった。
 
-今回の `/channels.json` 追加によって、少なくとも **現在配信されている 3 チャンネルの一覧部分は実 API ベースで構築可能**になった。
+今回の `/channels.json` 追加によって、**現在配信されているチャンネル一覧とカテゴリーは実 API ベースで構築可能**になった。
 
 ```text
 /channels.json
@@ -375,7 +371,6 @@ channels.json と照合
 - viewer count
 - streamer account
 - follower count
-- category
 - thumbnail endpoint
 - schedule
 - ranking
@@ -387,7 +382,7 @@ channels.json と照合
 
 ## コメント・ギフト API との関係 — 重要
 
-HLS サーバーは 3 チャンネル対応になったが、既存フロントで利用しているコメント API は別サーバーである。
+HLS サーバーはマルチチャンネル対応になったが、既存フロントで利用しているコメント API は別サーバーである。
 
 現在確認できるコメント関連 I/O は:
 
@@ -470,9 +465,7 @@ Network
 ```text
 channels.json failed
         ↓
-show non-blocking warning
-        ↓
-try /stream.m3u8
+show catalog error and do not start playback
 ```
 
 チャンネル一覧取得の失敗だけでプレイヤー全体を使用不能にしない。
@@ -487,8 +480,6 @@ requested id not found
 default channel
       ↓
 first channel
-      ↓
-/stream.m3u8
 ```
 
 ### Playlist error
@@ -529,7 +520,6 @@ first channel
 - `playlist` ベースの再生
 - Channel selector
 - channel switch
-- `/stream.m3u8` fallback
 
 ### P1
 
@@ -550,7 +540,7 @@ first channel
 - channel-scoped gifts
 - viewer counts
 - thumbnails
-- categories
+- standalone category catalog
 - follow / ranking / recommendations
 
 ---
@@ -566,15 +556,14 @@ Before
 After
 channels.json
    |
-   +-- llamigos
-   +-- llama-drama
-   +-- gran-dillama
+   +-- channel.category
+   +-- channel.playlist
 ```
 
 という構造になった。
 
 フロント側で最も重要なのは、**チャンネルをコードに固定せず `/channels.json` を source of truth にすること**。
 
-また、既存のコメント API には現時点で channel identifier がないため、**映像だけを 3 チャンネル対応にしたからといってチャットまでチャンネル別になったと解釈しないこと**。
+また、既存のコメント API には現時点で channel identifier がないため、**映像だけをマルチチャンネル対応にしたからといってチャットまでチャンネル別になったと解釈しないこと**。
 
 この境界を守れば、固定バックエンドの範囲でも Home / Watch / Channel selector をかなり本物のストリーミングサービスに近づけられる。
