@@ -50,6 +50,21 @@ describe("AppShell", () => {
     expect(within(topbar as HTMLElement).queryByRole("link", { name: /ギフト/ })).not.toBeInTheDocument();
   });
 
+  it("shows the local profile summary and credit icon in the sidebar", async () => {
+    render(<RouterProvider router={router} />);
+
+    const sidebar = (await screen.findByRole("link", { name: /^ホーム$/ })).closest("aside");
+    if (!sidebar) throw new Error("sidebar not found");
+
+    const profile = sidebar.querySelector(".profile-card");
+    if (!profile) throw new Error("profile card not found");
+
+    expect(within(profile as HTMLElement).getByText("Guest")).toBeInTheDocument();
+    expect(within(profile as HTMLElement).getByText("Premium")).toBeInTheDocument();
+    expect(within(profile as HTMLElement).getByText("3,000 P")).toBeInTheDocument();
+    expect(profile.querySelector(".profile-credit-icon")).toHaveAttribute("src", "/credits.svg");
+  });
+
   it("keeps search disabled and shows no fabricated notification count", async () => {
     render(<RouterProvider router={router} />);
 

@@ -3,6 +3,7 @@ import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
 import {
   Bell,
+  ChevronRight,
   CircleHelp,
   Download,
   Flame,
@@ -135,10 +136,15 @@ export function AppShell({ children }: PropsWithChildren) {
             <Avatar.Image src="/avatars/avatar1.png" alt="" />
             <Avatar.Fallback>G</Avatar.Fallback>
           </Avatar>
-          <div>
+          <div className="profile-card-details">
             <strong>Guest</strong>
-            <small>Default profile</small>
+            <small className="profile-tier">Premium</small>
+            <span className="profile-credits">
+              <img className="profile-credit-icon" src="/credits.svg" alt="" />
+              <span>{credits.toLocaleString()} P</span>
+            </span>
           </div>
+          <ChevronRight className="profile-card-chevron" size={18} aria-hidden="true" />
         </div>
       </aside>
 

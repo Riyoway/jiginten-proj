@@ -214,6 +214,34 @@
   font-size: 11px;
 }
 
+.profile-card .profile-tier {
+  color: var(--purple-2);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profile-credits {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  color: #e8ebf4;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profile-card .profile-credit-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.profile-card-chevron {
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+
 .workspace {
   min-width: 0;
 }
