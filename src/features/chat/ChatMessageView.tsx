@@ -18,6 +18,7 @@ export function ChatMessageView({ message }: { message: ChatMessage }) {
         <div className="chat-body">
           <div className="chat-meta">
             <strong>Guest</strong>
+            <time>{formatTime(message.receivedAt)}</time>
             <span className="gift-chip">
               <GiftIcon size={12} /> GIFT
             </span>

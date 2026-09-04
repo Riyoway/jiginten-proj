@@ -28,6 +28,25 @@ test("shows the volume slider when the volume control is hovered", async ({ page
   await expect(slider).toBeVisible();
 });
 
+test("shares the current watch URL", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "share", {
+      configurable: true,
+      value: async ({ url }: ShareData) => {
+        (window as Window & { sharedUrl?: string }).sharedUrl = url;
+      },
+    });
+  });
+  await page.goto("/watch?channel=llama-drama");
+
+  await page.getByRole("button", { name: "シェア" }).click();
+
+  await expect(page.locator(".share-status")).toHaveText("リンクを共有しました");
+  expect(await page.evaluate(() => (window as Window & { sharedUrl?: string }).sharedUrl)).toContain(
+    "/watch?channel=llama-drama",
+  );
+});
+
 test("watch page resolves a channel requested via the URL", async ({ page }) => {
   await page.goto("/watch?channel=llama-drama");
 

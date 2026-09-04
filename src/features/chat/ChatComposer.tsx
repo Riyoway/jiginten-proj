@@ -49,7 +49,6 @@ export function ChatComposer() {
 
   return (
     <div className="composer-wrap">
-      <GiftPicker open={giftOpen} selectedId={selectedGift?.id ?? null} onSelect={setSelectedGift} />
       {selectedGift ? (
         <div className="selected-gift">
           <img src={selectedGift.iconUrl} alt="" />
@@ -93,6 +92,7 @@ export function ChatComposer() {
           <Send size={18} />
         </button>
       </form>
+      <GiftPicker open={giftOpen} selectedId={selectedGift?.id ?? null} onSelect={setSelectedGift} />
       <div className="composer-footer">
         <span>
           {text.length}/{MAX_COMMENT_LENGTH}
