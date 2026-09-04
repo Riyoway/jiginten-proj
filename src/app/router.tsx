@@ -2,6 +2,7 @@ import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/re
 import { AppShell } from "../components/layout/AppShell";
 import { FavoritesPage, FollowsPage, HistoryPage } from "../features/collections/CollectionPages";
 import { HomePage } from "../features/home/HomePage";
+import { NotFoundPage } from "../features/not-found/NotFoundPage";
 import { WatchPage } from "../features/watch/WatchPage";
 
 const rootRoute = createRootRoute({
@@ -10,6 +11,7 @@ const rootRoute = createRootRoute({
       <Outlet />
     </AppShell>
   ),
+  notFoundComponent: NotFoundPage,
 });
 
 const homeRoute = createRoute({
