@@ -10,9 +10,22 @@ test("watch page plays the default stream", async ({ page }) => {
   await page.goto("/watch");
 
   await expect(page.locator(".player-frame")).toBeVisible();
+  await expect(page.locator("video")).toHaveAttribute("autoplay", "");
   await expect(page.locator(".live-badge").first()).toBeVisible();
   await expect.poll(() => playlistPaths.some((path) => path.startsWith("/ch/"))).toBe(true);
   expect(playlistPaths).not.toContain("/stream.m3u8");
+});
+
+test("shows the volume slider when the volume control is hovered", async ({ page }) => {
+  await page.goto("/watch?channel=llama-drama");
+
+  const volumeControl = page.locator(".volume-control");
+  const slider = volumeControl.locator('input[type="range"]');
+  await expect(volumeControl).toBeVisible({ timeout: 15000 });
+  await expect(slider).toHaveValue("0.8");
+
+  await volumeControl.hover();
+  await expect(slider).toBeVisible();
 });
 
 test("watch page resolves a channel requested via the URL", async ({ page }) => {
