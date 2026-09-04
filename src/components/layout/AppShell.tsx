@@ -3,7 +3,6 @@ import { buttonVariants } from "@heroui/styles";
 import { Link } from "@tanstack/react-router";
 import {
   Bell,
-  ChevronRight,
   CircleHelp,
   Download,
   Flame,
@@ -160,7 +159,6 @@ export function AppShell({ children }: PropsWithChildren) {
               <span>{credits.toLocaleString()} P</span>
             </span>
           </div>
-          <ChevronRight className="profile-card-chevron" size={18} aria-hidden="true" />
         </div>
       </aside>
 

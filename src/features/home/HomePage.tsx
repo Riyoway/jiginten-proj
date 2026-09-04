@@ -26,21 +26,22 @@ import { StreamCard, StreamCardSkeleton } from "./StreamCard";
 
 const SKELETON_KEYS = ["skeleton-1", "skeleton-2", "skeleton-3"] as const;
 
-const CATEGORY_OPTIONS: { label: string; icon: LucideIcon }[] = [
-  { label: "コメディ", icon: Laugh },
-  { label: "ドラマ", icon: Clapperboard },
-  { label: "ファンタジー", icon: Sparkles },
-  { label: "SF", icon: Rocket },
-  { label: "ゲーム", icon: Gamepad2 },
-  { label: "雑談", icon: MessageCircle },
-  { label: "音楽", icon: Music },
-  { label: "学習・教育", icon: BookOpen },
-  { label: "クリエイティブ", icon: Palette },
-  { label: "スポーツ", icon: Trophy },
-  { label: "その他", icon: Shapes },
+const CATEGORY_OPTIONS: { label: string; icon: LucideIcon; tone: string }[] = [
+  { label: "コメディ", icon: Laugh, tone: "coral" },
+  { label: "ドラマ", icon: Clapperboard, tone: "amber" },
+  { label: "ファンタジー", icon: Sparkles, tone: "violet" },
+  { label: "SF", icon: Rocket, tone: "blue" },
+  { label: "ゲーム", icon: Gamepad2, tone: "indigo" },
+  { label: "雑談", icon: MessageCircle, tone: "sky" },
+  { label: "音楽", icon: Music, tone: "pink" },
+  { label: "学習・教育", icon: BookOpen, tone: "teal" },
+  { label: "クリエイティブ", icon: Palette, tone: "peach" },
+  { label: "スポーツ", icon: Trophy, tone: "green" },
+  { label: "その他", icon: Shapes, tone: "slate" },
 ];
 
 const CATEGORY_ICONS = new Map(CATEGORY_OPTIONS.map(({ label, icon }) => [label, icon]));
+const CATEGORY_TONES = new Map(CATEGORY_OPTIONS.map(({ label, tone }) => [label, tone]));
 
 function normalizeCategory(category: string) {
   return category.trim() || "その他";
@@ -52,6 +53,7 @@ export function HomePage() {
 
   const { channels, status } = useChannels();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const categories = useMemo(() => {
     const counts = new Map(CATEGORY_OPTIONS.map(({ label }) => [label, 0]));
     for (const channel of channels) {
@@ -64,6 +66,7 @@ export function HomePage() {
         label,
         count,
         Icon: CATEGORY_ICONS.get(label) ?? Shapes,
+        tone: CATEGORY_TONES.get(label) ?? "violet",
       }))
       .sort((left, right) => right.count - left.count);
   }, [channels]);
@@ -103,12 +106,26 @@ export function HomePage() {
               <div>
                 <h2>人気のカテゴリー</h2>
               </div>
+              <button
+                className="category-toggle"
+                type="button"
+                aria-controls="home-category-list"
+                aria-expanded={showAllCategories}
+                onClick={() => setShowAllCategories((current) => !current)}
+              >
+                {showAllCategories ? "折りたたむ" : "すべて見る"}
+              </button>
             </div>
-            <fieldset className="category-row" aria-label="カテゴリーで絞り込む">
-              {categories.map(({ label, count, Icon }) => (
+            <fieldset
+              className={`category-row${showAllCategories ? " expanded" : ""}`}
+              id="home-category-list"
+              aria-label="カテゴリーで絞り込む"
+            >
+              {categories.map(({ label, count, Icon, tone }) => (
                 <button
                   type="button"
                   className="category-card"
+                  data-tone={tone}
                   aria-label={`${label} ${count}件`}
                   aria-pressed={selectedCategory === label}
                   disabled={count === 0}

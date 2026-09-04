@@ -71,6 +71,7 @@ describe("AppShell", () => {
     expect(within(profile as HTMLElement).getByText("Premium")).toBeInTheDocument();
     expect(within(profile as HTMLElement).getByText("3,000 P")).toBeInTheDocument();
     expect(profile.querySelector(".profile-credit-icon")).toHaveAttribute("src", "/credits.svg");
+    expect(profile.querySelector(".profile-card-chevron")).toBeNull();
   });
 
   it("keeps search disabled and shows no fabricated notification count", async () => {
