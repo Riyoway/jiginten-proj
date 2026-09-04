@@ -265,11 +265,10 @@ UI から直接 URL を組み立てず、API adapter に閉じ込める。
 ### 推奨 API
 
 ```ts
-export const HLS_BASE_URL =
-  "https://intern-hls-server.tomaton.workers.dev";
+import { endpoints } from "./endpoints";
 
 export async function fetchChannels(signal?: AbortSignal) {
-  const response = await fetch(`${HLS_BASE_URL}/channels.json`, { signal });
+  const response = await fetch(endpoints.channels, { signal });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch channels: ${response.status}`);
@@ -279,7 +278,7 @@ export async function fetchChannels(signal?: AbortSignal) {
 }
 
 export function resolvePlaylistUrl(playlist: string) {
-  return new URL(playlist, HLS_BASE_URL).href;
+  return new URL(playlist, endpoints.channels).href;
 }
 ```
 

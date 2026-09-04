@@ -1,5 +1,5 @@
 import type { Channel } from "./contracts";
-import { endpoints, HLS_BASE_URL } from "./endpoints";
+import { endpoints } from "./endpoints";
 
 // ponytail: channels.json の実JSON全体(配列直下か{channels:[...]}か)はDocs/HLS-SERVER.mdでも
 // 未確定と明記されているため、両方の形を受け付けて決め打ちを避ける。
@@ -15,7 +15,7 @@ export async function fetchChannels(signal?: AbortSignal): Promise<Channel[]> {
 
 // playlistが相対URLの場合にも対応する。
 export function resolvePlaylistUrl(playlist: string): string {
-  return new URL(playlist, HLS_BASE_URL).href;
+  return new URL(playlist, endpoints.channels).href;
 }
 
 // フォールバック順: URL指定のchannel id → default:true → 先頭 → (呼び出し側で/stream.m3u8へ)

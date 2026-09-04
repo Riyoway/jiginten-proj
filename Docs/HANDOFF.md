@@ -177,11 +177,10 @@ HLS      GET /channels.json / /stream.m3u8 / /ch/<id>/stream.m3u8 / /ch/<id>/seg
   Biomeが全行差分を出す(このリポジトリはLF)。
 - **devサーバーのポートが流れる。** 5173が空いていないと5174, 5175…と上がる。終了時は残プロセスを掃除する。
 
-- **`VITE_*`が「定義済みだが空文字」だと`??`は素通りする。** ホスティング側で値なしで登録すると
-  `endpoints`が`""`になり、`fetch("")` / `new EventSource("")`が**現在のページURL**へ相対解決して
-  リクエストしてしまう(`POST https://<自サイト>/watch?channel=... 404`)。
-  デプロイ先で送信も受信も死んだ実例あり。`lib/api/endpoints.ts`の`resolveEndpoint()`が
-  未設定・空・空白をすべて既定値へ落とすので、**新しいエンドポイントもこれを通すこと**。
+- **5つの`VITE_*_URL`はすべて必須。** ホスティング側で値なしにすると`fetch("")` /
+  `new EventSource("")`が現在のページURLへ相対解決し、送受信が死んだ実例がある。
+  `lib/api/endpointConfig.ts`をVite設定とアプリで共有し、未設定・空・相対URL・HTTP(S)以外を
+  dev server/build開始前に拒否する。実URLのソースコード内フォールバックは置かない。
   デプロイ済みバンドルを直接見るのが一番速い切り分けになる
   (`curl <site>/assets/index-*.js | grep -o '{stream:[^}]*'`)。
 

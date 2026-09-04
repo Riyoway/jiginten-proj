@@ -26,8 +26,9 @@ pnpm test:e2e        # playwright (builds + previews first, see webServer in pla
 Single test file: `pnpm vitest run tests/unit/messages.test.ts` (or any path). Single Playwright spec:
 `pnpm playwright test tests/e2e/home.spec.ts`.
 
-No `.env` is required to run — `src/lib/api/endpoints.ts` falls back to the live fixed endpoints when
-`VITE_STREAM_URL`/`VITE_COMMENTS_URL`/`VITE_MESSAGES_URL`/`VITE_GIFTS_URL` are unset.
+All five endpoint variables (`VITE_STREAM_URL`, `VITE_CHANNELS_URL`, `VITE_COMMENTS_URL`,
+`VITE_MESSAGES_URL`, `VITE_GIFTS_URL`) are required in `.env` or the hosting environment. Missing,
+blank, relative, or non-HTTP(S) values fail before the dev server/build starts.
 
 ## Development workflow
 
@@ -115,7 +116,8 @@ profile, follow state, viewer count, or ranking API. Consequences enforced throu
 - Comment store caps at 300 messages (`src/store/comments.ts`) to bound DOM growth; raise this only with
   virtualization in place.
 
-All raw endpoint URLs live in `src/lib/api/endpoints.ts`; feature components call through
+Endpoint URLs come only from the five required `VITE_*_URL` variables and are validated by
+`src/lib/api/endpointConfig.ts`; feature components call through
 `src/lib/api/{channels,comments,messages,gifts}.ts` and never construct request URLs themselves.
 
 ## Architecture
